@@ -1,0 +1,26 @@
+{
+  "ui_console": [
+    "Insert"
+  ],
+  "ui_accept": [
+    "Enter"
+  ],
+  "ui_cancel": [
+    "Escape"
+  ],
+  "ui_cameraup": [
+    "W"
+  ],
+  "ui_cameradown": [
+    "S"
+  ],
+  "ui_cameraleft": [
+    "A"
+  ],
+  "ui_cameraright": [
+    "D"
+  ],
+  "ui_profiler": [
+    "Home"
+  ]
+}

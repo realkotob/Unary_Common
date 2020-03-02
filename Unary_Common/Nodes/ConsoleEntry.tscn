@@ -1,0 +1,11 @@
+[gd_scene format=2]
+
+[node name="ConsoleEntry" type="Label"]
+margin_right = 520.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 520, 0 )
+size_flags_horizontal = 11
+size_flags_vertical = 1
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "Text"
+autowrap = true

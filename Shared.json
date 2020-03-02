@@ -1,0 +1,49 @@
+{
+  "Unary_Common.Headless": {
+    "Type": "System.Boolean",
+    "Value": false
+  },
+  "Unary_Common.Window.VSync": {
+    "Type": "System.Boolean",
+    "Value": false
+  },
+  "Unary_Common.Window.Fullscreen": {
+    "Type": "System.Boolean",
+    "Value": false
+  },
+  "Unary_Common.Window.Title": {
+    "Type": "System.String",
+    "Value": "Recusant"
+  },
+  "Unary_Common.Window.Size": {
+    "Type": "Godot.Vector2",
+    "Value": {
+      "x": 1920.0,
+      "y": 1980.0
+    }
+  },
+  "Unary_Common.Locale": {
+    "Type": "System.String",
+    "Value": "en"
+  },
+  "Unary_Common.Locale.Fallback": {
+    "Type": "System.String",
+    "Value": "en"
+  },
+  "Unary_Common.Network.Port": {
+    "Type": "System.Int32",
+    "Value": 30000
+  },
+  "Unary_Common.Network.MaxPlayers": {
+    "Type": "System.Int32",
+    "Value": 4
+  },
+  "Unary_Common.Random.RareTickSelector": {
+    "Type": "System.UInt32",
+    "Value": 1
+  },
+  "Unary_Common.Random.RareTickRange": {
+    "Type": "System.UInt32",
+    "Value": 500000
+  }
+}
