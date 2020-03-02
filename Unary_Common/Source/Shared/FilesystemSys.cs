@@ -24,6 +24,7 @@ SOFTWARE.
 
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
+using Unary_Common.Structs;
 
 using Godot;
 
@@ -65,18 +66,18 @@ namespace Unary_Common.Shared
 			ModIDFiles.Clear();
 		}
 
-		public void ClearMod(string ModID)
+		public void ClearMod(Mod Mod)
 		{
-			if (ModIDFiles.ContainsKey(ModID))
+			if (ModIDFiles.ContainsKey(Mod.ModID))
 			{
-				foreach (var File in ModIDFiles[ModID])
+				foreach (var File in ModIDFiles[Mod.ModID])
 				{
 					FilesystemUtil.GodotFileRemove(File);
 				}
 			}
 
-			FilesystemUtil.GodotDirRemove("res://" + ModID);
-			ModIDFiles.Remove(ModID);
+			FilesystemUtil.GodotDirRemove("res://" + Mod.ModID);
+			ModIDFiles.Remove(Mod.ModID);
 		}
 
 		public void ClearedMods()
@@ -85,35 +86,35 @@ namespace Unary_Common.Shared
 			ProjectSettings.LoadResourcePack(CorePath);
 		}
 
-		public void InitCore(string ModID, string Path)
+		public void InitCore(Mod Mod)
 		{
-			if(ModIDFiles.ContainsKey(ModID))
+			if(ModIDFiles.ContainsKey(Mod.ModID))
 			{
 				return;
 			}
 
 			ModSys ModSys = Sys.Ref.GetShared<ModSys>();
 
-			string PCKPath = Path + '/' + ModID + ".pck";
-			string PCKManifest = Path + '/' + ModID + ".json";
+			string PCKPath = Mod.Path + '/' + Mod.ModID + ".pck";
+			string PCKManifest = Mod.Path + '/' + Mod.ModID + ".json";
 
 			#if DEBUG
-				if (!FilesystemUtil.GodotPackPCK(ModID, Path, new List<string>() { }))
+				if (!FilesystemUtil.GodotPackPCK(Mod.ModID, Mod.Path, new List<string>() { }))
 				{
-					Sys.Ref.GetShared<ConsoleSys>().Error("Failed to repack " + ModID);
+					Sys.Ref.GetShared<ConsoleSys>().Error("Failed to repack " + Mod.ModID);
 					return;
 				}
 			#endif
 
 			if (!FilesystemUtil.SystemFileExists(PCKPath))
 			{
-				Sys.Ref.GetShared<ConsoleSys>().Error(ModID + " is not providing a package to load from");
+				Sys.Ref.GetShared<ConsoleSys>().Error(Mod.ModID + " is not providing a package to load from");
 				return;
 			}
 
 			if (!FilesystemUtil.SystemFileExists(PCKManifest))
 			{
-				Sys.Ref.GetShared<ConsoleSys>().Error(ModID + " is not providing a package manifest to load from");
+				Sys.Ref.GetShared<ConsoleSys>().Error(Mod.ModID + " is not providing a package manifest to load from");
 				return;
 			}
 
@@ -121,15 +122,15 @@ namespace Unary_Common.Shared
 
 			if (Manifest == null)
 			{
-				Sys.Ref.GetShared<ConsoleSys>().Error(ModID + " is providing a package manifest but it is empty");
+				Sys.Ref.GetShared<ConsoleSys>().Error(Mod.ModID + " is providing a package manifest but it is empty");
 				return;
 			}
 
 			try
 			{
 				List<string> Files = JsonConvert.DeserializeObject<List<string>>(Manifest);
-				ModIDFiles[ModID] = Files;
-				CorePath = Path;
+				ModIDFiles[Mod.ModID] = Files;
+				CorePath = Mod.Path;
 			}
 			catch (Exception)
 			{
@@ -138,40 +139,40 @@ namespace Unary_Common.Shared
 
 			if (!ProjectSettings.LoadResourcePack(PCKPath))
 			{
-				Sys.Ref.GetShared<ConsoleSys>().Error("Failed to load package of " + ModID);
+				Sys.Ref.GetShared<ConsoleSys>().Error("Failed to load package of " + Mod.ModID);
 				return;
 			}
 		}
 
-		public void InitMod(string ModID, string Path)
+		public void InitMod(Mod Mod)
 		{
-			if (ModIDFiles.ContainsKey(ModID))
+			if (ModIDFiles.ContainsKey(Mod.ModID))
 			{
 				return;
 			}
 
 			ModSys ModSys = Sys.Ref.GetShared<ModSys>();
 
-			if (!FilesystemUtil.GodotDirContainsFiles(Path, ModID + ".pck"))
+			if (!FilesystemUtil.GodotDirContainsFiles(Mod.Path, Mod.ModID + ".pck"))
 			{
 				return;
 			}
 
 			#if DEBUG
 				List<string> TargetFolders = new List<string>();
-				TargetFolders.Add(ModID);
+				TargetFolders.Add(Mod.ModID);
 
-				if (ModSys.Get(ModID).Overrides != null)
+				if (ModSys.GetManifest(Mod).Overrides != null)
 				{
-					TargetFolders.AddRange(ModSys.Get(ModID).Overrides);
+					TargetFolders.AddRange(ModSys.GetManifest(Mod).Overrides);
 				}
 
 				TargetFolders = TargetFolders.Distinct().ToList();
 
-				FilesystemUtil.GodotPackPCK(ModID, Path, TargetFolders);
+				FilesystemUtil.GodotPackPCK(Mod.ModID, Mod.Path, TargetFolders);
 			#endif
 
-			string Manifest = FilesystemUtil.SystemFileRead(Path + '/' + ModID + ".json");
+			string Manifest = FilesystemUtil.SystemFileRead(Mod.Path + '/' + Mod.ModID + ".json");
 
 			if (Manifest == null)
 			{
@@ -181,14 +182,14 @@ namespace Unary_Common.Shared
 			try
 			{
 				List<string> Files = JsonConvert.DeserializeObject<List<string>>(Manifest);
-				ModIDFiles[ModID] = Files;
+				ModIDFiles[Mod.ModID] = Files;
 			}
 			catch (Exception)
 			{
 				return;
 			}
 
-			if (!ProjectSettings.LoadResourcePack(Path + '/' + ModID + ".pck"))
+			if (!ProjectSettings.LoadResourcePack(Mod.Path + '/' + Mod.ModID + ".pck"))
 			{
 				return;
 			}

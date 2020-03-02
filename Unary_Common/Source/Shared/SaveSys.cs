@@ -84,7 +84,7 @@ namespace Unary_Common.Shared
             Saves.Clear();
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
 
         }
@@ -99,12 +99,12 @@ namespace Unary_Common.Shared
             return Saves;
         }
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
 
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
 
         }

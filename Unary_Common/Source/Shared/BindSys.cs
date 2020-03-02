@@ -55,12 +55,12 @@ namespace Unary_Common.Shared
             Entries.Clear();
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
-            if (Entries.ContainsKey(ModID))
+            if (Entries.ContainsKey(Mod.ModID))
             {
-                Entries[ModID].Save();
-                Entries.Remove(ModID);
+                Entries[Mod.ModID].Save();
+                Entries.Remove(Mod.ModID);
             }
         }
 
@@ -112,14 +112,14 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
-            Load(ModID, Path);
+            Load(Mod.ModID, Mod.Path);
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
-            Load(ModID, Path);
+            Load(Mod.ModID, Mod.Path);
         }
     }
 }

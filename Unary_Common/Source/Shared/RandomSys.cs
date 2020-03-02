@@ -50,7 +50,11 @@ namespace Unary_Common.Shared
                 {
                     if(IsInstanceValid(RareTickSubscribers[i].Subscriber.Target))
                     {
-                        if(Chance(RareTickSubscribers[i].Selector, RareTickSubscribers[i].Range))
+                        if(RareTickSubscribers[i].Selector == RareTickSubscribers[i].Range)
+                        {
+                            RareTickSubscribers[i].Subscriber.Target.Call(RareTickSubscribers[i].Subscriber.MemberName);
+                        }
+                        else if(Chance(RareTickSubscribers[i].Selector, RareTickSubscribers[i].Range))
                         {
                             RareTickSubscribers[i].Subscriber.Target.Call(RareTickSubscribers[i].Subscriber.MemberName);
                         }
@@ -66,6 +70,9 @@ namespace Unary_Common.Shared
         public void Init()
         {
             ConfigSys Config = Sys.Ref.GetShared<ConfigSys>();
+
+            RareTickSubscribers = new List<RareTickSubscriber>();
+
             Selector = Config.GetShared<uint>("Unary_Common.Random.RareTickSelector");
             Range = Config.GetShared<uint>("Unary_Common.Random.RareTickRange");
         }
@@ -75,7 +82,7 @@ namespace Unary_Common.Shared
             RareTickSubscribers.Clear();
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
 
         }
@@ -85,12 +92,12 @@ namespace Unary_Common.Shared
 
         }
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
 
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
 
         }
@@ -165,7 +172,7 @@ namespace Unary_Common.Shared
             return BitConverter.ToInt64(Bytes, 0);
         }
 
-        public bool Chance(uint Selector, uint Range)
+        public bool Chance(uint Selector = 1, uint Range = 20)
         {
             if((uint)GD.RandRange(0, Selector - 1) < Range - 1)
             {
@@ -177,7 +184,7 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void RareTickSubscribe(Godot.Object Target, string MemberName, uint Selector, uint Range)
+        public void RareTickSubscribe(Godot.Object Target, string MemberName, uint Selector = 1, uint Range = 1)
         {
             RareTickSubscriber NewSubscriber = new RareTickSubscriber()
             {

@@ -26,6 +26,7 @@ using Godot;
 
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
+using Unary_Common.Structs;
 
 using System;
 using System.Collections.Generic;
@@ -75,16 +76,16 @@ namespace Unary_Common.Shared
             ActualTypes.Clear();
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
-            if(Assemblies.ContainsKey(ModID))
+            if(Assemblies.ContainsKey(Mod.ModID))
             {
-                Assemblies.Remove(ModID);
+                Assemblies.Remove(Mod.ModID);
             }
 
             foreach(var NamedType in NamedTypes)
             {
-                if(NamedType.Key.StartsWith(ModID + "."))
+                if(NamedType.Key.StartsWith(Mod.ModID + "."))
                 {
                     ActualTypes.Remove(NamedType.Value);
                     NamedTypes.Remove(NamedType.Key);
@@ -159,26 +160,26 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
-            if(!FilesystemUtil.SystemDirContainsFiles(Path, ModID + ".dll"))
+            if(!FilesystemUtil.SystemDirContainsFiles(Mod.Path, Mod.ModID + ".dll"))
             {
                 ConsoleSys.Panic("Core mod cant exist without assembly");
             }
             else
             {
-                if (!Assemblies.ContainsKey(ModID))
+                if (!Assemblies.ContainsKey(Mod.ModID))
                 {
                     try
                     {
-                        Assemblies[ModID] = Assembly.LoadFrom(Path + '/' + ModID + ".dll");
+                        Assemblies[Mod.ModID] = Assembly.LoadFrom(Mod.Path + '/' + Mod.ModID + ".dll");
                     }
                     catch (Exception Exception)
                     {
                         ConsoleSys.Error(Exception.Message);
                     }
 
-                    AddTypes(Assemblies[ModID]);
+                    AddTypes(Assemblies[Mod.ModID]);
                 }
                 else
                 {
@@ -187,20 +188,20 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
-            if (FilesystemUtil.SystemDirContainsFiles(Path, ModID + ".dll"))
+            if (FilesystemUtil.SystemDirContainsFiles(Mod.Path, Mod.ModID + ".dll"))
             {
                 try
                 {
-                    Assemblies[ModID] = Assembly.LoadFrom(Path + '/' + ModID + ".dll");
+                    Assemblies[Mod.ModID] = Assembly.LoadFrom(Mod.Path + '/' + Mod.ModID + ".dll");
                 }
                 catch (Exception Exception)
                 {
                     ConsoleSys.Error(Exception.Message);
                 }
 
-                AddTypes(Assemblies[ModID]);
+                AddTypes(Assemblies[Mod.ModID]);
             }
         }
     }

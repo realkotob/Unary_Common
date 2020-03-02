@@ -32,15 +32,15 @@ namespace Unary_Common.Utils
 {
     public static class NetworkUtil
     {
-        public static byte[] Pack(Arguments Arguments)
+        public static byte[] Pack(Arguments.Arguments Arguments)
         {
             return MessagePackSerializer.Serialize(Arguments, 
 			MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray));
         }
 
-        public static Arguments Unpack(byte[] Bytes)
+        public static Arguments.Arguments Unpack(byte[] Bytes)
         {
-            return MessagePackSerializer.Deserialize<Arguments>(Bytes, 
+            return MessagePackSerializer.Deserialize<Arguments.Arguments>(Bytes, 
 			MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray));
         }
     }

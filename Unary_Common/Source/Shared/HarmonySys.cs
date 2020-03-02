@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 using Unary_Common.Interfaces;
+using Unary_Common.Structs;
 
 using System;
 using System.Collections.Generic;
@@ -51,12 +52,12 @@ namespace Unary_Common.Shared
 			Instances.Clear();
 		}
 
-		public void ClearMod(string ModID)
+		public void ClearMod(Mod Mod)
 		{
-			if (Instances.ContainsKey(ModID))
+			if (Instances.ContainsKey(Mod.ModID))
 			{
-				Instances[ModID].UnpatchAll();
-				Instances.Remove(ModID);
+				Instances[Mod.ModID].UnpatchAll();
+				Instances.Remove(Mod.ModID);
 			}
 		}
 
@@ -65,36 +66,36 @@ namespace Unary_Common.Shared
 
 		}
 
-		public void InitCore(string ModID, string Path)
+		public void InitCore(Mod Mod)
 		{
-			if(!Instances.ContainsKey(ModID))
+			if(!Instances.ContainsKey(Mod.ModID))
 			{
-				Assembly Target = AssemblySys.GetAssembly(ModID);
+				Assembly Target = AssemblySys.GetAssembly(Mod.ModID);
 
 				if(Target != null)
 				{
-					HarmonyInstance NewInstance = HarmonyInstance.Create(ModID);
+					HarmonyInstance NewInstance = HarmonyInstance.Create(Mod.ModID);
 					NewInstance.PatchAll(Target);
-					Instances[ModID] = NewInstance;
+					Instances[Mod.ModID] = NewInstance;
 				}
 			}
 			else
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error(ModID + " is already presented for initialization");
+				Sys.Ref.GetSharedNode<ConsoleSys>().Error(Mod.ModID + " is already presented for initialization");
 			}
 		}
 
-		public void InitMod(string ModID, string Path)
+		public void InitMod(Mod Mod)
 		{
-			if (!Instances.ContainsKey(ModID))
+			if (!Instances.ContainsKey(Mod.ModID))
 			{
-				Assembly Target = AssemblySys.GetAssembly(ModID);
+				Assembly Target = AssemblySys.GetAssembly(Mod.ModID);
 
 				if (Target != null)
 				{
-					HarmonyInstance NewInstance = HarmonyInstance.Create(ModID);
+					HarmonyInstance NewInstance = HarmonyInstance.Create(Mod.ModID);
 					NewInstance.PatchAll(Target);
-					Instances[ModID] = NewInstance;
+					Instances[Mod.ModID] = NewInstance;
 				}
 			}
 		}

@@ -60,24 +60,24 @@ namespace Unary_Common.Shared
 			ServerConfigs.Clear();
 		}
 
-		public void ClearMod(string ModID)
+		public void ClearMod(Mod Mod)
 		{
-			if(ServerConfigs.ContainsKey(ModID))
+			if(ServerConfigs.ContainsKey(Mod.ModID))
 			{
-				ServerConfigs[ModID].Save();
-				ServerConfigs.Remove(ModID);
+				ServerConfigs[Mod.ModID].Save();
+				ServerConfigs.Remove(Mod.ModID);
 			}
 
-			if (ClientConfigs.ContainsKey(ModID))
+			if (ClientConfigs.ContainsKey(Mod.ModID))
 			{
-				ClientConfigs[ModID].Save();
-				ClientConfigs.Remove(ModID);
+				ClientConfigs[Mod.ModID].Save();
+				ClientConfigs.Remove(Mod.ModID);
 			}
 
-			if (SharedConfigs.ContainsKey(ModID))
+			if (SharedConfigs.ContainsKey(Mod.ModID))
 			{
-				SharedConfigs[ModID].Save();
-				SharedConfigs.Remove(ModID);
+				SharedConfigs[Mod.ModID].Save();
+				SharedConfigs.Remove(Mod.ModID);
 			}
 		}
 
@@ -294,14 +294,14 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void InitCore(string ModID, string Path)
+		public void InitCore(Mod Mod)
 		{
-			LoadConfig(ModID, Path);
+			LoadConfig(Mod.ModID, Mod.Path);
 		}
 
-		public void InitMod(string ModID, string Path)
+		public void InitMod(Mod Mod)
 		{
-			LoadConfig(ModID, Path);
+			LoadConfig(Mod.ModID, Mod.Path);
 		}
 
 		public void Reload()

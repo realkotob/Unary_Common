@@ -24,6 +24,7 @@ SOFTWARE.
 
 using Unary_Common.Utils;
 using Unary_Common.Interfaces;
+using Unary_Common.Structs;
 
 using Godot;
 using System.Collections.Generic;
@@ -68,7 +69,7 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void ClearMod(string ModID)
+		public void ClearMod(Mod Mod)
 		{
 
 		}
@@ -93,12 +94,12 @@ namespace Unary_Common.Shared
 			this.Path = Path;
 		}
 
-		public void InitCore(string ModID, string Path)
+		public void InitCore(Mod Mod)
 		{
 			
 		}
 
-		public void InitMod(string ModID, string Path)
+		public void InitMod(Mod Mod)
 		{
 			
 		}

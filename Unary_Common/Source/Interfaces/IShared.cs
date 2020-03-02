@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using Unary_Common.Structs;
+
 namespace Unary_Common.Interfaces
 {
     public interface IShared
@@ -33,15 +35,15 @@ namespace Unary_Common.Interfaces
         void Clear();
 
         // Executed when requested to clear specified ModID
-        void ClearMod(string ModID);
+        void ClearMod(Mod Mod);
 
         // Executed after all the mods have been cleaned
         void ClearedMods();
 
         // Executed when requested to implement Core namespace
-        void InitCore(string ModID, string Path);
+        void InitCore(Mod Mod);
 
         //Executed when requested to implement Mod namespace
-        void InitMod(string ModID, string Path);
+        void InitMod(Mod Mod);
     }
 }

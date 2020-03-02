@@ -217,16 +217,55 @@ namespace Unary_Common.Shared
             }
 
             AddShared<ModSys>();
-            InitCore(GetShared<ModSys>().Core.ModID, GetShared<ModSys>().Core.Path);
+            InitCore(GetShared<ModSys>().Core.Mod);
         }
 
         public void ClearMods()
         {
+            foreach (var Mod in GetShared<ModSys>().LoadOrder)
+            {
+                ClearServerMod(Mod.ModID);
+                ClearClientMod(Mod.ModID);
+                ClearSharedMod(Mod.ModID);
 
+                for (int i = SharedOrder.Count - 1; i >= 0; --i)
+                {
+                    string SharedModID = SharedOrder[i];
 
-            ClearAllServerMod();
-            ClearAllClientMod();
-            ClearAllSharedMod();
+                    if (SharedSys.ContainsKey(SharedModID))
+                    {
+                        IShared Shared = (IShared)SharedSys[SharedModID];
+                        Shared.ClearMod(Mod);
+                    }
+                    else if (SharedNodeID.ContainsKey(SharedModID))
+                    {
+                        GetChild<IShared>(SharedNodeID[SharedModID].ID).ClearMod(Mod);
+                    }
+                    else
+                    {
+                        ConsoleSys.Error("Could not send ClearMod with ModID " + Mod.ModID + " to " + SharedModID);
+                    }
+                }                
+            }
+
+            for (int i = SharedOrder.Count - 1; i >= 0; --i)
+            {
+                string SharedModID = SharedOrder[i];
+
+                if (SharedSys.ContainsKey(SharedModID))
+                {
+                    IShared Shared = (IShared)SharedSys[SharedModID];
+                    Shared.ClearedMods();
+                }
+                else if (SharedNodeID.ContainsKey(SharedModID))
+                {
+                    GetChild<IShared>(SharedNodeID[SharedModID].ID).ClearedMods();
+                }
+                else
+                {
+                    ConsoleSys.Error("Could not send ClearedMods with ModID to " + SharedModID);
+                }
+            }
         }
 
         public void Clear()
@@ -430,18 +469,18 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitSharedCore(string ModID, string Path)
+        public void InitSharedCore(Mod Mod)
         {
             foreach (var OrderModID in SharedOrder)
             {
                 if (SharedSys.ContainsKey(OrderModID))
                 {
                     IShared Shared = (IShared)SharedSys[OrderModID];
-                    Shared.InitCore(ModID, Path);
+                    Shared.InitCore(Mod);
                 }
                 else if (SharedNodeID.ContainsKey(OrderModID))
                 {
-                    GetChild<IShared>(SharedNodeID[OrderModID].ID).InitCore(ModID, Path);
+                    GetChild<IShared>(SharedNodeID[OrderModID].ID).InitCore(Mod);
                 }
                 else
                 {
@@ -450,18 +489,18 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitSharedMod(string ModID, string Path)
+        public void InitSharedMod(Mod Mod)
         {
             foreach (var OrderModID in SharedOrder)
             {
                 if (SharedSys.ContainsKey(OrderModID))
                 {
                     IShared Shared = (IShared)SharedSys[OrderModID];
-                    Shared.InitCore(ModID, Path);
+                    Shared.InitMod(Mod);
                 }
                 else if (SharedNodeID.ContainsKey(OrderModID))
                 {
-                    GetChild<IShared>(SharedNodeID[OrderModID].ID).InitMod(ModID, Path);
+                    GetChild<IShared>(SharedNodeID[OrderModID].ID).InitMod(Mod);
                 }
                 else
                 {
@@ -516,6 +555,20 @@ namespace Unary_Common.Shared
                 string ModID = SharedOrder[i];
                 ClearShared(ModID);
                 SharedOrder.RemoveAt(i);
+            }
+        }
+
+        public void ClearSharedMod(string TargetModID)
+        {
+            for (int i = SharedOrder.Count - 1; i >= 0; --i)
+            {
+                string ModID = SharedOrder[i];
+
+                if (ModID.BeginsWith(TargetModID))
+                {
+                    ClearShared(ModID);
+                    SharedOrder.RemoveAt(i);
+                }
             }
         }
 
@@ -760,6 +813,20 @@ namespace Unary_Common.Shared
             }
         }
 
+        public void ClearClientMod(string TargetModID)
+        {
+            for (int i = ClientOrder.Count - 1; i >= 0; --i)
+            {
+                string ModID = ClientOrder[i];
+
+                if (ModID.BeginsWith(TargetModID))
+                {
+                    ClearClient(ModID);
+                    ClientOrder.RemoveAt(i);
+                }
+            }
+        }
+
         // Server systems
 
         public void AddServer<T>() where T : Godot.Object, IServer
@@ -1001,52 +1068,40 @@ namespace Unary_Common.Shared
             }
         }
 
-        // Util functions
-
-        public void InitCore(string ModID, string Path)
+        public void ClearedAllServer()
         {
-            InitSharedCore(ModID, Path);
+            for (int i = ServerOrder.Count - 1; i >= 0; --i)
+            {
+                string ModID = ServerOrder[i];
+                ClearServer(ModID);
+                ServerOrder.RemoveAt(i);
+            }
         }
 
-        public void InitMod(string ModID, string Path)
-        {
-            InitSharedMod(ModID, Path);
-        }
-
-        public void ClearMods(List<string> ExcludedModIDs)
+        public void ClearServerMod(string TargetModID)
         {
             for (int i = ServerOrder.Count - 1; i >= 0; --i)
             {
                 string ModID = ServerOrder[i];
 
-                if (!ExcludedModIDs.Contains(ModID))
+                if(ModID.BeginsWith(TargetModID))
                 {
                     ClearServer(ModID);
                     ServerOrder.RemoveAt(i);
                 }
             }
+        }
 
-            for (int i = ClientOrder.Count - 1; i >= 0; --i)
-            {
-                string ModID = ClientOrder[i];
+        // Util functions
 
-                if (!ExcludedModIDs.Contains(ModID))
-                {
-                    ClearClient(ModID);
-                    ClientOrder.RemoveAt(i);
-                }
-            }
+        public void InitCore(Mod Mod)
+        {
+            InitSharedCore(Mod);
+        }
 
-            for (int i = SharedOrder.Count - 1; i >= 0; --i)
-            {
-                string ModID = SharedOrder[i];
-
-                if (!ExcludedModIDs.Contains(ModID))
-                {
-                    ClearShared(ModID);
-                    SharedOrder.RemoveAt(i);
-                }
-            }
+        public void InitMod(Mod Mod)
+        {
+            InitSharedMod(Mod);
         }
     }
 }

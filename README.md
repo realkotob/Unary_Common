@@ -5,7 +5,7 @@
 Common Framework provides you with a toolset to make plug-n-play architecture for your
 Core game, as well as for all the Mods, which allows you to have interchangable mods in-between
 sessions/servers/lobbies with automatic Steam workshop / Mods folder synchronization. Is uses the
-same ClassDB-like architecture in Godot, and provides an easy way to separate codebase into 
+same ClassDB-like architecture from Godot, and provides an easy way to separate codebase into 
 Shared, Client and Server systems.
 
 ### Used third-party materials:

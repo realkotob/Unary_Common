@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Shared;
 using Unary_Common.Utils;
+using Unary_Common.Structs;
 
 using System;
 using System.Collections.Generic;
@@ -54,11 +55,11 @@ namespace Unary_Common.Shared
             DataPaths.Clear();
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
-            if (DataPaths.ContainsKey(ModID))
+            if (DataPaths.ContainsKey(Mod.ModID))
             {
-                DataPaths.Remove(ModID);
+                DataPaths.Remove(Mod.ModID);
             }
         }
 
@@ -67,21 +68,21 @@ namespace Unary_Common.Shared
 
         }
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
-            if(!FilesystemUtil.SystemDirExists(FolderPath + ModID))
+            if(!FilesystemUtil.SystemDirExists(FolderPath + Mod.ModID))
             {
-                FilesystemUtil.SystemDirCreate(FolderPath + ModID);
-                DataPaths[ModID] = FolderPath + ModID;
+                FilesystemUtil.SystemDirCreate(FolderPath + Mod.ModID);
+                DataPaths[Mod.ModID] = FolderPath + Mod.ModID;
             }
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
-            if (!FilesystemUtil.SystemDirExists(FolderPath + ModID))
+            if (!FilesystemUtil.SystemDirExists(FolderPath + Mod.ModID))
             {
-                FilesystemUtil.SystemDirCreate(FolderPath + ModID);
-                DataPaths[ModID] = FolderPath + ModID;
+                FilesystemUtil.SystemDirCreate(FolderPath + Mod.ModID);
+                DataPaths[Mod.ModID] = FolderPath + Mod.ModID;
             }
         }
 

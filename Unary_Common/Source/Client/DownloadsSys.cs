@@ -36,7 +36,7 @@ namespace Unary_Common.Client
     {
         private EventSys EventSys;
 
-        private bool IsProcessing = false;
+        //private bool IsProcessing = false;
 
         private byte[] Buffer;
 
@@ -45,34 +45,9 @@ namespace Unary_Common.Client
             EventSys = Sys.Ref.GetSharedNode<EventSys>();
 
             Buffer = new byte[65500];
-
-            EventSys.SubscribeRPC(this, nameof(Start), "Unary_Common.DownloadsSys.Start");
-            EventSys.SubscribeRPC(this, nameof(Process), "Unary_Common.DownloadsSys.Process");
-            EventSys.SubscribeRPC(this, nameof(End), "Unary_Common.DownloadsSys.End");
-            EventSys.SubscribeRPC(this, nameof(EndAll), "Unary_Common.DownloadsSys.EndAll");
         }
 
         public void Clear()
-        {
-
-        }
-
-        public void Start(Arguments Arguments)
-        {
-
-        }
-
-        public void Process(Arguments Arguments)
-        {
-            //Arguments.Get<byte[]>("Unary_Common.Data")
-        }
-
-        public void End(Arguments Arguments)
-        {
-
-        }
-
-        public void EndAll(Arguments Arguments)
         {
 
         }

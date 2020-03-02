@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Utils;
 using Unary_Common.Interfaces;
 using Unary_Common.Shared;
+using Unary_Common.Structs;
 
 using Godot;
 
@@ -114,11 +115,11 @@ namespace Unary_Common.Shared
 			FallbackLocaleEntries.Clear();
 		}
 
-		public void ClearMod(string ModID)
+		public void ClearMod(Mod Mod)
 		{
 			foreach (var Entry in SelectedLocaleEntries.ToList())
 			{
-				if (Entry.Key.StartsWith(ModID + '.'))
+				if (Entry.Key.StartsWith(Mod.ModID + '.'))
 				{
 					SelectedLocaleEntries.Remove(Entry.Key);
 				}
@@ -126,7 +127,7 @@ namespace Unary_Common.Shared
 
 			foreach (var Entry in FallbackLocaleEntries.ToList())
 			{
-				if (Entry.Key.StartsWith(ModID + '.'))
+				if (Entry.Key.StartsWith(Mod.ModID + '.'))
 				{
 					FallbackLocaleEntries.Remove(Entry.Key);
 				}
@@ -260,21 +261,21 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void InitCore(string ModID, string Path)
+		public void InitCore(Mod Mod)
 		{
-			LoadLocale(ModID, SelectedLocale, true);
+			LoadLocale(Mod.ModID, SelectedLocale, true);
 			if (!SelectedIsFallback)
 			{
-				LoadLocale(ModID, FallbackLocale, false);
+				LoadLocale(Mod.ModID, FallbackLocale, false);
 			}
 		}
 
-		public void InitMod(string ModID, string Path)
+		public void InitMod(Mod Mod)
 		{
-			LoadLocale(ModID, SelectedLocale, true);
+			LoadLocale(Mod.ModID, SelectedLocale, true);
 			if (!SelectedIsFallback)
 			{
-				LoadLocale(ModID, FallbackLocale, false);
+				LoadLocale(Mod.ModID, FallbackLocale, false);
 			}
 		}
 	}

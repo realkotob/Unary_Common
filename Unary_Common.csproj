@@ -117,7 +117,7 @@
     <Compile Include="Unary_Common\Source\Shared\TempSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\EntryDebug.cs" />
     <Compile Include="Unary_Common\Source\Structs\RareTickSubscriber.cs" />
-    <Compile Include="Unary_Common\Source\Structs\ModDependency.cs" />
+    <Compile Include="Unary_Common\Source\Structs\Mod.cs" />
     <Compile Include="Unary_Common\Source\Structs\Save.cs" />
     <Compile Include="Unary_Common\Source\Structs\Singletones.cs" />
     <Compile Include="Unary_Common\Source\Structs\Categories.cs" />

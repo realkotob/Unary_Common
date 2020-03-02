@@ -24,9 +24,6 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Unary_Common.Structs
 {
@@ -35,11 +32,24 @@ namespace Unary_Common.Structs
         public string Name;
         public string Description;
         public string Path;
-        public Version Version;
-        public string ModID;
-        public List<ModDependency> Dependency;
+        public Mod Mod;
+        public List<Mod> Dependency;
         public List<string> Overrides;
         public string Boot;
         public bool Core;
+
+        public override string ToString()
+        {
+            string Result = default;
+            Result += "Name: " + Name + Environment.NewLine;
+            Result += "Description: " + Description + Environment.NewLine;
+            Result += "Path: " + Path + Environment.NewLine;
+            Result += "Mod: " + Mod + Environment.NewLine;
+            Result += "Dependency: " + Dependency + Environment.NewLine;
+            Result += "Overrides: " + Overrides + Environment.NewLine;
+            Result += "Boot: " + Boot + Environment.NewLine;
+            Result += "Core: " + Core;
+            return Result;
+        }
     }
 }

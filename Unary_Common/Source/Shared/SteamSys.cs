@@ -39,7 +39,7 @@ namespace Unary_Common.Shared
     {
         private static ConsoleSys ConsoleSys;
 
-        private int AuthTicketSize = 1024;
+        //private int AuthTicketSize = 1024;
 
         public List<SteamInstallInfo> WorkshopEntries { get; private set; }
 
@@ -93,7 +93,7 @@ namespace Unary_Common.Shared
             SteamAPI.Shutdown();
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
 
         }
@@ -150,11 +150,12 @@ namespace Unary_Common.Shared
             SteamAPI.RunCallbacks();
         }
 
-        public string GetName()
+        public string GetPersonaName()
         {
-
+            return SteamFriends.GetPersonaName();
         }
 
+        /*
         public byte[] GetAuthTicket() 
         {
             byte[] Result = new byte[AuthTicketSize];
@@ -163,15 +164,16 @@ namespace Unary_Common.Shared
 
             SteamUser.GetAuthSessionTicket(Result, AuthTicketSize, out TicketSize);
 
-            GetAuthSessionTicketResponse_t
+            //GetAuthSessionTicketResponse_t
         }
+        */
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
             
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
             
         }

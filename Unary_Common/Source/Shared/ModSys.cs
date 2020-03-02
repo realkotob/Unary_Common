@@ -37,14 +37,17 @@ namespace Unary_Common.Shared
 	public class ModSys : Object, IShared
 	{
 		public ModManifest Core { get; private set; }
-		public Dictionary<string, ModManifest> ExistingMods { get; private set; }
+
+		public Dictionary<Mod, ModManifest> ExistingMods { get; set; }
+		public List<Mod> LoadOrder { get; set; }
 
 		private ConsoleSys Console;
 		private SteamSys SteamSys;
 
 		public void Init()
 		{
-			ExistingMods = new Dictionary<string, ModManifest>();
+			ExistingMods = new Dictionary<Mod, ModManifest>();
+			LoadOrder = new List<Mod>();
 
 			Console = Sys.Ref.GetSharedNode<ConsoleSys>();
 			SteamSys = Sys.Ref.GetSharedNode<SteamSys>();
@@ -60,7 +63,7 @@ namespace Unary_Common.Shared
 				ParseMod(Folder.Replace('\\', '/'));
 			}
 
-			if (Core.ModID == null)
+			if (Core.Mod.ModID == null)
 			{
 				Console.Panic("We could not find any mod assigned as a Core. Quitting...");
 				return;
@@ -83,21 +86,21 @@ namespace Unary_Common.Shared
 				return;
 			}
 
-			if (NewMod.ModID == null)
+			if (NewMod.Mod.ModID == null)
 			{
 				Console.Error("Failed to parse " + Path + '/' + "Manifest.json");
 				return;
 			}
 
-			if (ExistingMods.ContainsKey(NewMod.ModID))
+			if (ExistingMods.ContainsKey(NewMod.Mod))
 			{
-				Console.Error("Duplicated ModID of " + ExistingMods[NewMod.ModID].Name + " and " + NewMod.Name);
+				Console.Error("Duplicate mod " + NewMod.Name);
 				return;
 			}
 
 			if(NewMod.Core)
 			{
-				if(Core.ModID == null)
+				if(Core.Mod.ModID == null)
 				{
 					Core = NewMod;
 				}
@@ -108,37 +111,24 @@ namespace Unary_Common.Shared
 			}
 			else
 			{
-				ExistingMods[NewMod.ModID] = NewMod;
-			}
-		}
-
-		public new ModManifest Get(string ModID)
-		{
-			if(Core.ModID == ModID)
-			{
-				return Core;
-			}
-			else if(ExistingMods.ContainsKey(ModID))
-			{
-				return ExistingMods[ModID];
-			}
-			else
-			{
-				Console.Error("Tried to get non-existing ModID " + ModID);
-				return default;
+				ExistingMods[NewMod.Mod] = NewMod;
 			}
 		}
 
 		public void Clear()
 		{
 			ExistingMods.Clear();
+			LoadOrder.Clear();
 		}
 
-		public void ClearMod(string ModID)
+		public void ClearMod(Mod Mod)
 		{
-			if(ExistingMods.ContainsKey(ModID))
+			for(int i = LoadOrder.Count - 1; i >= 0; --i)
 			{
-				ExistingMods.Remove(ModID);
+				if(LoadOrder[i] == Mod)
+				{
+					LoadOrder.RemoveAt(i);
+				}
 			}
 		}
 
@@ -147,14 +137,26 @@ namespace Unary_Common.Shared
 
 		}
 
-		public void InitCore(string ModID, string Path)
+		public void InitCore(Mod Mod)
 		{
 			
 		}
 
-		public void InitMod(string ModID, string Path)
+		public void InitMod(Mod Mod)
 		{
 
+		}
+
+		public ModManifest GetManifest(Mod Mod)
+		{
+			if(ExistingMods.ContainsKey(Mod))
+			{
+				return ExistingMods[Mod];
+			}
+			else
+			{
+				return default;
+			}
 		}
 	}
 }

@@ -64,11 +64,11 @@ namespace Unary_Common.Shared
 			ModIDs.Clear();
 		}
 
-		public void ClearMod(string ModID)
+		public void ClearMod(Mod Mod)
 		{
-			if(ModIDs.Contains(ModID))
+			if(ModIDs.Contains(Mod.ModID))
 			{
-				ModIDs.Remove(ModID);
+				ModIDs.Remove(Mod.ModID);
 			}
 		}
 
@@ -392,14 +392,14 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void InitCore(string ModID, string Path)
+		public void InitCore(Mod Mod)
 		{
-			if(!ModIDs.Contains(ModID))
+			if(!ModIDs.Contains(Mod.ModID))
 			{
-				ModIDs.Add(ModID);
+				ModIDs.Add(Mod.ModID);
 			}
 
-			string ScriptPath = Path + '/' + "Autoexec.usl";
+			string ScriptPath = Mod.Path + '/' + "Autoexec.usl";
 
 			if (FilesystemUtil.SystemFileExists(ScriptPath))
 			{
@@ -407,14 +407,14 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void InitMod(string ModID, string Path)
+		public void InitMod(Mod Mod)
 		{
-			if (!ModIDs.Contains(ModID))
+			if (!ModIDs.Contains(Mod.ModID))
 			{
-				ModIDs.Add(ModID);
+				ModIDs.Add(Mod.ModID);
 			}
 
-			string ScriptPath = Path + '/' + "Autoexec.usl";
+			string ScriptPath = Mod.Path + '/' + "Autoexec.usl";
 
 			if (FilesystemUtil.SystemFileExists(ScriptPath))
 			{

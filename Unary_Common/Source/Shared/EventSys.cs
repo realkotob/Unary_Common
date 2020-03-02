@@ -52,11 +52,11 @@ namespace Unary_Common.Shared
             RPCSubscribers.Clear();
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
             foreach(var Event in EventSubscribers.ToList())
             {
-                if (Event.Key.StartsWith(ModID + '.'))
+                if (Event.Key.StartsWith(Mod.ModID + '.'))
                 {
                     EventSubscribers.Remove(Event.Key);
                 }
@@ -64,7 +64,7 @@ namespace Unary_Common.Shared
 
             foreach (var Event in RPCSubscribers.ToList())
             {
-                if (Event.Key.StartsWith(ModID + '.'))
+                if (Event.Key.StartsWith(Mod.ModID + '.'))
                 {
                     RPCSubscribers.Remove(Event.Key);
                 }
@@ -76,12 +76,12 @@ namespace Unary_Common.Shared
 
         }
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
             
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
             
         }

@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 using Unary_Common.Interfaces;
+using Unary_Common.Structs;
 
 using Godot;
 
@@ -45,11 +46,11 @@ namespace Unary_Common.Shared
             Bootables.Clear();
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
-            if (Bootables.ContainsKey(ModID))
+            if (Bootables.ContainsKey(Mod.ModID))
             {
-                Bootables.Remove(ModID);
+                Bootables.Remove(Mod.ModID);
             }
         }
 
@@ -58,9 +59,9 @@ namespace Unary_Common.Shared
 
         }
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
-            if(Bootables.ContainsKey(ModID))
+            if(Bootables.ContainsKey(Mod.ModID))
             {
                 Sys.Ref.GetSharedNode<ConsoleSys>().Panic("Tried to init Core twice");
                 return;
@@ -69,7 +70,7 @@ namespace Unary_Common.Shared
             ModSys ModSys = Sys.Ref.GetShared<ModSys>();
             AssemblySys AssemblySys = Sys.Ref.GetShared<AssemblySys>();
 
-            string BootTarget = ModSys.Get(ModID).Boot;
+            string BootTarget = ModSys.Core.Boot;
 
             if(BootTarget == null)
             {
@@ -86,26 +87,26 @@ namespace Unary_Common.Shared
             }
 
             IBoot NewBoot = (IBoot)Activator.CreateInstance(BootType);
-            Bootables[ModID] = NewBoot;
-            Bootables[ModID].AddShared();
+            Bootables[Mod.ModID] = NewBoot;
+            Bootables[Mod.ModID].AddShared();
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
-            if (Bootables.ContainsKey(ModID))
+            if (Bootables.ContainsKey(Mod.ModID))
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init twice " + ModID);
+                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init twice " + Mod.ModID);
                 return;
             }
 
             ModSys ModSys = Sys.Ref.GetShared<ModSys>();
             AssemblySys AssemblySys = Sys.Ref.GetShared<AssemblySys>();
 
-            string BootTarget = ModSys.Get(ModID).Boot;
+            string BootTarget = ModSys.GetManifest(Mod).Boot;
 
             if (BootTarget == null)
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init " + ModID + " without Boot target");
+                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init " + Mod.ModID + " without Boot target");
                 return;
             }
 
@@ -113,13 +114,13 @@ namespace Unary_Common.Shared
 
             if (BootType == null)
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init " + ModID + " with invalid Boot target");
+                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init " + Mod.ModID + " with invalid Boot target");
                 return;
             }
 
             IBoot NewBoot = (IBoot)Activator.CreateInstance(BootType);
-            Bootables[ModID] = NewBoot;
-            Bootables[ModID].AddShared();
+            Bootables[Mod.ModID] = NewBoot;
+            Bootables[Mod.ModID].AddShared();
         }
 
         public void AddShared(string ModID)

@@ -34,10 +34,9 @@ namespace Unary_Common.Shared
 {
     public class DownloadsSys : Godot.Object, IShared
     {
-        private string FolderPath = "Downloads/";
         private string TempPath;
 
-        private List<string> DownloadPaths;
+        public List<string> DownloadPaths { get; private set; }
 
         private EventSys EventSys;
 
@@ -73,7 +72,7 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
 
         }
@@ -83,12 +82,12 @@ namespace Unary_Common.Shared
 
         }
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
 
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
 
         }

@@ -65,7 +65,7 @@ namespace Unary_Common.Shared
             Categories.Clear();
         }
 
-        public void ClearMod(string ModID)
+        public void ClearMod(Mod Mod)
         {
             
         }
@@ -172,14 +172,14 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitCore(string ModID, string Path)
+        public void InitCore(Mod Mod)
         {
-            LoadEntries(ModID, true);
+            LoadEntries(Mod.ModID, true);
         }
 
-        public void InitMod(string ModID, string Path)
+        public void InitMod(Mod Mod)
         {
-            LoadEntries(ModID, false);
+            LoadEntries(Mod.ModID, false);
         }
 
         public List<string> GetCategory(string Category)
