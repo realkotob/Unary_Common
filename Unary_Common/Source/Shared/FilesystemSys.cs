@@ -81,7 +81,7 @@ namespace Unary_Common.Shared
 
 		public void ClearedMods()
 		{
-			ProjectSettings.LoadResourcePack("Common.pck");
+			ProjectSettings.LoadResourcePack("Unary_Common.pck");
 			ProjectSettings.LoadResourcePack(CorePath);
 		}
 

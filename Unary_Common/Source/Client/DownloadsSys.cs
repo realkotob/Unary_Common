@@ -64,7 +64,7 @@ namespace Unary_Common.Client
 
         public void Process(Arguments Arguments)
         {
-            Arguments.Get<byte[]>("Unary_Common.Data")
+            //Arguments.Get<byte[]>("Unary_Common.Data")
         }
 
         public void End(Arguments Arguments)

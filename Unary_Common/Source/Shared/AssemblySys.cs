@@ -53,8 +53,8 @@ namespace Unary_Common.Shared
             Assembly CommonAssembly = Assembly.GetCallingAssembly();
             Assembly[] NewAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            Assemblies["Common"] = CommonAssembly;
-            AddTypes(Assemblies["Common"]);
+            Assemblies["Unary_Common"] = CommonAssembly;
+            AddTypes(Assemblies["Unary_Common"]);
 
             foreach (var Entry in NewAssemblies)
             {

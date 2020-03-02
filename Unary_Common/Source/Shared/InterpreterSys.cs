@@ -140,10 +140,10 @@ namespace Unary_Common.Shared
 
 		public void ProcessCommand(string Command)
 		{
-			if(!Command.StartsWith("Common.Shared.ConsoleSys.Message") &&
-			   !Command.StartsWith("Common.Shared.ConsoleSys.Warning") &&
-			   !Command.StartsWith("Common.Shared.ConsoleSys.Error") &&
-			   !Command.StartsWith("Common.Shared.ConsoleSys.Panic"))
+			if(!Command.StartsWith("Unary_Common.Shared.ConsoleSys.Message") &&
+			   !Command.StartsWith("Unary_Common.Shared.ConsoleSys.Warning") &&
+			   !Command.StartsWith("Unary_Common.Shared.ConsoleSys.Error") &&
+			   !Command.StartsWith("Unary_Common.Shared.ConsoleSys.Panic"))
 			{
 				ConsoleSys.Message("> " + Command);
 			}

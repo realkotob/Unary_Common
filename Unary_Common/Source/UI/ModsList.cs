@@ -43,7 +43,7 @@ namespace Unary_Common.UI
             Instance = this;
             Console = Console.Instance;
 
-            ModListEntry = GD.Load<PackedScene>("Common/Nodes/UI/ModListEntry.tscn");
+            ModListEntry = GD.Load<PackedScene>("Unary_Common/Nodes/UI/ModListEntry.tscn");
             EntryList = GetNode<VBoxContainer>("Main/Scroll/EntryList");
         }
 

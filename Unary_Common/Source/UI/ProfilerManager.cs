@@ -74,7 +74,7 @@ namespace Unary_Common.UI
         {
             Instance = this;
             Debug = ConfigSystem.Instance.GetConfig("Common").GetValue<bool>("Debug");
-            ProfilerEntryPacked = GD.Load<PackedScene>("Common/Nodes/UI/ProfilerEntry.tscn");
+            ProfilerEntryPacked = GD.Load<PackedScene>("Unary_Common/Nodes/UI/ProfilerEntry.tscn");
 
             Namespaces = new Dictionary<int, ProfilerNamespace>();
             Subscribers = new Dictionary<int, Dictionary<int, Profiler>>();

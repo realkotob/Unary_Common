@@ -477,7 +477,7 @@ namespace Unary_Common.Utils
                 {
                     List<string> NewModFiles = SystemDirGetFiles(TargetPath + '/' + Folder);
 
-                    if(ModID == "Common")
+                    if(ModID == "Unary_Common")
                     {
                         foreach (var File in NewModFiles)
                         {
@@ -500,7 +500,7 @@ namespace Unary_Common.Utils
 
                 foreach (var File in NewImportFiles)
                 {
-                    if (ModID == "Common")
+                    if (ModID == "Unary_Common")
                     {
                         FilesystemPaths.Add(File.Replace('\\', '/').Replace("./", ""));
                     }
@@ -509,7 +509,7 @@ namespace Unary_Common.Utils
                         FilesystemPaths.Add(File.Replace('\\', '/'));
                     }
 
-                    if (ModID == "Common")
+                    if (ModID == "Unary_Common")
                     {
                         ImportPaths.Add("res://" + File.Replace('\\', '/').Replace("./", ""));
                     }
@@ -551,7 +551,7 @@ namespace Unary_Common.Utils
 
                 if (System.IO.Path.GetExtension(File) == ".cs")
                 {
-                    string EmptyFile = "res://Common/Empty";
+                    string EmptyFile = "res://Unary_Common/Empty";
 
                     if (Packer.AddFile(InternalPath, EmptyFile) != Error.Ok)
                     {

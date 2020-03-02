@@ -207,7 +207,7 @@ namespace Unary_Common.Shared
             AddShared<BootSys>();
             GetShared<BootSys>().Add("Unary_Common", NewCommon);
 
-            if(GetShared<ConfigSys>().GetShared<bool>("Common.Headless"))
+            if(GetShared<ConfigSys>().GetShared<bool>("Unary_Common.Headless"))
             {
                 GetShared<BootSys>().AddServer("Unary_Common");
             }

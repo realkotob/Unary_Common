@@ -215,7 +215,7 @@ namespace Unary_Common.Shared
 
 		public override void _Ready()
 		{
-			ConsoleEntry = GD.Load<PackedScene>("Common/Nodes/ConsoleEntry.tscn");
+			ConsoleEntry = GD.Load<PackedScene>("Unary_Common/Nodes/ConsoleEntry.tscn");
 
 			Window = GetNode<WindowDialog>("Console");
 
