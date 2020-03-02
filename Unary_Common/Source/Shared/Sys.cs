@@ -220,13 +220,27 @@ namespace Unary_Common.Shared
             InitCore(GetShared<ModSys>().Core.Mod);
         }
 
+        public void InitMods()
+        {
+            ModSys ModSys = GetShared<ModSys>();
+
+            foreach(var Mod in ModSys.LoadOrder)
+            {
+                InitMod(Mod);
+            }
+        }
+
         public void ClearMods()
         {
-            foreach (var Mod in GetShared<ModSys>().LoadOrder)
+            ModSys ModSys = GetShared<ModSys>();
+
+            for (int m = ModSys.LoadOrder.Count - 1; m >= 0; --m)
             {
-                ClearServerMod(Mod.ModID);
-                ClearClientMod(Mod.ModID);
-                ClearSharedMod(Mod.ModID);
+                Mod TargetMod = ModSys.LoadOrder[m];
+
+                ClearServerMod(TargetMod.ModID);
+                ClearClientMod(TargetMod.ModID);
+                ClearSharedMod(TargetMod.ModID);
 
                 for (int i = SharedOrder.Count - 1; i >= 0; --i)
                 {
@@ -235,17 +249,17 @@ namespace Unary_Common.Shared
                     if (SharedSys.ContainsKey(SharedModID))
                     {
                         IShared Shared = (IShared)SharedSys[SharedModID];
-                        Shared.ClearMod(Mod);
+                        Shared.ClearMod(TargetMod);
                     }
                     else if (SharedNodeID.ContainsKey(SharedModID))
                     {
-                        GetChild<IShared>(SharedNodeID[SharedModID].ID).ClearMod(Mod);
+                        GetChild<IShared>(SharedNodeID[SharedModID].ID).ClearMod(TargetMod);
                     }
                     else
                     {
-                        ConsoleSys.Error("Could not send ClearMod with ModID " + Mod.ModID + " to " + SharedModID);
+                        ConsoleSys.Error("Could not send ClearMod with ModID " + TargetMod.ModID + " to " + SharedModID);
                     }
-                }                
+                }
             }
 
             for (int i = SharedOrder.Count - 1; i >= 0; --i)
