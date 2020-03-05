@@ -1,0 +1,18 @@
+{
+	"Unary_Common.PlayerLeft.InvalidTicket": "Disconnected due to invalid ticket.",
+	"Unary_Common.PlayerLeft.DuplicateRequest": "Disconnected due to duplicate request.",
+	"Unary_Common.PlayerLeft.InvalidVersion": "Disconnected due to invalid game version.",
+	"Unary_Common.PlayerLeft.GameMismatch": "Disconnected due to game mismatch.",
+	"Unary_Common.PlayerLeft.UserNotConnectedToSteam": "Disconnected due to user not being connected to Steam.",
+	"Unary_Common.PlayerLeft.NoLicenseOrExpired": "Disconnected due to user's license expiration.",
+	"Unary_Common.PlayerLeft.VACBanned": "Disconnected due to user being VAC banned.",
+	"Unary_Common.PlayerLeft.LoggedInElseWhere": "Disconnected due to user being logged in on two devices.",
+	"Unary_Common.PlayerLeft.VACCheckTimedOut": "Disconnected due to VAC failure to check user.",
+	"Unary_Common.PlayerLeft.AuthTicketCanceled": "Disconnected due to ticket cancelation.",
+	"Unary_Common.PlayerLeft.AuthTicketInvalidAlreadyUsed": "Disconnected due to already used ticket.",
+	"Unary_Common.PlayerLeft.AuthTicketInvalid": "Disconnected due to ticket invalidity.",
+	"Unary_Common.PlayerLeft.PublisherIssuedBan": "Disconnected due to publisher ban.",
+	"Unary_Common.PlayerLeft.ExpiredTicket": "Disconnected by server.",
+	"Unary_Common.PlayerLeft.ByUser": "Disconnected by user.",
+	"Unary_Common.PlayerLeft.ByServer": "Disconnected by server.",
+}

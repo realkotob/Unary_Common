@@ -43,7 +43,7 @@ namespace Unary_Common
 			// Adding shared systems
 			Sys.AddShared<AssemblySys>();
 			Sys.AddShared<ConfigSys>();
-			Sys.AddSharedNode<SteamSys>();
+			Sys.AddSharedNode<Shared.SteamSys>();
 			Sys.AddSharedNode<DiscordSys>();
 			Sys.AddShared<FilesystemSys>();
 			Sys.AddShared<LocaleSys>();
@@ -65,13 +65,16 @@ namespace Unary_Common
 		public void AddClient()
 		{
 			// Adding client systems
+			Sys.AddClient<Client.SteamSys>();
 			Sys.AddClientNode<MusicSys>();
 			Sys.AddClientNodeLoad<AlertSys>("Alert");
+			Sys.AddClientNode<Client.NetworkSys>();
 		}
 
 		public void AddServer()
 		{
-			
+			Sys.AddServer<Server.SteamSys>();
+			Sys.AddServerNode<Server.NetworkSys>();
 		}
 	}
 }

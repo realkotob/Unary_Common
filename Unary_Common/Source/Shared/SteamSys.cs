@@ -24,6 +24,8 @@ SOFTWARE.
 
 using Unary_Common.Interfaces;
 using Unary_Common.Structs;
+using Unary_Common.Arguments;
+using Unary_Common.Utils;
 
 using Godot;
 
@@ -31,15 +33,12 @@ using System;
 using System.Collections.Generic;
 
 using Steamworks;
-using System.Threading.Tasks;
 
 namespace Unary_Common.Shared
 {
     public class SteamSys : Node, IShared
     {
         private static ConsoleSys ConsoleSys;
-
-        //private int AuthTicketSize = 1024;
 
         public List<SteamInstallInfo> WorkshopEntries { get; private set; }
 
@@ -51,7 +50,6 @@ namespace Unary_Common.Shared
 
         public void Init()
         {
-
             ConsoleSys = Sys.Ref.GetSharedNode<ConsoleSys>();
 
             try
@@ -86,6 +84,7 @@ namespace Unary_Common.Shared
                 m_SteamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(SteamAPIDebugTextHook);
                 SteamClient.SetWarningMessageHook(m_SteamAPIWarningMessageHook);
             }
+
         }
 
         public void Clear()
@@ -149,24 +148,6 @@ namespace Unary_Common.Shared
         {
             SteamAPI.RunCallbacks();
         }
-
-        public string GetPersonaName()
-        {
-            return SteamFriends.GetPersonaName();
-        }
-
-        /*
-        public byte[] GetAuthTicket() 
-        {
-            byte[] Result = new byte[AuthTicketSize];
-
-            uint TicketSize;
-
-            SteamUser.GetAuthSessionTicket(Result, AuthTicketSize, out TicketSize);
-
-            //GetAuthSessionTicketResponse_t
-        }
-        */
 
         public void InitCore(Mod Mod)
         {

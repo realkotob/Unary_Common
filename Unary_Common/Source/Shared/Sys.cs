@@ -42,9 +42,18 @@ namespace Unary_Common.Shared
             Node
         }
 
+        public enum SysMultiplayerType : byte
+        {
+            Client,
+            Server,
+            Host
+        }
+
         public static Sys Ref { get; private set; }
 
         private ConsoleSys ConsoleSys;
+
+        public SysMultiplayerType MultiplayerType { get; set; }
 
         private Dictionary<string, Godot.Object> SharedSys;
         private Dictionary<string, NodeID> SharedNodeID;

@@ -24,9 +24,9 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class Arguments
+    public class SteamPlayer : Arguments
     {
-        public bool Canceled;
-        public int Peer;
+        public ulong SteamID;
+        public byte[] Ticket;
     }
 }

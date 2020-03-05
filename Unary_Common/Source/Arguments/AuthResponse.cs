@@ -24,9 +24,8 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class Arguments
+    public class AuthResponse : Arguments
     {
-        public bool Canceled;
-        public int Peer;
+        public string Response;
     }
 }

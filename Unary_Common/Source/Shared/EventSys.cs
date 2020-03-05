@@ -54,19 +54,19 @@ namespace Unary_Common.Shared
 
         public void ClearMod(Mod Mod)
         {
-            foreach(var Event in EventSubscribers.ToList())
+            foreach (var Name in EventSubscribers.ToList())
             {
-                if (Event.Key.StartsWith(Mod.ModID + '.'))
+                if(Name.Key.BeginsWith(Mod.ModID + '.'))
                 {
-                    EventSubscribers.Remove(Event.Key);
+                    EventSubscribers.Remove(Name.Key);
                 }
             }
 
-            foreach (var Event in RPCSubscribers.ToList())
+            foreach (var Name in RPCSubscribers.ToList())
             {
-                if (Event.Key.StartsWith(Mod.ModID + '.'))
+                if (Name.Key.BeginsWith(Mod.ModID + '.'))
                 {
-                    RPCSubscribers.Remove(Event.Key);
+                    RPCSubscribers.Remove(Name.Key);
                 }
             }
         }
@@ -78,7 +78,7 @@ namespace Unary_Common.Shared
 
         public void InitCore(Mod Mod)
         {
-            
+
         }
 
         public void InitMod(Mod Mod)
@@ -88,7 +88,7 @@ namespace Unary_Common.Shared
 
         public void SubscribeEvent(Godot.Object Target, string MemberName, string EventName)
         {
-            if (!EventSubscribers.ContainsKey(EventName))
+            if(!EventSubscribers.ContainsKey(EventName))
             {
                 EventSubscribers[EventName] = new List<Subscriber>();
             }
@@ -120,13 +120,13 @@ namespace Unary_Common.Shared
             RPCSubscribers[EventName].Add(NewSubscriber);
         }
 
-        private void Invoke(string Name, Arguments.Arguments Arguments, ref Dictionary<string, List<Subscriber>> Subscribers)
+        private void Invoke(string EventName, Arguments.Arguments Arguments, ref Dictionary<string, List<Subscriber>> Subscribers)
         {
-            if (Subscribers.ContainsKey(Name))
+            if (Subscribers.ContainsKey(EventName))
             {
-                for (int i = Subscribers[Name].Count - 1; i >= 0; --i)
+                for (int i = Subscribers[EventName].Count - 1; i >= 0; --i)
                 {
-                    Subscriber Subscriber = Subscribers[Name][i];
+                    Subscriber Subscriber = Subscribers[EventName][i];
 
                     if (IsInstanceValid(Subscriber.Target))
                     {
@@ -157,7 +157,7 @@ namespace Unary_Common.Shared
                     }
                     else
                     {
-                        Subscribers[Name].RemoveAt(i);
+                        Subscribers[EventName].RemoveAt(i);
                     }
                 }
             }
@@ -169,12 +169,18 @@ namespace Unary_Common.Shared
 
         public void InvokeEvent(string Name, Arguments.Arguments Arguments)
         {
-            Invoke(Name, Arguments, ref EventSubscribers);
+            if(EventSubscribers.ContainsKey(Name))
+            {
+                Invoke(Name, Arguments, ref EventSubscribers);
+            }
         }
-
+        
         public void InvokeRPC(string Name, Arguments.Arguments Arguments)
         {
-            Invoke(Name, Arguments, ref RPCSubscribers);
+            if (RPCSubscribers.ContainsKey(Name))
+            {
+                Invoke(Name, Arguments, ref RPCSubscribers);
+            }
         }
     }
 }

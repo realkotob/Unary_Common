@@ -23,28 +23,31 @@ SOFTWARE.
 */
 
 using Unary_Common.Interfaces;
-using Unary_Common.Utils;
+using Unary_Common.Arguments;
 using Unary_Common.Shared;
-using Unary_Common.Structs;
 
 using System;
-using System.Collections.Generic;
-
-using Godot;
 
 using Steamworks;
-using MessagePack;
 
 namespace Unary_Common.Client
 {
-    public class NetworkSys : Node, IClient
+    public class SteamSys : Godot.Object, IClient
     {
-
         private EventSys EventSys;
+
+        public int AuthTicketSize { get; set; } = 1024;
+        public HAuthTicket AuthTicket { get; set; }
+
+        private Callback<GameOverlayActivated_t> CallbackGameOverlayActivated;
 
         public void Init()
         {
             EventSys = Sys.Ref.GetSharedNode<EventSys>();
+            CallbackGameOverlayActivated = Callback<GameOverlayActivated_t>.Create(OnOverlayActivated);
+
+            EventSys.SubscribeEvent(this, nameof(OnJoin), "Unary_Common.CJoin");
+            EventSys.SubscribeEvent(this, nameof(OnLeave), "Unary_Common.CLeave");
         }
 
         public void Clear()
@@ -52,33 +55,46 @@ namespace Unary_Common.Client
 
         }
 
-        public void Start(string Address = "127.0.0.1", int Port = 0, int MaxPlayers = 0)
+        private void OnOverlayActivated(GameOverlayActivated_t Callback)
         {
-            if (Port == 0)
-            {
-                Port = Sys.Ref.GetShared<ConfigSys>().GetShared<int>("Unary_Common.Network.Port");
-            }
-            
-            NetworkedMultiplayerENet NewPeer = new NetworkedMultiplayerENet();
-            NewPeer.CreateClient(Address, Port, MaxPlayers);
-            GetTree().NetworkPeer = NewPeer;
+            OverlayActivated NewResponse = new OverlayActivated();
+            NewResponse.Target = Callback;
+            EventSys.InvokeEvent("Unary_Common.COverlay", NewResponse);
         }
 
-        public void RPC(string EventName, Arguments.Arguments Arguments)
+        public string GetPersonaName()
         {
-            Rpc("S", EventName, Arguments);
+            return SteamFriends.GetPersonaName();
         }
 
-        public void RPCUnreliable(string EventName, Arguments.Arguments Arguments)
+        public byte[] GetAuthTicket()
         {
-            RpcUnreliable("S", EventName, Arguments);
+            byte[] TempTicket = new byte[AuthTicketSize];
+
+            uint TicketSize;
+
+            AuthTicket = SteamUser.GetAuthSessionTicket(TempTicket, AuthTicketSize, out TicketSize);
+
+            byte[] ResultTicket = new byte[TicketSize];
+
+            Array.Copy(TempTicket, 0, ResultTicket, 0, TicketSize);
+
+            return ResultTicket;
         }
 
-        [Remote]
-        public void C(string EventName, Arguments.Arguments Arguments)
+        public void CancelAuthTicket()
         {
-            Arguments.Peer = Multiplayer.GetRpcSenderId();
-            EventSys.InvokeRPC(EventName, Arguments);
+            SteamUser.CancelAuthTicket(AuthTicket);
+        }
+
+        public void OnJoin()
+        {
+
+        }
+
+        public void OnLeave()
+        {
+
         }
     }
 }

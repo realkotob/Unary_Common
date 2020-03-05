@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Shared;
 using Unary_Common.Structs;
+using Unary_Common.Arguments;
 
 using System;
 using System.Collections.Generic;
@@ -35,10 +36,46 @@ namespace Unary_Common.Server
 {
     public class NetworkSys : Node, IServer
     {
+        private EventSys EventSys;
+        private SteamSys SteamSys;
+
+        private Dictionary<int, bool> ValidatedPeers;
 
         public void Init()
         {
+            EventSys = Sys.Ref.GetSharedNode<EventSys>();
+            SteamSys = Sys.Ref.GetServer<SteamSys>();
 
+            ValidatedPeers = new Dictionary<int, bool>();
+
+            EventSys.SubscribeEvent(this, nameof(OnAuthResponse), "Unary_Common.AuthResponse");
+            EventSys.SubscribeEvent(this, nameof(OnTicketResponse), "Unary_Common.TicketResponse");
+        }
+
+        public void OnPlayerConnected(int PeerID)
+        {
+            if(!ValidatedPeers.ContainsKey(PeerID))
+            {
+                ValidatedPeers[PeerID] = false;
+            }
+
+            EventSys.InvokeEvent("Unary_Common.Connected", new Arguments.Arguments
+            {
+                Peer = PeerID
+            });
+        }
+
+        public void OnPlayerDisconnected(int PeerID)
+        {
+            if (ValidatedPeers.ContainsKey(PeerID))
+            {
+                ValidatedPeers.Remove(PeerID);
+            }
+
+            EventSys.InvokeEvent("Unary_Common.Disconnected", new Arguments.Arguments
+            {
+                Peer = PeerID
+            });
         }
 
         public void Clear()
@@ -60,7 +97,154 @@ namespace Unary_Common.Server
 
             NetworkedMultiplayerENet NewPeer = new NetworkedMultiplayerENet();
             NewPeer.CreateServer(Port, MaxPlayers);
+
             GetTree().NetworkPeer = NewPeer;
+            GetTree().Connect("network_peer_connected", this, nameof(OnPlayerConnected));
+            GetTree().Connect("network_peer_disconnected", this, nameof(OnPlayerDisconnected));
+            ValidatedPeers[1] = true;
+        }
+
+        public void Stop()
+        {
+            GetTree().NetworkPeer = null;
+            GetTree().Disconnect("network_peer_connected", this, nameof(OnPlayerConnected));
+            GetTree().Disconnect("network_peer_disconnected", this, nameof(OnPlayerDisconnected));
+            ValidatedPeers.Remove(1);
+        }
+
+        public void RPCID(string EventName, int PeerID, Arguments.Arguments Arguments)
+        {
+            if(PeerID == 1)
+            {
+                EventSys.InvokeRPC(EventName, Arguments);
+            }
+            else
+            {
+                RpcId(PeerID, "C", EventName, Arguments);
+            }
+        }
+
+        public void RPCIDUnreliable(string EventName, int PeerID, Arguments.Arguments Arguments)
+        {
+            if (PeerID == 1)
+            {
+                EventSys.InvokeRPC(EventName, Arguments);
+            }
+            else
+            {
+                RpcUnreliableId(PeerID, "C", EventName, Arguments);
+            }
+        }
+
+        public void RPCIDAll(string EventName, Arguments.Arguments Arguments)
+        {
+            int[] Peers = Multiplayer.GetNetworkConnectedPeers();
+
+            foreach(var PeerID in Peers)
+            {
+                if (PeerID == 1)
+                {
+                    EventSys.InvokeRPC(EventName, Arguments);
+                }
+                else
+                {
+                    RpcId(PeerID, "C", EventName, Arguments);
+                }
+            }
+        }
+
+        public void RPCIDAllUnreliable(string EventName, Arguments.Arguments Arguments)
+        {
+            int[] Peers = Multiplayer.GetNetworkConnectedPeers();
+
+            foreach (var PeerID in Peers)
+            {
+                if (PeerID == 1)
+                {
+                    EventSys.InvokeRPC(EventName, Arguments);
+                }
+                else
+                {
+                    RpcUnreliableId(PeerID, "C", EventName, Arguments);
+                }
+            }
+        }
+
+        public void OnAuthResponse(AuthResponse Arguments)
+        {
+
+        }
+
+        public void OnTicketResponse(TicketResponse Arguments)
+        {
+
+        }
+
+        private void RemovePeer(int Peer)
+        {
+            NetworkedMultiplayerENet NetworkPeer = GetTree().NetworkPeer as NetworkedMultiplayerENet;
+            NetworkPeer.DisconnectPeer(Peer, true);
+        }
+
+        public void ConnectionKick(int Peer, string Reason)
+        {
+            RPCID("Unary_Common.Disconnected", Peer, new PlayerDisconnected
+            {
+                Peer = Peer,
+                Reason = Reason
+            });
+            RemovePeer(Peer);
+        }
+
+        public void ConnectionBan(int Peer, string Reason)
+        {
+            RPCID("Unary_Common.Disconnected", Peer, new PlayerDisconnected
+            {
+                Peer = Peer,
+                Reason = Reason
+            });
+            RemovePeer(Peer);
+        }
+
+        public void Kick(int Peer, string Reason)
+        {
+            RPCIDAll("Unary_Common.Left", new PlayerLeft
+            {
+                Peer = Peer,
+                Reason = Reason
+            });
+            RemovePeer(Peer);
+        }
+
+        public void Ban(int Peer, string Reason)
+        {
+            RPCIDAll("Unary_Common.Left", new PlayerLeft
+            {
+                Peer = Peer,
+                Reason = Reason
+            });
+            RemovePeer(Peer);
+        }
+
+        [Remote]
+        public void S(string EventName, Arguments.Arguments Arguments)
+        {
+            if(ValidatedPeers[Multiplayer.GetRpcSenderId()] == true)
+            {
+                Arguments.Peer = Multiplayer.GetRpcSenderId();
+                EventSys.InvokeRPC(EventName, Arguments);
+            }
+            else
+            {
+                if(EventName == "Unary_Common.Auth" && Arguments is SteamPlayer)
+                {
+                    EventSys.InvokeEvent("Unary_Common.Auth", Arguments);
+                }
+                else
+                {
+                    ConnectionKick(Multiplayer.GetRpcSenderId(), "ByServer");
+                }
+            }
         }
     }
 }

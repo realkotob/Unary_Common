@@ -24,9 +24,8 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class Arguments
+    public class TicketResponse : Arguments
     {
-        public bool Canceled;
-        public int Peer;
+        public string Response;
     }
 }

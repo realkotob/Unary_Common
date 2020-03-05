@@ -34,5 +34,10 @@ namespace Unary_Common.Utils
         {
             return (R)Enum.Parse(typeof(T), Key);
         }
+
+        public static string GetStringFromKey<R>(R Value)
+        {
+            return Enum.GetName(typeof(R), Value);
+        }
     }
 }

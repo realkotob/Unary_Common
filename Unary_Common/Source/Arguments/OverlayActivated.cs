@@ -22,11 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using Steamworks;
+
 namespace Unary_Common.Arguments
 {
-    public class Arguments
+    class OverlayActivated : Arguments
     {
-        public bool Canceled;
-        public int Peer;
+        public GameOverlayActivated_t Target;
     }
 }

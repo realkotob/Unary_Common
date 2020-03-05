@@ -24,9 +24,8 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class Arguments
+    public class PlayerDisconnected : Arguments
     {
-        public bool Canceled;
-        public int Peer;
+        public string Reason;
     }
 }
