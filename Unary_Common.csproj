@@ -101,6 +101,7 @@
     <Compile Include="Unary_Common\Source\Arguments\AuthResponse.cs" />
     <Compile Include="Unary_Common\Source\Arguments\PlayerDisconnected.cs" />
     <Compile Include="Unary_Common\Source\Arguments\OverlayActivated.cs" />
+    <Compile Include="Unary_Common\Source\Arguments\PlayerJoined.cs" />
     <Compile Include="Unary_Common\Source\Arguments\PlayerLeft.cs" />
     <Compile Include="Unary_Common\Source\Arguments\SteamPlayer.cs" />
     <Compile Include="Unary_Common\Source\Arguments\TicketResponse.cs" />

@@ -172,12 +172,28 @@ namespace Unary_Common.Server
 
         public void OnAuthResponse(AuthResponse Arguments)
         {
-
+            if(Arguments.Response != "OK")
+            {
+                ConnectionKick(Arguments.Peer, Arguments.Response);
+            }
         }
 
         public void OnTicketResponse(TicketResponse Arguments)
         {
+            if (Arguments.Response != "OK")
+            {
+                ConnectionKick(Arguments.Peer, Arguments.Response);
+            }
+            else
+            {
+                ValidatedPeers[Arguments.Peer] = true;
 
+                RPCIDAll("Unary_Common.Join", new PlayerJoined
+                {
+                    Peer = Arguments.Peer,
+                    Nickname = SteamSys.GetNickname(Arguments.Peer)
+                });
+            }
         }
 
         private void RemovePeer(int Peer)
