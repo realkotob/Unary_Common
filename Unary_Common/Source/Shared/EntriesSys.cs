@@ -42,8 +42,8 @@ namespace Unary_Common.Shared
 {
     public class EntriesSys : Godot.Object, IShared
     {
-        private Entries Entries;
-        private Categories Categories;
+        public Entries Entries { get; private set; }
+        public Categories Categories { get; private set; }
 
         private ConsoleSys ConsoleSys;
         private AssemblySys AssemblySys;
@@ -180,21 +180,6 @@ namespace Unary_Common.Shared
         public void InitMod(Mod Mod)
         {
             LoadEntries(Mod.ModID, false);
-        }
-
-        public List<string> GetCategory(string Category)
-        {
-            return Categories.GetCategory(Category);
-        }
-
-        public T GetSingle<T>(string ModIDEntry)
-        {
-            return Entries.GetSingletone<T>(ModIDEntry);
-        }
-
-        public T GetNew<T>(string ModIDEntry)
-        {
-            return Entries.GetEntry<T>(ModIDEntry);
         }
     }
 }

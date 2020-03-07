@@ -34,19 +34,30 @@ namespace Unary_Common.Shared
 {
     public class SaveSys : Godot.Object, IShared
     {
-        private List<Save> Saves;
+        public Dictionary<string, Save> Saves { get; private set; }
+
+        private EntriesSys EntriesSys;
 
         public void Init()
         {
-            if(!FilesystemUtil.SystemDirExists("Saves"))
+            EntriesSys = Sys.Ref.GetShared<EntriesSys>();
+
+            if (!FilesystemUtil.SystemDirExists("Saves"))
             {
                 FilesystemUtil.SystemDirCreate("Saves");
             }
 
-            Saves = new List<Save>();
+            Saves = new Dictionary<string, Save>();
 
             foreach(var Dir in FilesystemUtil.SystemDirGetDirsTop("Saves"))
             {
+                string Name = System.IO.Path.GetFileName(Dir);
+
+                if (Saves.ContainsKey(Name))
+                {
+                    continue;
+                }
+
                 string ManifestPath = Dir + '/' + "Manifest.json";
 
                 if(FilesystemUtil.SystemFileExists(ManifestPath))
@@ -64,7 +75,7 @@ namespace Unary_Common.Shared
                         Save NewSave = JsonConvert.DeserializeObject<Save>(Manifest);
                         NewSave.Path = ManifestPath;
 
-                        Saves.Add(NewSave);
+                        Saves[Name] = NewSave;
                     }
                     catch(Exception)
                     {
@@ -94,11 +105,6 @@ namespace Unary_Common.Shared
 
         }
 
-        public List<Save> GetAll()
-        {
-            return Saves;
-        }
-
         public void InitCore(Mod Mod)
         {
 
@@ -109,9 +115,51 @@ namespace Unary_Common.Shared
 
         }
 
-        public void CreateNew(string Name)
+        public bool CreateNew(string Name, string Description = default)
         {
+            if (FilesystemUtil.SystemDirExists("Saves/" + Name) || Saves.ContainsKey(Name))
+            {
+                return false;
+            }
 
+            Dictionary<string, uint> NewRegistry = new Dictionary<string, uint>();
+
+            uint Counter = 0;
+
+            foreach(var Entry in EntriesSys.Entries.GetEntries())
+            {
+                NewRegistry[Entry] = Counter;
+                Counter++;
+            }
+
+            Save NewSave = new Save
+            {
+                Description = Description,
+                Core = Sys.Ref.GetShared<ModSys>().Core.Mod,
+                Dependency = Sys.Ref.GetShared<ModSys>().LoadOrder,
+                Time = DateTime.Now.ToString(),
+                Path = "Saves/" + Name,
+                Registry = new Registry()
+                {
+                    Free = new List<uint>(),
+                    Busy = NewRegistry
+                }
+            };
+
+            FilesystemUtil.SystemDirCreate("Saves/" + Name);
+
+            try
+            {
+                FilesystemUtil.SystemFileWrite("Saves/" + Name + "/Manifest.json", JsonConvert.SerializeObject(NewSave));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            Saves[Name] = NewSave;
+
+            return true;
         }
     }
 }

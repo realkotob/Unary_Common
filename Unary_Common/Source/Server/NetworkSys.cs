@@ -72,15 +72,17 @@ namespace Unary_Common.Server
                 ValidatedPeers.Remove(PeerID);
             }
 
-            EventSys.InvokeEvent("Unary_Common.Disconnected", new Arguments.Arguments
+            EventSys.InvokeEvent("Unary_Common.Left", new Arguments.Arguments
             {
                 Peer = PeerID
             });
+
+            Kick(PeerID, "ByUser");
         }
 
         public void Clear()
         {
-
+            Stop();
         }
 
         public void Start(int Port = 0, int MaxPlayers = 0)
@@ -102,6 +104,16 @@ namespace Unary_Common.Server
             GetTree().Connect("network_peer_connected", this, nameof(OnPlayerConnected));
             GetTree().Connect("network_peer_disconnected", this, nameof(OnPlayerDisconnected));
             ValidatedPeers[1] = true;
+            
+            if(Sys.Ref.MultiplayerType == Sys.SysMultiplayerType.Host)
+            {
+                EventSys.InvokeEvent("Unary_Common.Join", new PlayerJoined()
+                {
+                    Peer = 1,
+                    Nickname = Sys.Ref.GetClient<Client.SteamSys>().GetNickname(),
+                    SteamID = Sys.Ref.GetClient<Client.SteamSys>().GetSteamID()
+                });
+            }
         }
 
         public void Stop()
@@ -110,6 +122,15 @@ namespace Unary_Common.Server
             GetTree().Disconnect("network_peer_connected", this, nameof(OnPlayerConnected));
             GetTree().Disconnect("network_peer_disconnected", this, nameof(OnPlayerDisconnected));
             ValidatedPeers.Remove(1);
+
+            if (Sys.Ref.MultiplayerType == Sys.SysMultiplayerType.Host)
+            {
+                EventSys.InvokeEvent("Unary_Common.Left", new PlayerLeft()
+                {
+                    Peer = 1,
+                    Reason = "ByUser"
+                });
+            }
         }
 
         public void RPCID(string EventName, int PeerID, Arguments.Arguments Arguments)
@@ -191,7 +212,8 @@ namespace Unary_Common.Server
                 RPCIDAll("Unary_Common.Join", new PlayerJoined
                 {
                     Peer = Arguments.Peer,
-                    Nickname = SteamSys.GetNickname(Arguments.Peer)
+                    Nickname = SteamSys.GetNickname(Arguments.Peer),
+                    SteamID = SteamSys.GetSteamID(Arguments.Peer)
                 });
             }
         }

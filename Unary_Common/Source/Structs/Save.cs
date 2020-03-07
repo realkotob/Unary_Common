@@ -29,10 +29,11 @@ namespace Unary_Common.Structs
 {
     public struct Save
     {
-        public string Name;
         public string Description;
-        public string Core;
-        public Version Version;
+        public Mod Core;
+        public List<Mod> Dependency;
+        public string Time;
         public string Path;
+        public Registry Registry;
     }
 }

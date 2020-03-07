@@ -22,11 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Arguments
+using System.Collections.Generic;
+
+namespace Unary_Common.Structs
 {
-    public class PlayerJoined : Arguments
+    public struct Registry
     {
-        public string Nickname;
-        public ulong SteamID;
+        public List<uint> Free;
+        public Dictionary<string, uint> Busy;
     }
 }

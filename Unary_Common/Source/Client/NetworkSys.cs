@@ -39,12 +39,13 @@ namespace Unary_Common.Client
 {
     public class NetworkSys : Node, IClient
     {
-
         private EventSys EventSys;
+        private SteamSys SteamSys;
 
         public void Init()
         {
             EventSys = Sys.Ref.GetSharedNode<EventSys>();
+            SteamSys = Sys.Ref.GetClient<SteamSys>();
         }
 
         public void Clear()
@@ -62,6 +63,32 @@ namespace Unary_Common.Client
             NetworkedMultiplayerENet NewPeer = new NetworkedMultiplayerENet();
             NewPeer.CreateClient(Address, Port, MaxPlayers);
             GetTree().NetworkPeer = NewPeer;
+            GetTree().Connect("connected_to_server", this, nameof(OnConnectedToServer));
+            GetTree().Connect("connection_failed", this, nameof(OnConnectionFailed));
+            GetTree().Connect("server_disconnected", this, nameof(OnServerDisconnected));
+        }
+
+        public void Stop()
+        {
+            GetTree().NetworkPeer = null;
+            GetTree().Disconnect("connected_to_server", this, nameof(OnConnectedToServer));
+            GetTree().Disconnect("connection_failed", this, nameof(OnConnectionFailed));
+            GetTree().Disconnect("server_disconnected", this, nameof(OnServerDisconnected));
+        }
+
+        public void OnConnectedToServer()
+        {
+            EventSys.InvokeEvent("Unary_Common.Connected", null);
+        }
+
+        public void OnConnectionFailed()
+        {
+            EventSys.InvokeEvent("Unary_Common.ConnectionFailed", null);
+        }
+
+        public void OnServerDisconnected()
+        {
+            EventSys.InvokeEvent("Unary_Common.Disconnected", null);
         }
 
         public void RPC(string EventName, Arguments.Arguments Arguments)

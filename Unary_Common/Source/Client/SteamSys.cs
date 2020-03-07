@@ -46,8 +46,9 @@ namespace Unary_Common.Client
             EventSys = Sys.Ref.GetSharedNode<EventSys>();
             CallbackGameOverlayActivated = Callback<GameOverlayActivated_t>.Create(OnOverlayActivated);
 
-            EventSys.SubscribeEvent(this, nameof(OnJoin), "Unary_Common.CJoin");
-            EventSys.SubscribeEvent(this, nameof(OnLeave), "Unary_Common.CLeave");
+            EventSys.SubscribeEvent(this, nameof(OnConnected), "Unary_Common.Connected");
+            EventSys.SubscribeEvent(this, nameof(OnDisconnected), "Unary_Common.ConnectionFailed");
+            EventSys.SubscribeEvent(this, nameof(OnDisconnected), "Unary_Common.Disconnected");
         }
 
         public void Clear()
@@ -58,13 +59,18 @@ namespace Unary_Common.Client
         private void OnOverlayActivated(GameOverlayActivated_t Callback)
         {
             OverlayActivated NewResponse = new OverlayActivated();
-            NewResponse.Target = Callback;
-            EventSys.InvokeEvent("Unary_Common.COverlay", NewResponse);
+            NewResponse.Active = Callback.m_bActive;
+            EventSys.InvokeEvent("Unary_Common.Overlay", NewResponse);
         }
 
-        public string GetPersonaName()
+        public string GetNickname()
         {
             return SteamFriends.GetPersonaName();
+        }
+
+        public ulong GetSteamID()
+        {
+            return SteamUser.GetSteamID().m_SteamID;
         }
 
         public byte[] GetAuthTicket()
@@ -87,14 +93,18 @@ namespace Unary_Common.Client
             SteamUser.CancelAuthTicket(AuthTicket);
         }
 
-        public void OnJoin()
+        public void OnConnected()
         {
-
+            Sys.Ref.GetClientNode<NetworkSys>().RPC("Unary_Common.Auth", new SteamPlayer()
+            {
+                SteamID = GetSteamID(),
+                Ticket = GetAuthTicket()
+            });
         }
 
-        public void OnLeave()
+        public void OnDisconnected()
         {
-
+            CancelAuthTicket();
         }
     }
 }

@@ -127,6 +127,7 @@
     <Compile Include="Unary_Common\Source\Structs\EntryDebug.cs" />
     <Compile Include="Unary_Common\Source\Structs\RareTickSubscriber.cs" />
     <Compile Include="Unary_Common\Source\Structs\Mod.cs" />
+    <Compile Include="Unary_Common\Source\Structs\Registry.cs" />
     <Compile Include="Unary_Common\Source\Structs\Save.cs" />
     <Compile Include="Unary_Common\Source\Structs\Singletones.cs" />
     <Compile Include="Unary_Common\Source\Structs\Categories.cs" />

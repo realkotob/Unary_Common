@@ -69,18 +69,25 @@ namespace Unary_Common.Structs
 
         public void AddModEntry(string Category, string ModIDEntry)
         {
-            if (!ModCategories.ContainsKey(Category))
+            if (CoreCategories.ContainsKey(Category))
             {
-                ModCategories[Category] = new List<string>();
+                CoreCategories[Category].Add(ModIDEntry);
             }
-
-            if(!ModCategories[Category].Contains(ModIDEntry))
+            else
             {
-                ModCategories[Category].Add(ModIDEntry);
+                if (!ModCategories.ContainsKey(Category))
+                {
+                    ModCategories[Category] = new List<string>();
+                }
+
+                if (!ModCategories[Category].Contains(ModIDEntry))
+                {
+                    ModCategories[Category].Add(ModIDEntry);
+                }
             }
         }
 
-        public List<string> GetCategory(string Category)
+        public List<string> GetEntries(string Category)
         {
             List<string> Result = new List<string>();
 
@@ -92,6 +99,23 @@ namespace Unary_Common.Structs
             if(ModCategories.ContainsKey(Category))
             {
                 Result.AddRange(ModCategories[Category]);
+            }
+
+            return Result;
+        }
+
+        public List<string> GetNames()
+        {
+            List<string> Result = new List<string>();
+
+            foreach(var Category in CoreCategories)
+            {
+                Result.Add(Category.Key);
+            }
+
+            foreach (var Category in ModCategories)
+            {
+                Result.Add(Category.Key);
             }
 
             return Result;

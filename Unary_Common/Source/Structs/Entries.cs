@@ -71,7 +71,14 @@ namespace Unary_Common.Structs
 
         public void AddModEntry(string ModIDEntry, byte[] Entry)
         {
-            ModEntries[ModIDEntry] = Entry;
+            if(CoreEntries.ContainsKey(ModIDEntry))
+            {
+                CoreEntries[ModIDEntry] = Entry;
+            }
+            else
+            {
+                ModEntries[ModIDEntry] = Entry;
+            }
         }
 
         public T GetSingletone<T>(string ModIDEntry)
@@ -143,6 +150,23 @@ namespace Unary_Common.Structs
             {
                 return default;
             }
+        }
+
+        public List<string> GetEntries()
+        {
+            List<string> Result = new List<string>();
+
+            foreach(var Entry in CoreEntries)
+            {
+                Result.Add(Entry.Key);
+            }
+
+            foreach (var Entry in ModEntries)
+            {
+                Result.Add(Entry.Key);
+            }
+
+            return Result;
         }
     }
 }

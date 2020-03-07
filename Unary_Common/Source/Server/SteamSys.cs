@@ -173,5 +173,17 @@ namespace Unary_Common.Server
                 return "";
             }
         }
+
+        public ulong GetSteamID(int Peer)
+        {
+            if(SteamIDs.ContainsKey(Peer))
+            {
+                return SteamIDs[Peer];
+            }
+            else
+            {
+                return 0;
+            }
+        }
     }
 }
