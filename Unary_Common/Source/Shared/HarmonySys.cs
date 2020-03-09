@@ -24,6 +24,7 @@ SOFTWARE.
 
 using Unary_Common.Interfaces;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
@@ -36,23 +37,23 @@ using System.Reflection;
 
 namespace Unary_Common.Shared
 {
-	public class HarmonySys : Godot.Object, IShared
+	public class HarmonySys : SysObject
 	{
 		private AssemblySys AssemblySys;
 		private Dictionary<string, HarmonyInstance> Instances;
 
-		public void Init()
+		public override void Init()
 		{
-			AssemblySys = Sys.Ref.GetShared<AssemblySys>();
+			AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
 			Instances = new Dictionary<string, HarmonyInstance>();
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
 			Instances.Clear();
 		}
 
-		public void ClearMod(Mod Mod)
+		public override void ClearMod(Mod Mod)
 		{
 			if (Instances.ContainsKey(Mod.ModID))
 			{
@@ -61,12 +62,7 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void ClearedMods()
-		{
-
-		}
-
-		public void InitCore(Mod Mod)
+		public override void InitCore(Mod Mod)
 		{
 			if(!Instances.ContainsKey(Mod.ModID))
 			{
@@ -81,11 +77,11 @@ namespace Unary_Common.Shared
 			}
 			else
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error(Mod.ModID + " is already presented for initialization");
+				Sys.Ref.ConsoleSys.Error(Mod.ModID + " is already presented for initialization");
 			}
 		}
 
-		public void InitMod(Mod Mod)
+		public override void InitMod(Mod Mod)
 		{
 			if (!Instances.ContainsKey(Mod.ModID))
 			{

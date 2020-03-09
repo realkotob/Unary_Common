@@ -24,6 +24,7 @@ SOFTWARE.
 
 using Unary_Common.Interfaces;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using Godot;
 
@@ -32,21 +33,21 @@ using System.Collections.Generic;
 
 namespace Unary_Common.Shared
 {
-    public class BootSys : Godot.Object, IShared
+    public class BootSys : SysObject
     {
         private Dictionary<string, IBoot> Bootables;
 
-        public void Init()
+        public override void Init()
         {
             Bootables = new Dictionary<string, IBoot>();
         }
 
-        public void Clear()
+        public override void Clear()
         {
             Bootables.Clear();
         }
 
-        public void ClearMod(Mod Mod)
+        public override void ClearMod(Mod Mod)
         {
             if (Bootables.ContainsKey(Mod.ModID))
             {
@@ -54,27 +55,22 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void ClearedMods()
-        {
-
-        }
-
-        public void InitCore(Mod Mod)
+        public override void InitCore(Mod Mod)
         {
             if(Bootables.ContainsKey(Mod.ModID))
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Panic("Tried to init Core twice");
+                Sys.Ref.ConsoleSys.Panic("Tried to init Core twice");
                 return;
             }
 
-            ModSys ModSys = Sys.Ref.GetShared<ModSys>();
-            AssemblySys AssemblySys = Sys.Ref.GetShared<AssemblySys>();
+            ModSys ModSys = Sys.Ref.Shared.GetObject<ModSys>();
+            AssemblySys AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
 
             string BootTarget = ModSys.Core.Boot;
 
             if(BootTarget == null)
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Panic("Tried to init Core without Boot target");
+                Sys.Ref.ConsoleSys.Panic("Tried to init Core without Boot target");
                 return;
             }
 
@@ -82,7 +78,7 @@ namespace Unary_Common.Shared
 
             if (BootType == null)
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Panic("Tried to init Core with invalid Boot target");
+                Sys.Ref.ConsoleSys.Panic("Tried to init Core with invalid Boot target");
                 return;
             }
 
@@ -91,22 +87,22 @@ namespace Unary_Common.Shared
             Bootables[Mod.ModID].AddShared();
         }
 
-        public void InitMod(Mod Mod)
+        public override void InitMod(Mod Mod)
         {
             if (Bootables.ContainsKey(Mod.ModID))
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init twice " + Mod.ModID);
+                Sys.Ref.ConsoleSys.Error("Tried to init twice " + Mod.ModID);
                 return;
             }
 
-            ModSys ModSys = Sys.Ref.GetShared<ModSys>();
-            AssemblySys AssemblySys = Sys.Ref.GetShared<AssemblySys>();
+            ModSys ModSys = Sys.Ref.Shared.GetObject<ModSys>();
+            AssemblySys AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
 
             string BootTarget = ModSys.GetManifest(Mod).Boot;
 
             if (BootTarget == null)
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init " + Mod.ModID + " without Boot target");
+                Sys.Ref.ConsoleSys.Error("Tried to init " + Mod.ModID + " without Boot target");
                 return;
             }
 
@@ -114,7 +110,7 @@ namespace Unary_Common.Shared
 
             if (BootType == null)
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init " + Mod.ModID + " with invalid Boot target");
+                Sys.Ref.ConsoleSys.Error("Tried to init " + Mod.ModID + " with invalid Boot target");
                 return;
             }
 
@@ -155,7 +151,7 @@ namespace Unary_Common.Shared
             }
             else
             {
-                Sys.Ref.GetShared<ConsoleSys>().Error("Tried to add already registered bootable " + ModID);
+                Sys.Ref.ConsoleSys.Error("Tried to add already registered bootable " + ModID);
             }
         }
 
@@ -167,7 +163,7 @@ namespace Unary_Common.Shared
             }
             else
             {
-                Sys.Ref.GetShared<ConsoleSys>().Error("Tried to get boot of " + ModID + " but it is not presented");
+                Sys.Ref.ConsoleSys.Error("Tried to get boot of " + ModID + " but it is not presented");
                 return default;
             }
         }

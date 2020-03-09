@@ -23,27 +23,58 @@ SOFTWARE.
 */
 
 using Unary_Common.Structs;
+using Unary_Common.Arguments;
 
-namespace Unary_Common.Interfaces
+namespace Unary_Common.Abstract
 {
-    public interface IShared
+    public class SysObject : Godot.Object, ISysEntry
     {
         // Executed instead of a constructor for Object/Node inherited systems
-        void Init();
+        public virtual void Init()
+        {
+
+        }
 
         // Executed instead of a deconstuctor for Node base systems
-        void Clear();
+        public virtual void Clear()
+        {
+
+        }
 
         // Executed when requested to clear specified ModID
-        void ClearMod(Mod Mod);
+        public virtual void ClearMod(Mod Mod)
+        {
+
+        }
 
         // Executed after all the mods have been cleaned
-        void ClearedMods();
+        public virtual void ClearedMods()
+        {
+
+        }
 
         // Executed when requested to implement Core namespace
-        void InitCore(Mod Mod);
+        public virtual void InitCore(Mod Mod)
+        {
+
+        }
 
         //Executed when requested to implement Mod namespace
-        void InitMod(Mod Mod);
+        public virtual void InitMod(Mod Mod)
+        {
+
+        }
+
+        //Executed when requesting a system to provide sync info to client
+        public virtual Args Sync()
+        {
+            return null;
+        }
+
+        //Executed when system is provided with sync info from client
+        public virtual void Sync(Args Arguments)
+        {
+
+        }
     }
 }

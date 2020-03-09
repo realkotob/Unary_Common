@@ -26,6 +26,7 @@ using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Arguments;
 using Unary_Common.Shared;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
@@ -37,16 +38,16 @@ using Steamworks;
 
 namespace Unary_Common.Server
 {
-    public class SteamSys : Godot.Object, IServer
+    public class SteamSys : SysObject
     {
         private EventSys EventSys;
         private Callback<ValidateAuthTicketResponse_t> CallbackValidateAuthTicketResponse;
 
         private Dictionary<int, ulong> SteamIDs;
 
-        public void Init()
+        public override void Init()
         {
-            EventSys = Sys.Ref.GetSharedNode<EventSys>();
+            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
             CallbackValidateAuthTicketResponse = Callback<ValidateAuthTicketResponse_t>.Create(OnTicketResponse);
 
             SteamIDs = new Dictionary<int, ulong>();
@@ -57,7 +58,7 @@ namespace Unary_Common.Server
             SteamIDs[1] = SteamUser.GetSteamID().m_SteamID;
         }
 
-        public void Clear()
+        public override void Clear()
         {
             foreach(var SteamID in SteamIDs.ToList())
             {
@@ -146,7 +147,7 @@ namespace Unary_Common.Server
             EventSys.InvokeEvent("Unary_Common.AuthResponse", NewResponse);
         }
 
-        public void OnDisconnected(Arguments.Arguments Arguments)
+        public void OnDisconnected(Args Arguments)
         {
             if (SteamIDs.ContainsKey(Arguments.Peer))
             {

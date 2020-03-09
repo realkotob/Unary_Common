@@ -22,11 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Interfaces
+using Unary_Common.Interfaces;
+using Unary_Common.Abstract;
+
+using System;
+using System.Collections.Generic;
+
+namespace Unary_Common.Client
 {
-    public interface IClient
+    public class RegistrySys : SysObject
     {
-        void Init();
-        void Clear();
+        private Dictionary<string, uint> Registry;
+
+        public override void Init()
+        {
+
+        }
+
+        public override void Clear()
+        {
+
+        }
     }
 }

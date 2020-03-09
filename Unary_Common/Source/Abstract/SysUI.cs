@@ -22,49 +22,59 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using Unary_Common.Interfaces;
 using Unary_Common.Structs;
-using Unary_Common.Abstract;
+using Unary_Common.Arguments;
 
-using Godot;
-using System.Collections.Generic;
-
-namespace Unary_Common.Shared
+namespace Unary_Common.Abstract
 {
-    public class OSSys : SysNode
+    public class SysUI : Godot.CanvasLayer, ISysEntry
     {
-        public override void Init()
+        // Executed instead of a constructor for Object/Node inherited systems
+        public virtual void Init()
         {
-            ConfigSys ConfigSys = Sys.Ref.Shared.GetObject<ConfigSys>();
 
-            ConfigSys.SubscribeShared(this, nameof(SetUseVsync), 
-            "Unary_Common.Window.VSync", SubscriberType.Method);
-            ConfigSys.SubscribeShared(this, nameof(SetWindowFullscreen), 
-            "Unary_Common.Window.Fullscreen", SubscriberType.Method);
-            ConfigSys.SubscribeShared(this, nameof(SetWindowTitle), 
-            "Unary_Common.Window.Title", SubscriberType.Method);
-            ConfigSys.SubscribeShared(this, nameof(SetWindowSize), 
-            "Unary_Common.Window.Size", SubscriberType.Method);
         }
 
-        public void SetUseVsync(bool Value)
+        // Executed instead of a deconstuctor for Node base systems
+        public virtual void Clear()
         {
-            OS.VsyncEnabled = Value;
+
         }
 
-        public void SetWindowFullscreen(bool Value)
+        // Executed when requested to clear specified ModID
+        public virtual void ClearMod(Mod Mod)
         {
-            OS.WindowFullscreen = Value;
+
         }
 
-        public void SetWindowTitle(string Value)
+        // Executed after all the mods have been cleaned
+        public virtual void ClearedMods()
         {
-            OS.SetWindowTitle(Value);
+
         }
 
-        public void SetWindowSize(Vector2 NewSize)
+        // Executed when requested to implement Core namespace
+        public virtual void InitCore(Mod Mod)
         {
-            OS.WindowSize = NewSize;
+
+        }
+
+        //Executed when requested to implement Mod namespace
+        public virtual void InitMod(Mod Mod)
+        {
+
+        }
+
+        //Executed when requesting a system to provide sync info to client
+        public virtual Args Sync()
+        {
+            return null;
+        }
+
+        //Executed when system is provided with sync info from client
+        public virtual void Sync(Args Arguments)
+        {
+
         }
     }
 }

@@ -26,13 +26,14 @@ using Unary_Common.Interfaces;
 using Unary_Common.Shared;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
 
 namespace Unary_Common.Shared
 {
-    public class DownloadsSys : Godot.Object, IShared
+    public class DownloadsSys : SysObject
     {
         private string TempPath;
 
@@ -40,13 +41,13 @@ namespace Unary_Common.Shared
 
         private EventSys EventSys;
 
-        public void Init()
+        public override void Init()
         {
-            TempPath = Sys.Ref.GetShared<TempSys>().Get();
+            TempPath = Sys.Ref.Shared.GetObject<TempSys>().Get();
 
             DownloadPaths = new List<string>();
 
-            EventSys = Sys.Ref.GetSharedNode<EventSys>();
+            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
 
             if (!FilesystemUtil.SystemDirExists("Downloads"))
             {
@@ -59,7 +60,7 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void Clear()
+        public override void Clear()
         {
             DownloadPaths.Clear();
         }
@@ -70,26 +71,6 @@ namespace Unary_Common.Shared
             {
                 DownloadPaths.Add(Path);
             }
-        }
-
-        public void ClearMod(Mod Mod)
-        {
-
-        }
-
-        public void ClearedMods()
-        {
-
-        }
-
-        public void InitCore(Mod Mod)
-        {
-
-        }
-
-        public void InitMod(Mod Mod)
-        {
-
         }
     }
 }

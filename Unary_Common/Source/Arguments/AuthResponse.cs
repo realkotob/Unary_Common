@@ -24,7 +24,7 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class AuthResponse : Arguments
+    public class AuthResponse : Args
     {
         public string Response;
     }

@@ -22,11 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Arguments
+using Unary_Common.Interfaces;
+using Unary_Common.Shared;
+using Unary_Common.Abstract;
+
+using System;
+using System.Collections.Generic;
+
+namespace Unary_Common.Server
 {
-    public class SteamPlayer : Args
+    public class RegistrySys : SysObject
     {
-        public ulong SteamID;
-        public byte[] Ticket;
+        private EventSys EventSys;
+
+        private Dictionary<string, uint> Registry;
+
+        public override void Init()
+        {
+            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
+        }
+
+        public override void Clear()
+        {
+
+        }
     }
 }

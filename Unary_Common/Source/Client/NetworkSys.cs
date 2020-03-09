@@ -26,6 +26,8 @@ using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Shared;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
+using Unary_Common.Arguments;
 
 using System;
 using System.Collections.Generic;
@@ -37,27 +39,22 @@ using MessagePack;
 
 namespace Unary_Common.Client
 {
-    public class NetworkSys : Node, IClient
+    public class NetworkSys : SysNode
     {
         private EventSys EventSys;
         private SteamSys SteamSys;
 
-        public void Init()
+        public override void Init()
         {
-            EventSys = Sys.Ref.GetSharedNode<EventSys>();
-            SteamSys = Sys.Ref.GetClient<SteamSys>();
-        }
-
-        public void Clear()
-        {
-
+            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
+            SteamSys = Sys.Ref.Client.GetObject<SteamSys>();
         }
 
         public void Start(string Address = "127.0.0.1", int Port = 0, int MaxPlayers = 0)
         {
             if (Port == 0)
             {
-                Port = Sys.Ref.GetShared<ConfigSys>().GetShared<int>("Unary_Common.Network.Port");
+                Port = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<int>("Unary_Common.Network.Port");
             }
             
             NetworkedMultiplayerENet NewPeer = new NetworkedMultiplayerENet();
@@ -91,18 +88,18 @@ namespace Unary_Common.Client
             EventSys.InvokeEvent("Unary_Common.Disconnected", null);
         }
 
-        public void RPC(string EventName, Arguments.Arguments Arguments)
+        public void RPC(string EventName, Args Arguments)
         {
             Rpc("S", EventName, Arguments);
         }
 
-        public void RPCUnreliable(string EventName, Arguments.Arguments Arguments)
+        public void RPCUnreliable(string EventName, Args Arguments)
         {
             RpcUnreliable("S", EventName, Arguments);
         }
 
         [Remote]
-        public void C(string EventName, Arguments.Arguments Arguments)
+        public void C(string EventName, Args Arguments)
         {
             Arguments.Peer = Multiplayer.GetRpcSenderId();
             EventSys.InvokeRPC(EventName, Arguments);

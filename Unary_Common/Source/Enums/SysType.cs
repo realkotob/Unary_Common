@@ -22,11 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Arguments
+namespace Unary_Common.Enums
 {
-    public class SteamPlayer : Args
+    public enum SysType : byte
     {
-        public ulong SteamID;
-        public byte[] Ticket;
+        Object,
+        Node,
+        UI,
     }
 }

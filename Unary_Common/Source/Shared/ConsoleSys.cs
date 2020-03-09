@@ -30,13 +30,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
+using Unary_Common.Abstract;
 using Unary_Common.Utils;
 using Unary_Common.Interfaces;
 using Unary_Common.Structs;
 
 namespace Unary_Common.Shared
 {
-	public class ConsoleSys : CanvasLayer, IShared
+	public class ConsoleSys : SysUI
 	{
 		private enum ConsoleColors
 		{
@@ -51,17 +52,12 @@ namespace Unary_Common.Shared
 		private LineEdit ConsoleLine;
 		private PackedScene ConsoleEntry;
 		private VBoxContainer ConsoleHistory;
-		private VBoxContainer AutoContainer;
 		private VScrollBar ScrollBar;
-
-		private Queue<Label> ConsoleHistoryContainer;
 
 		private bool ConsoleVisible = false;
 
-		public void Init()
+		public override void Init()
 		{
-			ConsoleHistoryContainer = new Queue<Label>();
-
 			if (FilesystemUtil.SystemFileExists("log.old"))
 			{
 				FilesystemUtil.SystemFileDelete("log.old");
@@ -78,22 +74,17 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
-			int Count = ConsoleHistoryContainer.Count;
+			int Count = ConsoleHistory.GetChildCount();
 
 			for (int i = 0; i < Count; ++i)
 			{
-				ConsoleHistoryContainer.Dequeue().QueueFree();
+				ConsoleHistory.GetChild(i).QueueFree();
 			}
 		}
 
-		public void ClearMod(Mod Mod)
-		{
-			
-		}
-
-		public void ClearedMods()
+		public override void ClearedMods()
 		{
 			Clear();
 		}
@@ -119,7 +110,7 @@ namespace Unary_Common.Shared
 			{
 				if (ConsoleVisible)
 				{
-					Sys.Ref.GetSharedNode<InterpreterSys>().ProcessCommand(ConsoleLine.Text);
+					Sys.Ref.Shared.GetNode<InterpreterSys>().ProcessCommand(ConsoleLine.Text);
 					ConsoleLine.Clear();
 				}
 			}
@@ -127,9 +118,9 @@ namespace Unary_Common.Shared
 
 		private void AddEntry(string Text, ConsoleColors TextColor)
 		{
-			if (ConsoleHistoryContainer.Count >= ConsoleMaxLines)
+			if (ConsoleHistory.GetChildCount() >= ConsoleMaxLines)
 			{
-				ConsoleHistoryContainer.Dequeue().QueueFree();
+				ConsoleHistory.GetChild(0).QueueFree();
 			}
 
 			Node ConsoleEntryNode = ConsoleEntry.Instance();
@@ -152,9 +143,12 @@ namespace Unary_Common.Shared
 			ConsoleEntryLabel.Text = Text;
 
 			ConsoleHistory.AddChild(ConsoleEntryLabel);
-			ConsoleHistoryContainer.Enqueue(ConsoleEntryLabel);
 
-			//TODO: Fix this scrolling, seems to be broken from Godot side
+			CallDeferred(nameof(SetScrollbar));
+		}
+
+		public void SetScrollbar()
+		{
 			ScrollBar.Value = ScrollBar.MaxValue;
 		}
 
@@ -194,26 +188,6 @@ namespace Unary_Common.Shared
 			Main.Ref.Quit();
 		}
 		
-		public void Files()
-		{
-			var Files = FilesystemUtil.GodotGetAllFiles();
-
-			foreach (var File in Files)
-			{
-				Message("File: " + File);
-			}
-		}
-
-		public void InitCore(Mod Mod)
-		{
-			
-		}
-
-		public void InitMod(Mod Mod)
-		{
-			
-		}
-
 		public override void _Ready()
 		{
 			ConsoleEntry = GD.Load<PackedScene>("Unary_Common/Nodes/ConsoleEntry.tscn");
@@ -223,7 +197,6 @@ namespace Unary_Common.Shared
 			ConsoleLine = GetNode<LineEdit>("Console/Container/ConsoleLine");
 
 			ConsoleHistory = GetNode<VBoxContainer>("Console/Container/ScrollContainer/ConsoleHistory");
-			AutoContainer = GetNode<VBoxContainer>("Console/AutoContainer");
 
 			ScrollBar = GetNode<ScrollContainer>("Console/Container/ScrollContainer").GetVScrollbar();
 			Message("Reinitialized console!");

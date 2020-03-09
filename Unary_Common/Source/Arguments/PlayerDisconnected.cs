@@ -24,7 +24,7 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class PlayerDisconnected : Arguments
+    public class PlayerDisconnected : Args
     {
         public string Reason;
     }

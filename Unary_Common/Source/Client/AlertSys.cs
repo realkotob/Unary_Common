@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common;
 using Unary_Common.Interfaces;
 using Unary_Common.Shared;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
@@ -33,21 +34,16 @@ using Godot;
 
 namespace Unary_Common.Client
 {
-    public class AlertSys : Node, IClient
+    public class AlertSys : SysNode
     {
         private LocaleSys LocaleSys;
         private WindowDialog Window;
         private RichTextLabel Text;
         private Button Button;
 
-        public void Init()
+        public override void Init()
         {
-            LocaleSys = Sys.Ref.GetShared<LocaleSys>();
-        }
-
-        public void Clear()
-        {
-            
+            LocaleSys = Sys.Ref.Shared.GetObject<LocaleSys>();
         }
 
         public override void _Ready()

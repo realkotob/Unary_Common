@@ -24,7 +24,7 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class TicketResponse : Arguments
+    public class TicketResponse : Args
     {
         public string Response;
     }

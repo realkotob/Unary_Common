@@ -26,6 +26,7 @@ using Unary_Common.Interfaces;
 using Unary_Common.Structs;
 using Unary_Common.Shared;
 using Unary_Common.Utils;
+using Unary_Common.Abstract;
 
 using Godot;
 
@@ -38,13 +39,13 @@ using Newtonsoft.Json.Linq;
 
 namespace Unary_Common.Shared
 {
-	public class ConfigSys : Godot.Object, IShared
+	public class ConfigSys : SysObject
 	{
 		private Dictionary<string, Config> SharedConfigs;
 		private Dictionary<string, Config> ClientConfigs;
 		private Dictionary<string, Config> ServerConfigs;
 
-		public void Init()
+		public override void Init()
 		{
 			SharedConfigs = new Dictionary<string, Config>();
 			ClientConfigs = new Dictionary<string, Config>();
@@ -53,14 +54,14 @@ namespace Unary_Common.Shared
 			LoadConfig("Unary_Common", ".");
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
 			SharedConfigs.Clear();
 			ClientConfigs.Clear();
 			ServerConfigs.Clear();
 		}
 
-		public void ClearMod(Mod Mod)
+		public override void ClearMod(Mod Mod)
 		{
 			if(ServerConfigs.ContainsKey(Mod.ModID))
 			{
@@ -79,11 +80,6 @@ namespace Unary_Common.Shared
 				SharedConfigs[Mod.ModID].Save();
 				SharedConfigs.Remove(Mod.ModID);
 			}
-		}
-
-		public void ClearedMods()
-		{
-
 		}
 
 		private void LoadConfig(string ModID, string Path)
@@ -172,7 +168,7 @@ namespace Unary_Common.Shared
 		{
 			if (!ModIDUtil.Validate(ConfigVariable))
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Failed to validate " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
 				return default;
 			}
 
@@ -184,7 +180,7 @@ namespace Unary_Common.Shared
 			}
 			else
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to access non-existing config variable " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
 				return default;
 			}
 		}
@@ -193,7 +189,7 @@ namespace Unary_Common.Shared
 		{
 			if (ModIDUtil.Validate(ConfigVariable))
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Failed to validate " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
 				return default;
 			}
 
@@ -205,7 +201,7 @@ namespace Unary_Common.Shared
 			}
 			else
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to access non-existing config variable " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
 				return default;
 			}
 		}
@@ -214,7 +210,7 @@ namespace Unary_Common.Shared
 		{
 			if (!ModIDUtil.Validate(ConfigVariable))
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Failed to validate " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
 				return default;
 			}
 
@@ -226,7 +222,7 @@ namespace Unary_Common.Shared
 			}
 			else
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to access non-existing config variable " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
 				return default;
 			}
 		}
@@ -235,7 +231,7 @@ namespace Unary_Common.Shared
 		{
 			if (!ModIDUtil.Validate(ConfigVariable))
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Failed to validate " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
 				return;
 			}
 
@@ -247,7 +243,7 @@ namespace Unary_Common.Shared
 			}
 			else
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to access non-existing config variable " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
 				return;
 			}
 		}
@@ -256,7 +252,7 @@ namespace Unary_Common.Shared
 		{
 			if (!ModIDUtil.Validate(ConfigVariable))
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Failed to validate " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
 				return;
 			}
 
@@ -268,7 +264,7 @@ namespace Unary_Common.Shared
 			}
 			else
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to access non-existing config variable " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
 				return;
 			}
 		}
@@ -277,7 +273,7 @@ namespace Unary_Common.Shared
 		{
 			if (!ModIDUtil.Validate(ConfigVariable))
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Failed to validate " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
 				return;
 			}
 
@@ -289,17 +285,17 @@ namespace Unary_Common.Shared
 			}
 			else
 			{
-				Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to access non-existing config variable " + ConfigVariable);
+				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
 				return;
 			}
 		}
 
-		public void InitCore(Mod Mod)
+		public override void InitCore(Mod Mod)
 		{
 			LoadConfig(Mod.ModID, Mod.Path);
 		}
 
-		public void InitMod(Mod Mod)
+		public override void InitMod(Mod Mod)
 		{
 			LoadConfig(Mod.ModID, Mod.Path);
 		}

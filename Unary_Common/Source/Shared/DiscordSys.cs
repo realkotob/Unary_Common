@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using Godot;
 
@@ -35,15 +36,15 @@ using Discord;
 
 namespace Unary_Common.Shared
 {
-    class DiscordSys : Node, IShared
+    class DiscordSys : SysNode
     {
         private ConsoleSys ConsoleSys;
 
         public Discord.Discord Client { get; private set; }
 
-        public void Init()
+        public override void Init()
         {
-            ConsoleSys = Sys.Ref.GetSharedNode<ConsoleSys>();
+            ConsoleSys = Sys.Ref.ConsoleSys;
 
             try
             {
@@ -77,22 +78,12 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void Clear()
+        public override void Clear()
         {
             if (Client != null)
             {
                 Client.Dispose();
             }
-        }
-
-        public void ClearMod(Mod Mod)
-        {
-            
-        }
-
-        public void ClearedMods()
-        {
-
         }
 
         public override void _Process(float delta)
@@ -101,16 +92,6 @@ namespace Unary_Common.Shared
             {
                 Client.RunCallbacks();
             }
-        }
-
-        public void InitCore(Mod Mod)
-        {
-            
-        }
-
-        public void InitMod(Mod Mod)
-        {
-            
         }
     }
 }

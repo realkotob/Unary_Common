@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ using Godot;
 
 namespace Unary_Common.Shared
 {
-    public class RandomSys : Node, IShared
+    public class RandomSys : SysNode
     {
         public string IDCharacters { get; set; } = "0123456789ABCDEF";
 
@@ -67,9 +68,9 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void Init()
+        public override void Init()
         {
-            ConfigSys Config = Sys.Ref.GetShared<ConfigSys>();
+            ConfigSys Config = Sys.Ref.Shared.GetObject<ConfigSys>();
 
             RareTickSubscribers = new List<RareTickSubscriber>();
 
@@ -77,29 +78,9 @@ namespace Unary_Common.Shared
             Range = Config.GetShared<uint>("Unary_Common.Random.RareTickRange");
         }
 
-        public void Clear()
+        public override void Clear()
         {
             RareTickSubscribers.Clear();
-        }
-
-        public void ClearMod(Mod Mod)
-        {
-
-        }
-
-        public void ClearedMods()
-        {
-
-        }
-
-        public void InitCore(Mod Mod)
-        {
-
-        }
-
-        public void InitMod(Mod Mod)
-        {
-
         }
 
         public void SetSeed(long Seed)

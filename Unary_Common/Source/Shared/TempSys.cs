@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
@@ -32,11 +33,11 @@ using System.Collections.Generic;
 namespace Unary_Common.Shared
 {
     // "Temp" folder system
-    public class TempSys : Godot.Object, IShared
+    public class TempSys : SysObject
     {
         private string FolderPath = "Temp/";
 
-        public void Init()
+        public override void Init()
         {
             if(FilesystemUtil.SystemDirExists("Temp"))
             {
@@ -49,31 +50,6 @@ namespace Unary_Common.Shared
         public string Get()
         {
             return FolderPath;
-        }
-
-        public void Clear()
-        {
-
-        }
-
-        public void ClearedMods()
-        {
-
-        }
-
-        public void ClearMod(Mod Mod)
-        {
-
-        }
-
-        public void InitCore(Mod Mod)
-        {
-
-        }
-
-        public void InitMod(Mod Mod)
-        {
-
         }
     }
 }

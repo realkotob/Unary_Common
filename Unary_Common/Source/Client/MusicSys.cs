@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Shared;
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
+using Unary_Common.Abstract;
 
 using Godot;
 
@@ -33,11 +34,11 @@ using System.Collections.Generic;
 
 namespace Unary_Common.Client
 {
-    public class MusicSys : Node, IClient
+    public class MusicSys : SysNode
     {
         private AudioStreamPlayer Player;
 
-        public void Init()
+        public override void Init()
         {
             Player = new AudioStreamPlayer();
             Player.Bus = "Music";
@@ -53,7 +54,7 @@ namespace Unary_Common.Client
             AddChild(Player);
         }
 
-        public void Clear()
+        public override void Clear()
         {
             Player.Stop();
 

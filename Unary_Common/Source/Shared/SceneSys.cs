@@ -25,13 +25,14 @@ SOFTWARE.
 using Unary_Common.Utils;
 using Unary_Common.Interfaces;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using Godot;
 using System.Collections.Generic;
 
 namespace Unary_Common.Shared
 {
-	public class SceneSys : Node, IShared
+	public class SceneSys : SysNode
 	{
 		private string ModID;
 		private string Path;
@@ -39,11 +40,6 @@ namespace Unary_Common.Shared
 		public Node GetScene()
 		{
 			return GetChild(0);
-		}
-
-		public void Init()
-		{
-
 		}
 
 		public override void _Ready()
@@ -61,22 +57,12 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
 			if(GetChildCount() != 0)
 			{
 				GetChild(0).QueueFree();
 			}
-		}
-
-		public void ClearMod(Mod Mod)
-		{
-
-		}
-
-		public void ClearedMods()
-		{
-
 		}
 
 		public void ChangeScene<T>(string ModID, string Path) where T : Node
@@ -92,16 +78,6 @@ namespace Unary_Common.Shared
 
 			this.ModID = ModID;
 			this.Path = Path;
-		}
-
-		public void InitCore(Mod Mod)
-		{
-			
-		}
-
-		public void InitMod(Mod Mod)
-		{
-			
 		}
 	}
 }

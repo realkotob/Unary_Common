@@ -23,6 +23,8 @@ SOFTWARE.
 */
 
 using Unary_Common.Structs;
+using Unary_Common.Arguments;
+
 using System;
 using System.Collections.Generic;
 
@@ -32,15 +34,15 @@ namespace Unary_Common.Utils
 {
     public static class NetworkUtil
     {
-        public static byte[] Pack(Arguments.Arguments Arguments)
+        public static byte[] Pack(Args Arguments)
         {
             return MessagePackSerializer.Serialize(Arguments, 
 			MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray));
         }
 
-        public static Arguments.Arguments Unpack(byte[] Bytes)
+        public static Args Unpack(byte[] Bytes)
         {
-            return MessagePackSerializer.Deserialize<Arguments.Arguments>(Bytes, 
+            return MessagePackSerializer.Deserialize<Args>(Bytes, 
 			MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray));
         }
     }

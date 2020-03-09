@@ -24,7 +24,7 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class PlayerJoined : Arguments
+    public class PlayerJoined : Args
     {
         public string Nickname;
         public ulong SteamID;

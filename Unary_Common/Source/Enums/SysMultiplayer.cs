@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Arguments
+namespace Unary_Common.Enums
 {
-    public class Arguments
+    public enum SysMultiplayer : byte
     {
-        public bool Canceled;
-        public int Peer;
+        Client,
+        Server,
     }
 }

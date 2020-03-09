@@ -60,7 +60,7 @@ namespace Unary_Common.Structs
             if(!FilesystemUtil.SystemFileExists(Path))
             {
                 Valid = false;
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to load binds at " + Path + " but file is not presented");
+                Sys.Ref.ConsoleSys.Error("Tried to load binds at " + Path + " but file is not presented");
                 return;
             }
 
@@ -69,7 +69,7 @@ namespace Unary_Common.Structs
             if (BindList == null)
             {
                 Valid = false;
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init binds at " + Path + " but file empty");
+                Sys.Ref.ConsoleSys.Error("Tried to init binds at " + Path + " but file empty");
                 return;
             }
 
@@ -80,7 +80,7 @@ namespace Unary_Common.Structs
             catch(Exception)
             {
                 Valid = false;
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to load binds at " + Path + " but failed at parsing");
+                Sys.Ref.ConsoleSys.Error("Tried to load binds at " + Path + " but failed at parsing");
                 return;
             }
 
@@ -105,7 +105,7 @@ namespace Unary_Common.Structs
                 }
                 catch (Exception)
                 {
-                    Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried saving binds at " + Path + " but failed");
+                    Sys.Ref.ConsoleSys.Error("Tried saving binds at " + Path + " but failed");
                 }
 
                 foreach (var Entry in Actions)

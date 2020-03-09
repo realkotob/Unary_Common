@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Structs;
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
+using Unary_Common.Abstract;
 
 using System.Collections.Generic;
 
@@ -34,23 +35,23 @@ using Newtonsoft.Json;
 
 namespace Unary_Common.Shared
 {
-	public class ModSys : Object, IShared
+	public class ModSys : SysObject
 	{
 		public ModManifest Core { get; private set; }
 
 		public Dictionary<Mod, ModManifest> ExistingMods { get; set; }
 		public List<Mod> LoadOrder { get; set; }
 
-		private ConsoleSys Console;
+		private ConsoleSys ConsoleSys;
 		private SteamSys SteamSys;
 
-		public void Init()
+		public override void Init()
 		{
 			ExistingMods = new Dictionary<Mod, ModManifest>();
 			LoadOrder = new List<Mod>();
 
-			Console = Sys.Ref.GetSharedNode<ConsoleSys>();
-			SteamSys = Sys.Ref.GetSharedNode<SteamSys>();
+			ConsoleSys = Sys.Ref.ConsoleSys;
+			SteamSys = Sys.Ref.Shared.GetNode<SteamSys>();
 
 			List<string> ModFolders = new List<string>();
 			
@@ -65,7 +66,7 @@ namespace Unary_Common.Shared
 
 			if (Core.Mod.ModID == null)
 			{
-				Console.Panic("We could not find any mod assigned as a Core. Quitting...");
+				ConsoleSys.Panic("We could not find any mod assigned as a Core. Quitting...");
 				return;
 			}
 		}
@@ -82,19 +83,19 @@ namespace Unary_Common.Shared
 			}
 			catch (System.Exception)
 			{
-				Console.Error("Failed to parse " + Path + '/' + "Manifest.json");
+				ConsoleSys.Error("Failed to parse " + Path + '/' + "Manifest.json");
 				return;
 			}
 
 			if (NewMod.Mod.ModID == null)
 			{
-				Console.Error("Failed to parse " + Path + '/' + "Manifest.json");
+				ConsoleSys.Error("Failed to parse " + Path + '/' + "Manifest.json");
 				return;
 			}
 
 			if (ExistingMods.ContainsKey(NewMod.Mod))
 			{
-				Console.Error("Duplicate mod " + NewMod.Name);
+				ConsoleSys.Error("Duplicate mod " + NewMod.Name);
 				return;
 			}
 
@@ -106,7 +107,7 @@ namespace Unary_Common.Shared
 				}
 				else
 				{
-					Console.Error("Duplicated Core ModID of " + Core.Name + " and " + NewMod.Name);
+					ConsoleSys.Error("Duplicated Core ModID of " + Core.Name + " and " + NewMod.Name);
 				}
 			}
 			else
@@ -115,13 +116,13 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
 			ExistingMods.Clear();
 			LoadOrder.Clear();
 		}
 
-		public void ClearMod(Mod Mod)
+		public override void ClearMod(Mod Mod)
 		{
 			for(int i = LoadOrder.Count - 1; i >= 0; --i)
 			{
@@ -130,21 +131,6 @@ namespace Unary_Common.Shared
 					LoadOrder.RemoveAt(i);
 				}
 			}
-		}
-
-		public void ClearedMods()
-		{
-
-		}
-
-		public void InitCore(Mod Mod)
-		{
-			
-		}
-
-		public void InitMod(Mod Mod)
-		{
-
 		}
 
 		public ModManifest GetManifest(Mod Mod)

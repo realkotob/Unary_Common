@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
@@ -32,15 +33,17 @@ using Newtonsoft.Json;
 
 namespace Unary_Common.Shared
 {
-    public class SaveSys : Godot.Object, IShared
+    public class SaveSys : SysObject
     {
         public Dictionary<string, Save> Saves { get; private set; }
 
+        public Save Selected { get; private set; }
+
         private EntriesSys EntriesSys;
 
-        public void Init()
+        public override void Init()
         {
-            EntriesSys = Sys.Ref.GetShared<EntriesSys>();
+            EntriesSys = Sys.Ref.Shared.GetObject<EntriesSys>();
 
             if (!FilesystemUtil.SystemDirExists("Saves"))
             {
@@ -66,7 +69,7 @@ namespace Unary_Common.Shared
 
                     if(Manifest == null)
                     {
-                        Sys.Ref.GetSharedNode<ConsoleSys>().Error(ManifestPath + " is an invalid manifest");
+                        Sys.Ref.ConsoleSys.Error(ManifestPath + " is an invalid manifest");
                         continue;
                     }
 
@@ -79,43 +82,23 @@ namespace Unary_Common.Shared
                     }
                     catch(Exception)
                     {
-                        Sys.Ref.GetSharedNode<ConsoleSys>().Error("Failed to parse save manifest " + ManifestPath);
+                        Sys.Ref.ConsoleSys.Error("Failed to parse save manifest " + ManifestPath);
                         continue;
                     }
                 }
                 else
                 {
-                    Sys.Ref.GetSharedNode<ConsoleSys>().Warning(Dir + " doest not contain Manifest.json");
+                    Sys.Ref.ConsoleSys.Warning(Dir + " doest not contain Manifest.json");
                 }
             }
         }
 
-        public void Clear()
+        public override void Clear()
         {
             Saves.Clear();
         }
 
-        public void ClearMod(Mod Mod)
-        {
-
-        }
-
-        public void ClearedMods()
-        {
-
-        }
-
-        public void InitCore(Mod Mod)
-        {
-
-        }
-
-        public void InitMod(Mod Mod)
-        {
-
-        }
-
-        public bool CreateNew(string Name, string Description = default)
+        public bool New(string Name, string Description = default)
         {
             if (FilesystemUtil.SystemDirExists("Saves/" + Name) || Saves.ContainsKey(Name))
             {
@@ -135,8 +118,8 @@ namespace Unary_Common.Shared
             Save NewSave = new Save
             {
                 Description = Description,
-                Core = Sys.Ref.GetShared<ModSys>().Core.Mod,
-                Dependency = Sys.Ref.GetShared<ModSys>().LoadOrder,
+                Core = Sys.Ref.Shared.GetObject<ModSys>().Core.Mod,
+                Dependency = Sys.Ref.Shared.GetObject<ModSys>().LoadOrder,
                 Time = DateTime.Now.ToString(),
                 Path = "Saves/" + Name,
                 Registry = new Registry()
@@ -160,6 +143,19 @@ namespace Unary_Common.Shared
             Saves[Name] = NewSave;
 
             return true;
+        }
+
+        public bool Load(string Name)
+        {
+            if (!Saves.ContainsKey(Name))
+            {
+                return false;
+            }
+            else
+            {
+                Selected = Saves[Name];
+                return true;
+            }
         }
     }
 }

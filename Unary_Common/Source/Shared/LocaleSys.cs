@@ -26,6 +26,7 @@ using Unary_Common.Utils;
 using Unary_Common.Interfaces;
 using Unary_Common.Shared;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using Godot;
 
@@ -37,7 +38,7 @@ using Newtonsoft.Json;
 
 namespace Unary_Common.Shared
 {
-	public class LocaleSys : Godot.Object, IShared
+	public class LocaleSys : SysObject
 	{
 		private Dictionary<string, string> LocaleList;
 
@@ -51,9 +52,9 @@ namespace Unary_Common.Shared
 
 		private ConsoleSys ConsoleSys;
 
-		public void Init()
+		public override void Init()
 		{
-			ConsoleSys = Sys.Ref.GetSharedNode<ConsoleSys>();
+			ConsoleSys = Sys.Ref.ConsoleSys;
 
 			if (!FilesystemUtil.GodotFileExists("res://Unary_Common/Locales/Locales.json"))
 			{
@@ -83,8 +84,8 @@ namespace Unary_Common.Shared
 			SelectedLocaleEntries = new Dictionary<string, string>();
 			FallbackLocaleEntries = new Dictionary<string, string>();
 
-			SelectedLocale = Sys.Ref.GetShared<ConfigSys>().GetShared<string>("Unary_Common.Locale");
-			FallbackLocale = Sys.Ref.GetShared<ConfigSys>().GetShared<string>("Unary_Common.Locale.Fallback");
+			SelectedLocale = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<string>("Unary_Common.Locale");
+			FallbackLocale = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<string>("Unary_Common.Locale.Fallback");
 
 			if (SelectedLocale == FallbackLocale)
 			{
@@ -108,14 +109,14 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
 			LocaleList.Clear();
 			SelectedLocaleEntries.Clear();
 			FallbackLocaleEntries.Clear();
 		}
 
-		public void ClearMod(Mod Mod)
+		public override void ClearMod(Mod Mod)
 		{
 			foreach (var Entry in SelectedLocaleEntries.ToList())
 			{
@@ -132,11 +133,6 @@ namespace Unary_Common.Shared
 					FallbackLocaleEntries.Remove(Entry.Key);
 				}
 			}
-		}
-
-		public void ClearedMods()
-		{
-
 		}
 
 		private void LoadLocale(string ModID, string LocaleIndex, bool Selected)
@@ -261,7 +257,7 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void InitCore(Mod Mod)
+		public override void InitCore(Mod Mod)
 		{
 			LoadLocale(Mod.ModID, SelectedLocale, true);
 			if (!SelectedIsFallback)
@@ -270,7 +266,7 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void InitMod(Mod Mod)
+		public override void InitMod(Mod Mod)
 		{
 			LoadLocale(Mod.ModID, SelectedLocale, true);
 			if (!SelectedIsFallback)

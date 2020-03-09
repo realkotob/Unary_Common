@@ -26,13 +26,14 @@ using Unary_Common.Interfaces;
 using Unary_Common.Shared;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
 
 namespace Unary_Common.Client
 {
-    public class DownloadsSys : Godot.Object, IClient
+    public class DownloadsSys : SysObject
     {
         private EventSys EventSys;
 
@@ -40,14 +41,14 @@ namespace Unary_Common.Client
 
         private byte[] Buffer;
 
-        public void Init()
+        public override void Init()
         {
-            EventSys = Sys.Ref.GetSharedNode<EventSys>();
+            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
 
             Buffer = new byte[65500];
         }
 
-        public void Clear()
+        public override void Clear()
         {
 
         }

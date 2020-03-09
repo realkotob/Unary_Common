@@ -96,7 +96,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Unary_Common\Source\Arguments\Arguments.cs" />
+    <Compile Include="Unary_Common\Source\Abstract\SysUI.cs" />
+    <Compile Include="Unary_Common\Source\Interfaces\ISysEntry.cs" />
+    <Compile Include="Unary_Common\Source\Abstract\SysNode.cs" />
+    <Compile Include="Unary_Common\Source\Abstract\SysObject.cs" />
+    <Compile Include="Unary_Common\Source\Arguments\Args.cs" />
     <Compile Include="Unary_Common\Source\Arguments\Data.cs" />
     <Compile Include="Unary_Common\Source\Arguments\AuthResponse.cs" />
     <Compile Include="Unary_Common\Source\Arguments\PlayerDisconnected.cs" />
@@ -109,20 +113,22 @@
     <Compile Include="Unary_Common\Source\Client\DownloadsSys.cs" />
     <Compile Include="Unary_Common\Source\Client\MusicSys.cs" />
     <Compile Include="Unary_Common\Source\Client\NetworkSys.cs" />
+    <Compile Include="Unary_Common\Source\Client\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Client\SteamSys.cs" />
+    <Compile Include="Unary_Common\Source\Enums\SysMultiplayer.cs" />
+    <Compile Include="Unary_Common\Source\Enums\SysType.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\IBoot.cs" />
-    <Compile Include="Unary_Common\Source\Interfaces\IClient.cs" />
-    <Compile Include="Unary_Common\Source\Interfaces\IServer.cs" />
-    <Compile Include="Unary_Common\Source\Interfaces\IShared.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\ITreeStateEntry.cs" />
     <Compile Include="Unary_Common\Source\Server\DownloadSys.cs" />
     <Compile Include="Unary_Common\Source\Server\NetworkSys.cs" />
+    <Compile Include="Unary_Common\Source\Server\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Server\SteamSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\BootSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\DataSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\DownloadsSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\RandomSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\SaveSys.cs" />
+    <Compile Include="Unary_Common\Source\Shared\SysManager.cs" />
     <Compile Include="Unary_Common\Source\Shared\TempSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\EntryDebug.cs" />
     <Compile Include="Unary_Common\Source\Structs\RareTickSubscriber.cs" />

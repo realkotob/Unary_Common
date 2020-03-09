@@ -27,6 +27,7 @@ using Godot;
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ using System.Reflection;
 
 namespace Unary_Common.Shared
 {
-    class AssemblySys : Godot.Object, IShared
+    class AssemblySys : SysObject
     {
         private ConsoleSys ConsoleSys;
 
@@ -42,9 +43,9 @@ namespace Unary_Common.Shared
         Dictionary<string, Type> NamedTypes;
         Dictionary<Type, string> ActualTypes;
 
-        public void Init()
+        public override void Init()
         {
-            ConsoleSys = Sys.Ref.GetSharedNode<ConsoleSys>();
+            ConsoleSys = Sys.Ref.ConsoleSys;
 
             Assemblies = new Dictionary<string, Assembly>();
 
@@ -69,14 +70,14 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void Clear()
+        public override void Clear()
         {
             Assemblies.Clear();
             NamedTypes.Clear();
             ActualTypes.Clear();
         }
 
-        public void ClearMod(Mod Mod)
+        public override void ClearMod(Mod Mod)
         {
             if(Assemblies.ContainsKey(Mod.ModID))
             {
@@ -91,11 +92,6 @@ namespace Unary_Common.Shared
                     NamedTypes.Remove(NamedType.Key);
                 }
             }
-        }
-
-        public void ClearedMods()
-        {
-
         }
 
         public Assembly GetAssembly(string ModID)
@@ -160,7 +156,7 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitCore(Mod Mod)
+        public override void InitCore(Mod Mod)
         {
             if(!FilesystemUtil.SystemDirContainsFiles(Mod.Path, Mod.ModID + ".dll"))
             {
@@ -188,7 +184,7 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitMod(Mod Mod)
+        public override void InitMod(Mod Mod)
         {
             if (FilesystemUtil.SystemDirContainsFiles(Mod.Path, Mod.ModID + ".dll"))
             {

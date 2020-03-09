@@ -24,7 +24,7 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class Data : Arguments
+    public class Data : Args
     {
         public byte[] Target;
     }

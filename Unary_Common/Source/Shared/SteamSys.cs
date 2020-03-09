@@ -26,6 +26,7 @@ using Unary_Common.Interfaces;
 using Unary_Common.Structs;
 using Unary_Common.Arguments;
 using Unary_Common.Utils;
+using Unary_Common.Abstract;
 
 using Godot;
 
@@ -36,7 +37,7 @@ using Steamworks;
 
 namespace Unary_Common.Shared
 {
-    public class SteamSys : Node, IShared
+    public class SteamSys : SysNode
     {
         private static ConsoleSys ConsoleSys;
 
@@ -48,9 +49,9 @@ namespace Unary_Common.Shared
             ConsoleSys.Warning(pchDebugText.ToString());
         }
 
-        public void Init()
+        public override void Init()
         {
-            ConsoleSys = Sys.Ref.GetSharedNode<ConsoleSys>();
+            ConsoleSys = Sys.Ref.ConsoleSys;
 
             try
             {
@@ -87,19 +88,9 @@ namespace Unary_Common.Shared
 
         }
 
-        public void Clear()
+        public override void Clear()
         {
             SteamAPI.Shutdown();
-        }
-
-        public void ClearMod(Mod Mod)
-        {
-
-        }
-
-        public void ClearedMods()
-        {
-
         }
 
         public static IEnumerable<PublishedFileId_t> GetAllSubscribed()
@@ -147,16 +138,6 @@ namespace Unary_Common.Shared
         public override void _Process(float delta)
         {
             SteamAPI.RunCallbacks();
-        }
-
-        public void InitCore(Mod Mod)
-        {
-            
-        }
-
-        public void InitMod(Mod Mod)
-        {
-            
         }
     }
 }

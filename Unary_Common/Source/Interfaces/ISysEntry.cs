@@ -22,11 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Interfaces
+using Unary_Common.Structs;
+using Unary_Common.Arguments;
+
+using System;
+using System.Collections.Generic;
+
+namespace Unary_Common.Abstract
 {
-    public interface IServer
+    public interface ISysEntry
     {
+        // Executed instead of a constructor for Object/Node inherited systems
         void Init();
+
+        // Executed instead of a deconstuctor for Node base systems
         void Clear();
+
+        // Executed when requested to clear specified ModID
+        void ClearMod(Mod Mod);
+
+        // Executed after all the mods have been cleaned
+        void ClearedMods();
+
+        // Executed when requested to implement Core namespace
+        void InitCore(Mod Mod);
+
+        //Executed when requested to implement Mod namespace
+        void InitMod(Mod Mod);
+
+        //Executed when requesting a system to provide sync info to client
+        Args Sync();
+
+        //Executed when system is provided with sync info from client
+        void Sync(Args Arguments);
     }
 }

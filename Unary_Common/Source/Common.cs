@@ -41,40 +41,40 @@ namespace Unary_Common
 			Sys = Sys.Ref;
 
 			// Adding shared systems
-			Sys.AddShared<AssemblySys>();
-			Sys.AddShared<ConfigSys>();
-			Sys.AddSharedNode<Shared.SteamSys>();
-			Sys.AddSharedNode<DiscordSys>();
-			Sys.AddShared<FilesystemSys>();
-			Sys.AddShared<LocaleSys>();
-			Sys.AddShared<EntriesSys>();
-			Sys.AddSharedNode<InterpreterSys>();
-			Sys.AddSharedNode<BindSys>();
-			Sys.AddShared<HarmonySys>();
-			Sys.AddSharedNode<OSSys>();
-			Sys.AddSharedNode<EventSys>();
-			Sys.AddSharedNode<RandomSys>();
-			Sys.AddShared<TempSys>();
+			Sys.Shared.Add(new AssemblySys());
+			Sys.Shared.Add(new ConfigSys());
+			Sys.Shared.Add(new Shared.SteamSys());
+			Sys.Shared.Add(new DiscordSys());
+			Sys.Shared.Add(new FilesystemSys());
+			Sys.Shared.Add(new LocaleSys());
+			Sys.Shared.Add(new EntriesSys());
+			Sys.Shared.Add(new InterpreterSys());
+			Sys.Shared.Add(new BindSys());
+			Sys.Shared.Add(new HarmonySys());
+			Sys.Shared.Add(new OSSys());
+			Sys.Shared.Add(new EventSys());
+			Sys.Shared.Add(new RandomSys());
+			Sys.Shared.Add(new TempSys());
+			Sys.Shared.Add(new DataSys());
 			//Sys.AddShared<DownloadsSys>();
-			Sys.AddShared<SaveSys>();
+			Sys.Shared.Add(new SaveSys());
 			//Sys.(new ProfilerManager());
-
-			Sys.AddSharedNode<SceneSys>();
+			Sys.Shared.Add(new SceneSys());
 		}
 
 		public void AddClient()
 		{
 			// Adding client systems
-			Sys.AddClient<Client.SteamSys>();
-			Sys.AddClientNode<MusicSys>();
-			Sys.AddClientNodeLoad<AlertSys>("Alert");
-			Sys.AddClientNode<Client.NetworkSys>();
+			Sys.Client.Add(new Client.SteamSys());
+			Sys.Client.Add(new MusicSys());
+			Sys.Client.Add(new AlertSys(), "Alert");
+			Sys.Client.Add(new Client.NetworkSys());
 		}
 
 		public void AddServer()
 		{
-			Sys.AddServer<Server.SteamSys>();
-			Sys.AddServerNode<Server.NetworkSys>();
+			Sys.Server.Add(new Server.SteamSys());
+			Sys.Server.Add(new Server.NetworkSys());
 		}
 	}
 }

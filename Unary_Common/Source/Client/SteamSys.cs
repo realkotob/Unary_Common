@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Arguments;
 using Unary_Common.Shared;
+using Unary_Common.Abstract;
 
 using System;
 
@@ -32,7 +33,7 @@ using Steamworks;
 
 namespace Unary_Common.Client
 {
-    public class SteamSys : Godot.Object, IClient
+    public class SteamSys : SysObject
     {
         private EventSys EventSys;
 
@@ -41,9 +42,9 @@ namespace Unary_Common.Client
 
         private Callback<GameOverlayActivated_t> CallbackGameOverlayActivated;
 
-        public void Init()
+        public override void Init()
         {
-            EventSys = Sys.Ref.GetSharedNode<EventSys>();
+            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
             CallbackGameOverlayActivated = Callback<GameOverlayActivated_t>.Create(OnOverlayActivated);
 
             EventSys.SubscribeEvent(this, nameof(OnConnected), "Unary_Common.Connected");
@@ -51,7 +52,7 @@ namespace Unary_Common.Client
             EventSys.SubscribeEvent(this, nameof(OnDisconnected), "Unary_Common.Disconnected");
         }
 
-        public void Clear()
+        public override void Clear()
         {
 
         }
@@ -95,7 +96,7 @@ namespace Unary_Common.Client
 
         public void OnConnected()
         {
-            Sys.Ref.GetClientNode<NetworkSys>().RPC("Unary_Common.Auth", new SteamPlayer()
+            Sys.Ref.Client.GetNode<NetworkSys>().RPC("Unary_Common.Auth", new SteamPlayer()
             {
                 SteamID = GetSteamID(),
                 Ticket = GetAuthTicket()

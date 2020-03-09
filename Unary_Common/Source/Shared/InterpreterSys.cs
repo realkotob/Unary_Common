@@ -25,10 +25,13 @@ SOFTWARE.
 using Unary_Common.Structs;
 using Unary_Common.Utils;
 using Unary_Common.Interfaces;
-using System.Collections.Generic;
+using Unary_Common.Abstract;
+using Unary_Common.Enums;
 
 using Godot;
+
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -38,15 +41,15 @@ using Newtonsoft.Json.Linq;
 
 namespace Unary_Common.Shared
 {
-	public class InterpreterSys : Node, IShared
+	public class InterpreterSys : SysNode
 	{
 		private ConsoleSys ConsoleSys;
 
 		private List<string> ModIDs;
 
-		public void Init()
+		public override void Init()
 		{
-			ConsoleSys = Sys.Ref.GetSharedNode<ConsoleSys>();
+			ConsoleSys = Sys.Ref.ConsoleSys;
 
 			ModIDs = new List<string>();
 			ModIDs.Add("Unary_Common");
@@ -59,22 +62,17 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
 			ModIDs.Clear();
 		}
 
-		public void ClearMod(Mod Mod)
+		public override void ClearMod(Mod Mod)
 		{
 			if(ModIDs.Contains(Mod.ModID))
 			{
 				ModIDs.Remove(Mod.ModID);
 			}
-		}
-
-		public void ClearedMods()
-		{
-
 		}
 
 		private string GetArguments(ParameterInfo[] Parameters)
@@ -105,13 +103,13 @@ namespace Unary_Common.Shared
 			return Result;
 		}
 
-		private string GetSystems(string SystemType, Dictionary<string, Sys.SysType> Systems)
+		private string GetSystems(string SystemType, List<string> Systems)
 		{
 			string Result = "Available " + SystemType + " systems: \n";
 
 			foreach (var ModID in Systems)
 			{
-				Result += ModID.Key + ", ";
+				Result += ModID + ", ";
 			}
 
 			Result = Result.Substring(0, Result.Length - 2);
@@ -172,19 +170,19 @@ namespace Unary_Common.Shared
 				{
 					NewCommand = NewCommand.Replace("list system ", "");
 
-					Dictionary<string, Sys.SysType> Systems;
+					List<string> Systems;
 
 					if(NewCommand == "shared")
 					{
-						Systems = Sys.Ref.GetAllShared();
+						Systems = Sys.Ref.Shared.Order;
 					}
 					else if(NewCommand == "server")
 					{
-						Systems = Sys.Ref.GetAllServer();
+						Systems = Sys.Ref.Server.Order;
 					}
 					else if(NewCommand == "client")
 					{
-						Systems = Sys.Ref.GetAllClient();
+						Systems = Sys.Ref.Client.Order;
 					}
 					else
 					{
@@ -231,19 +229,19 @@ namespace Unary_Common.Shared
 					ModID = Group[1].Value;
 				}
 				
-				Dictionary<string, Sys.SysType> Systems;
+				List<string> Systems;
 
 				if (Group[2].Value == "Shared")
 				{
-					Systems = Sys.Ref.GetAllShared(ModID);
+					Systems = Sys.Ref.Shared.Order;
 				}
 				else if (Group[2].Value == "Client")
 				{
-					Systems = Sys.Ref.GetAllClient(ModID);
+					Systems = Sys.Ref.Client.Order;
 				}
 				else if(Group[2].Value == "Server")
 				{
-					Systems = Sys.Ref.GetAllServer(ModID);
+					Systems = Sys.Ref.Server.Order;
 				}
 				else
 				{
@@ -253,12 +251,11 @@ namespace Unary_Common.Shared
 				}
 
 				string ModIDEntry;
-				Sys.SysType Type;
+				SysType Type;
 
-				if(Systems.ContainsKey(Group[1].Value + '.' + Group[2].Value + '.' + Group[3].Value))
+				if(Systems.Contains(Group[1].Value + '.' + Group[2].Value + '.' + Group[3].Value))
 				{
 					ModIDEntry = Group[1].Value + '.' + Group[2].Value + '.' + Group[3].Value;
-					Type = Systems[Group[1].Value + '.' + Group[2].Value + '.' + Group[3].Value];
 				}
 				else
 				{
@@ -271,35 +268,53 @@ namespace Unary_Common.Shared
 
 				if (Group[2].Value == "Shared")
 				{
-					if(Type == Sys.SysType.Interface)
+					Type = Sys.Ref.Shared.GetType(ModIDEntry);
+
+					switch(Type)
 					{
-						TargetSystem = Sys.Ref.GetShared(ModIDEntry);
-					}
-					else
-					{
-						TargetSystem = Sys.Ref.GetSharedNode(ModIDEntry);
+						case SysType.Object:
+							TargetSystem = Sys.Ref.Shared.GetObject(ModIDEntry);
+							break;
+						case SysType.Node:
+							TargetSystem = Sys.Ref.Shared.GetNode(ModIDEntry);
+							break;
+						case SysType.UI:
+							TargetSystem = Sys.Ref.Shared.GetUI(ModIDEntry);
+							break;
 					}
 				}
 				else if (Group[2].Value == "Client")
 				{
-					if (Type == Sys.SysType.Interface)
+					Type = Sys.Ref.Client.GetType(ModIDEntry);
+
+					switch (Type)
 					{
-						TargetSystem = Sys.Ref.GetClient(ModIDEntry);
-					}
-					else
-					{
-						TargetSystem = Sys.Ref.GetClientNode(ModIDEntry);
+						case SysType.Object:
+							TargetSystem = Sys.Ref.Client.GetObject(ModIDEntry);
+							break;
+						case SysType.Node:
+							TargetSystem = Sys.Ref.Client.GetNode(ModIDEntry);
+							break;
+						case SysType.UI:
+							TargetSystem = Sys.Ref.Client.GetUI(ModIDEntry);
+							break;
 					}
 				}
 				else if (Group[2].Value == "Server")
 				{
-					if (Type == Sys.SysType.Interface)
+					Type = Sys.Ref.Server.GetType(ModIDEntry);
+
+					switch (Type)
 					{
-						TargetSystem = Sys.Ref.GetServer(ModIDEntry);
-					}
-					else
-					{
-						TargetSystem = Sys.Ref.GetServerNode(ModIDEntry);
+						case SysType.Object:
+							TargetSystem = Sys.Ref.Server.GetObject(ModIDEntry);
+							break;
+						case SysType.Node:
+							TargetSystem = Sys.Ref.Server.GetNode(ModIDEntry);
+							break;
+						case SysType.UI:
+							TargetSystem = Sys.Ref.Server.GetUI(ModIDEntry);
+							break;
 					}
 				}
 
@@ -392,7 +407,7 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void InitCore(Mod Mod)
+		public override void InitCore(Mod Mod)
 		{
 			if(!ModIDs.Contains(Mod.ModID))
 			{
@@ -407,7 +422,7 @@ namespace Unary_Common.Shared
 			}
 		}
 
-		public void InitMod(Mod Mod)
+		public override void InitMod(Mod Mod)
 		{
 			if (!ModIDs.Contains(Mod.ModID))
 			{

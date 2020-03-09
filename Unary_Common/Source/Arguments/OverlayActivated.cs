@@ -24,7 +24,7 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    class OverlayActivated : Arguments
+    class OverlayActivated : Args
     {
         public byte Active;
     }

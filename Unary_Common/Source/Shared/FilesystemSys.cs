@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using Godot;
 
@@ -38,35 +39,35 @@ using Newtonsoft.Json;
 
 namespace Unary_Common.Shared
 {
-	class FilesystemSys : Godot.Object, IShared
+	class FilesystemSys : SysObject
 	{
 		private Dictionary<string, List<string>> ModIDFiles;
 		private string CorePath;
 
-		public void Init()
+		public override void Init()
 		{
 			ModIDFiles = new Dictionary<string, List<string>>();
 
 			#if DEBUG
 				if (!FilesystemUtil.GodotPackPCK("Unary_Common", ".", new List<string>() { }))
 				{
-					Sys.Ref.GetShared<ConsoleSys>().Error("Failed to pack Unary_Common");
+					Sys.Ref.ConsoleSys.Error("Failed to pack Unary_Common");
 				}
 			#endif
 
 			if (!ProjectSettings.LoadResourcePack("Unary_Common.pck"))
 			{
-				Sys.Ref.GetShared<ConsoleSys>().Error("Failed to load package of Unary_Common");
+				Sys.Ref.ConsoleSys.Error("Failed to load package of Unary_Common");
 				return;
 			}
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
 			ModIDFiles.Clear();
 		}
 
-		public void ClearMod(Mod Mod)
+		public override void ClearMod(Mod Mod)
 		{
 			if (ModIDFiles.ContainsKey(Mod.ModID))
 			{
@@ -80,20 +81,20 @@ namespace Unary_Common.Shared
 			ModIDFiles.Remove(Mod.ModID);
 		}
 
-		public void ClearedMods()
+		public override void ClearedMods()
 		{
 			ProjectSettings.LoadResourcePack("Unary_Common.pck");
 			ProjectSettings.LoadResourcePack(CorePath);
 		}
 
-		public void InitCore(Mod Mod)
+		public override void InitCore(Mod Mod)
 		{
 			if(ModIDFiles.ContainsKey(Mod.ModID))
 			{
 				return;
 			}
 
-			ModSys ModSys = Sys.Ref.GetShared<ModSys>();
+			ModSys ModSys = Sys.Ref.Shared.GetObject<ModSys>();
 
 			string PCKPath = Mod.Path + '/' + Mod.ModID + ".pck";
 			string PCKManifest = Mod.Path + '/' + Mod.ModID + ".json";
@@ -101,20 +102,20 @@ namespace Unary_Common.Shared
 			#if DEBUG
 				if (!FilesystemUtil.GodotPackPCK(Mod.ModID, Mod.Path, new List<string>() { }))
 				{
-					Sys.Ref.GetShared<ConsoleSys>().Error("Failed to repack " + Mod.ModID);
+					Sys.Ref.ConsoleSys.Error("Failed to repack " + Mod.ModID);
 					return;
 				}
 			#endif
 
 			if (!FilesystemUtil.SystemFileExists(PCKPath))
 			{
-				Sys.Ref.GetShared<ConsoleSys>().Error(Mod.ModID + " is not providing a package to load from");
+				Sys.Ref.ConsoleSys.Error(Mod.ModID + " is not providing a package to load from");
 				return;
 			}
 
 			if (!FilesystemUtil.SystemFileExists(PCKManifest))
 			{
-				Sys.Ref.GetShared<ConsoleSys>().Error(Mod.ModID + " is not providing a package manifest to load from");
+				Sys.Ref.ConsoleSys.Error(Mod.ModID + " is not providing a package manifest to load from");
 				return;
 			}
 
@@ -122,7 +123,7 @@ namespace Unary_Common.Shared
 
 			if (Manifest == null)
 			{
-				Sys.Ref.GetShared<ConsoleSys>().Error(Mod.ModID + " is providing a package manifest but it is empty");
+				Sys.Ref.ConsoleSys.Error(Mod.ModID + " is providing a package manifest but it is empty");
 				return;
 			}
 
@@ -139,19 +140,19 @@ namespace Unary_Common.Shared
 
 			if (!ProjectSettings.LoadResourcePack(PCKPath))
 			{
-				Sys.Ref.GetShared<ConsoleSys>().Error("Failed to load package of " + Mod.ModID);
+				Sys.Ref.ConsoleSys.Error("Failed to load package of " + Mod.ModID);
 				return;
 			}
 		}
 
-		public void InitMod(Mod Mod)
+		public override void InitMod(Mod Mod)
 		{
 			if (ModIDFiles.ContainsKey(Mod.ModID))
 			{
 				return;
 			}
 
-			ModSys ModSys = Sys.Ref.GetShared<ModSys>();
+			ModSys ModSys = Sys.Ref.Shared.GetObject<ModSys>();
 
 			if (!FilesystemUtil.GodotDirContainsFiles(Mod.Path, Mod.ModID + ".pck"))
 			{

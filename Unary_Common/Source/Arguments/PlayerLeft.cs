@@ -24,7 +24,7 @@ SOFTWARE.
 
 namespace Unary_Common.Arguments
 {
-    public class PlayerLeft : Arguments
+    public class PlayerLeft : Args
     {
         public string Reason;
     }

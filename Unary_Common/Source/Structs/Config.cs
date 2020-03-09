@@ -60,7 +60,7 @@ namespace Unary_Common.Structs
             if(!FilesystemUtil.SystemFileExists(Path))
             {
                 Valid = false;
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init config at " + Path + " but it is not presented");
+                Sys.Ref.ConsoleSys.Error("Tried to init config at " + Path + " but it is not presented");
                 return;
             }
             
@@ -69,7 +69,7 @@ namespace Unary_Common.Structs
             if (Config == null)
             {
                 Valid = false;
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried to init config at " + Path + " but it was empty");
+                Sys.Ref.ConsoleSys.Error("Tried to init config at " + Path + " but it was empty");
                 return;
             }
 
@@ -82,12 +82,12 @@ namespace Unary_Common.Structs
             catch(Exception Exception)
             {
                 Valid = false;
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error("Failed to load config at " + Path);
-                Sys.Ref.GetSharedNode<ConsoleSys>().Error(Exception.Message);
+                Sys.Ref.ConsoleSys.Error("Failed to load config at " + Path);
+                Sys.Ref.ConsoleSys.Error(Exception.Message);
                 return;
             }
 
-            AssemblySys AssemblySys = Sys.Ref.GetShared<AssemblySys>();
+            AssemblySys AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
 
             foreach (var Entry in Entries)
             {
@@ -101,7 +101,7 @@ namespace Unary_Common.Structs
 
                 if (Type == null)
                 {
-                    Sys.Ref.GetSharedNode<ConsoleSys>().Error(TypeName + " is not a valid type");
+                    Sys.Ref.ConsoleSys.Error(TypeName + " is not a valid type");
                     continue;
                 }
 
@@ -112,8 +112,8 @@ namespace Unary_Common.Structs
                 }
                 catch (Exception Exception)
                 {
-                    Sys.Ref.GetSharedNode<ConsoleSys>().Error("Failed at parse of variable " + Entry.Key + " at " + Path);
-                    Sys.Ref.GetSharedNode<ConsoleSys>().Error(Exception.Message);
+                    Sys.Ref.ConsoleSys.Error("Failed at parse of variable " + Entry.Key + " at " + Path);
+                    Sys.Ref.ConsoleSys.Error(Exception.Message);
                     continue;
                 }
             }
@@ -129,7 +129,7 @@ namespace Unary_Common.Structs
                 }
                 catch (Exception)
                 {
-                    Sys.Ref.GetSharedNode<ConsoleSys>().Error("Tried saving config at " + Path + " but failed");
+                    Sys.Ref.ConsoleSys.Error("Tried saving config at " + Path + " but failed");
                 }
             }
         }

@@ -26,6 +26,7 @@ using Unary_Common.Interfaces;
 using Unary_Common.Structs;
 using Unary_Common.Utils;
 using Unary_Common.Arguments;
+using Unary_Common.Abstract;
 
 using Godot;
 
@@ -35,24 +36,24 @@ using System.Linq;
 
 namespace Unary_Common.Shared
 {
-    public class EventSys : Node, IShared
+    public class EventSys : SysNode
     {
         private Dictionary<string, List<Subscriber>> EventSubscribers;
         private Dictionary<string, List<Subscriber>> RPCSubscribers;
 
-        public void Init()
+        public override void Init()
         {
             EventSubscribers = new Dictionary<string, List<Subscriber>>();
             RPCSubscribers = new Dictionary<string, List<Subscriber>>();
         }
 
-        public void Clear()
+        public override void Clear()
         {
             EventSubscribers.Clear();
             RPCSubscribers.Clear();
         }
 
-        public void ClearMod(Mod Mod)
+        public override void ClearMod(Mod Mod)
         {
             foreach (var Name in EventSubscribers.ToList())
             {
@@ -69,21 +70,6 @@ namespace Unary_Common.Shared
                     RPCSubscribers.Remove(Name.Key);
                 }
             }
-        }
-
-        public void ClearedMods()
-        {
-
-        }
-
-        public void InitCore(Mod Mod)
-        {
-
-        }
-
-        public void InitMod(Mod Mod)
-        {
-            
         }
 
         public void SubscribeEvent(Godot.Object Target, string MemberName, string EventName)
@@ -120,7 +106,7 @@ namespace Unary_Common.Shared
             RPCSubscribers[EventName].Add(NewSubscriber);
         }
 
-        private void Invoke(string EventName, Arguments.Arguments Arguments, ref Dictionary<string, List<Subscriber>> Subscribers)
+        private void Invoke(string EventName, Args Arguments, ref Dictionary<string, List<Subscriber>> Subscribers)
         {
             if (Subscribers.ContainsKey(EventName))
             {
@@ -147,7 +133,7 @@ namespace Unary_Common.Shared
                         }
                         else
                         {
-                            Arguments = (Arguments.Arguments)Result;
+                            Arguments = (Args)Result;
 
                             if (Arguments.Canceled)
                             {
@@ -163,11 +149,11 @@ namespace Unary_Common.Shared
             }
             else
             {
-                Sys.Ref.GetSharedNode<ConsoleSys>().Warning("Tried invoking event with no subscribers");
+                Sys.Ref.ConsoleSys.Warning("Tried invoking event with no subscribers");
             }
         }
 
-        public void InvokeEvent(string Name, Arguments.Arguments Arguments)
+        public void InvokeEvent(string Name, Args Arguments)
         {
             if(EventSubscribers.ContainsKey(Name))
             {
@@ -175,7 +161,7 @@ namespace Unary_Common.Shared
             }
         }
         
-        public void InvokeRPC(string Name, Arguments.Arguments Arguments)
+        public void InvokeRPC(string Name, Args Arguments)
         {
             if (RPCSubscribers.ContainsKey(Name))
             {

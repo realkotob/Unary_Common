@@ -26,6 +26,7 @@ using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Shared;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using Godot;
 
@@ -40,7 +41,7 @@ using MessagePack;
 
 namespace Unary_Common.Shared
 {
-    public class EntriesSys : Godot.Object, IShared
+    public class EntriesSys : SysObject
     {
         public Entries Entries { get; private set; }
         public Categories Categories { get; private set; }
@@ -48,35 +49,30 @@ namespace Unary_Common.Shared
         private ConsoleSys ConsoleSys;
         private AssemblySys AssemblySys;
 
-        public void Init()
+        public override void Init()
         {
             Entries = new Entries();
             Entries.Init();
             Categories = new Categories();
             Categories.Init();
 
-            ConsoleSys = Sys.Ref.GetSharedNode<ConsoleSys>();
-            AssemblySys = Sys.Ref.GetShared<AssemblySys>();
+            ConsoleSys = Sys.Ref.ConsoleSys;
+            AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
         }
 
-        public void Clear()
+        public override void Clear()
         {
             Entries.Clear();
             Categories.Clear();
         }
 
-        public void ClearMod(Mod Mod)
-        {
-            
-        }
-
-        public void ClearedMods()
+        public override void ClearedMods()
         {
             Entries.ClearMods();
             Categories.ClearMods();
         }
 
-        private void AddCoreEntry(string ModIDEntry, Type Type, object Entry)
+        private void AddCoreEntry(string ModIDEntry, object Entry)
         {
             //Entries
             Entries.AddCoreEntry(ModIDEntry, MessagePackSerializer.Typeless.Serialize(Entry));
@@ -90,7 +86,7 @@ namespace Unary_Common.Shared
             }
         }
 
-        private void AddModEntry(string ModIDEntry, Type Type, object Entry)
+        private void AddModEntry(string ModIDEntry, object Entry)
         {
             //Entries
             Entries.AddModEntry(ModIDEntry, MessagePackSerializer.Typeless.Serialize(Entry));
@@ -154,11 +150,11 @@ namespace Unary_Common.Shared
                         {
                             if(Core)
                             {
-                                AddCoreEntry(NewModID, Type, JsonConvert.DeserializeObject(Entry.Value.ToString(Formatting.None), Type));
+                                AddCoreEntry(NewModID, JsonConvert.DeserializeObject(Entry.Value.ToString(Formatting.None), Type));
                             }
                             else
                             {
-                                AddModEntry(NewModID, Type, JsonConvert.DeserializeObject(Entry.Value.ToString(Formatting.None), Type));
+                                AddModEntry(NewModID, JsonConvert.DeserializeObject(Entry.Value.ToString(Formatting.None), Type));
                             }
                         }
                     }
@@ -172,12 +168,12 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitCore(Mod Mod)
+        public override void InitCore(Mod Mod)
         {
             LoadEntries(Mod.ModID, true);
         }
 
-        public void InitMod(Mod Mod)
+        public override void InitMod(Mod Mod)
         {
             LoadEntries(Mod.ModID, false);
         }

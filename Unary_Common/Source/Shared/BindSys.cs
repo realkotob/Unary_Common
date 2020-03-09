@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
@@ -35,38 +36,33 @@ using Newtonsoft.Json.Linq;
 
 namespace Unary_Common.Shared
 {
-    public class BindSys : Node, IShared
+    public class BindSys : SysNode
     {
         private ConsoleSys ConsoleSys;
 
         private Dictionary<string, Binds> Entries;
 
-        public void Init()
+        public override void Init()
         {
-            ConsoleSys = Sys.Ref.GetSharedNode<ConsoleSys>();
+            ConsoleSys = Sys.Ref.ConsoleSys;
 
             Entries = new Dictionary<string, Binds>();
 
             Load("Unary_Common", ".");
         }
 
-        public void Clear()
+        public override void Clear()
         {
             Entries.Clear();
         }
 
-        public void ClearMod(Mod Mod)
+        public override void ClearMod(Mod Mod)
         {
             if (Entries.ContainsKey(Mod.ModID))
             {
                 Entries[Mod.ModID].Save();
                 Entries.Remove(Mod.ModID);
             }
-        }
-
-        public void ClearedMods()
-        {
-
         }
 
         private void Load(string ModID, string Path)
@@ -112,12 +108,12 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitCore(Mod Mod)
+        public override void InitCore(Mod Mod)
         {
             Load(Mod.ModID, Mod.Path);
         }
 
-        public void InitMod(Mod Mod)
+        public override void InitMod(Mod Mod)
         {
             Load(Mod.ModID, Mod.Path);
         }

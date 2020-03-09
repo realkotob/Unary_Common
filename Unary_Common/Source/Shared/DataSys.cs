@@ -26,18 +26,19 @@ using Unary_Common.Interfaces;
 using Unary_Common.Shared;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
+using Unary_Common.Abstract;
 
 using System;
 using System.Collections.Generic;
 
 namespace Unary_Common.Shared
 {
-    class DataSys : Godot.Object, IShared
+    class DataSys : SysObject
     {
         private const string FolderPath = "Data/";
         private Dictionary<string, string> DataPaths;
 
-        public void Init()
+        public override void Init()
         {
             DataPaths = new Dictionary<string, string>();
 
@@ -50,12 +51,12 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void Clear()
+        public override void Clear()
         {
             DataPaths.Clear();
         }
 
-        public void ClearMod(Mod Mod)
+        public override void ClearMod(Mod Mod)
         {
             if (DataPaths.ContainsKey(Mod.ModID))
             {
@@ -63,12 +64,7 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void ClearedMods()
-        {
-
-        }
-
-        public void InitCore(Mod Mod)
+        public override void InitCore(Mod Mod)
         {
             if(!FilesystemUtil.SystemDirExists(FolderPath + Mod.ModID))
             {
@@ -77,7 +73,7 @@ namespace Unary_Common.Shared
             }
         }
 
-        public void InitMod(Mod Mod)
+        public override void InitMod(Mod Mod)
         {
             if (!FilesystemUtil.SystemDirExists(FolderPath + Mod.ModID))
             {
