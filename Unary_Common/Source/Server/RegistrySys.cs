@@ -25,6 +25,8 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Shared;
 using Unary_Common.Abstract;
+using Unary_Common.Structs;
+using Unary_Common.Arguments;
 
 using System;
 using System.Collections.Generic;
@@ -33,18 +35,43 @@ namespace Unary_Common.Server
 {
     public class RegistrySys : SysObject
     {
-        private EventSys EventSys;
-
-        private Dictionary<string, uint> Registry;
+        Shared.RegistrySys RegistrySysShared;
+        NetworkSys NetworkSys;
 
         public override void Init()
         {
-            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
+            RegistrySysShared = Sys.Ref.Shared.GetObject<Shared.RegistrySys>();
+            NetworkSys = Sys.Ref.Server.GetNode<NetworkSys>();
         }
 
         public override void Clear()
         {
-
+            RegistrySysShared.Synced = false;
         }
+
+        public override Args Sync()
+        {
+            RegistrySysShared.Synced = true;
+            return new RegistrySysSync { Registry = RegistrySysShared.Registry };
+        }
+
+        public void AddEntry(string RegistryName, string ModIDEntry)
+        {
+            NetworkSys.RPCIDAll("Unary_Common.RegistrySys.AddEntry", new RegistrySysEntry()
+            {
+                RegistryName = RegistryName,
+                ModIDEntry = ModIDEntry
+            });
+        }
+
+        public void RemoveEntry(string RegistryName, string ModIDEntry)
+        {
+            NetworkSys.RPCIDAll("Unary_Common.RegistrySys.RemoveEntry", new RegistrySysEntry()
+            {
+                RegistryName = RegistryName,
+                ModIDEntry = ModIDEntry
+            });
+        }
+
     }
 }

@@ -59,6 +59,7 @@ namespace Unary_Common.Client
             
             NetworkedMultiplayerENet NewPeer = new NetworkedMultiplayerENet();
             NewPeer.CreateClient(Address, Port, MaxPlayers);
+            NewPeer.TransferMode = NetworkedMultiplayerPeer.TransferModeEnum.Reliable;
             GetTree().NetworkPeer = NewPeer;
             GetTree().Connect("connected_to_server", this, nameof(OnConnectedToServer));
             GetTree().Connect("connection_failed", this, nameof(OnConnectionFailed));

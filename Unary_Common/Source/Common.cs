@@ -41,6 +41,8 @@ namespace Unary_Common
 			Sys = Sys.Ref;
 
 			// Adding shared systems
+
+			Sys.Shared.Add(new EventSys());
 			Sys.Shared.Add(new AssemblySys());
 			Sys.Shared.Add(new ConfigSys());
 			Sys.Shared.Add(new Shared.SteamSys());
@@ -52,7 +54,6 @@ namespace Unary_Common
 			Sys.Shared.Add(new BindSys());
 			Sys.Shared.Add(new HarmonySys());
 			Sys.Shared.Add(new OSSys());
-			Sys.Shared.Add(new EventSys());
 			Sys.Shared.Add(new RandomSys());
 			Sys.Shared.Add(new TempSys());
 			Sys.Shared.Add(new DataSys());
@@ -69,12 +70,14 @@ namespace Unary_Common
 			Sys.Client.Add(new MusicSys());
 			Sys.Client.Add(new AlertSys(), "Alert");
 			Sys.Client.Add(new Client.NetworkSys());
+			Sys.Client.Add(new Client.RegistrySys());
 		}
 
 		public void AddServer()
 		{
 			Sys.Server.Add(new Server.SteamSys());
 			Sys.Server.Add(new Server.NetworkSys());
+			Sys.Server.Add(new Server.RegistrySys());
 		}
 	}
 }

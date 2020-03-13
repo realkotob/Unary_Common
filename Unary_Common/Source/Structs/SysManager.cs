@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using Unary_Common.Structs;
+using Unary_Common.Shared;
 using Unary_Common.Enums;
 using Unary_Common.Interfaces;
 using Unary_Common.Abstract;
@@ -34,9 +34,9 @@ using System;
 
 using Godot;
 
-namespace Unary_Common.Shared
+namespace Unary_Common.Structs
 {
-    public class SysManager
+    public struct SysManager
     {
         private Dictionary<string, SysObject> Objects;
         private Dictionary<string, NodeID> Nodes;
@@ -44,7 +44,7 @@ namespace Unary_Common.Shared
 
         public List<string> Order { get; private set; }
 
-        public SysManager()
+        public void Init()
         {
             Objects = new Dictionary<string, SysObject>();
             Nodes = new Dictionary<string, NodeID>();

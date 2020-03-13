@@ -87,6 +87,18 @@ namespace Unary_Common.Utils
             }
         }
 
+        public static string ModIDTarget(string ModIDEntry)
+        {
+            if (!Validate(ModIDEntry))
+            {
+                return null;
+            }
+            else
+            {
+                return ModIDEntry.GetLastOccurence(".");
+            }
+        }
+
         public static List<string> GetCategories(string ModIDEntry)
         {
             List<string> Result = new List<string>();

@@ -155,7 +155,7 @@ namespace Unary_Common.Shared
 
         public bool Chance(uint Selector = 1, uint Range = 20)
         {
-            if((uint)GD.RandRange(0, Selector - 1) < Range - 1)
+            if((uint)GD.RandRange(0, Range - 1) <= Selector - 1)
             {
                 return true;
             }

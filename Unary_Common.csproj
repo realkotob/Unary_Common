@@ -97,6 +97,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Unary_Common\Source\Abstract\SysUI.cs" />
+    <Compile Include="Unary_Common\Source\Arguments\RegistrySysEntry.cs" />
+    <Compile Include="Unary_Common\Source\Arguments\RegistrySysSync.cs" />
+    <Compile Include="Unary_Common\Source\Enums\NetworkRPCType.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\ISysEntry.cs" />
     <Compile Include="Unary_Common\Source\Abstract\SysNode.cs" />
     <Compile Include="Unary_Common\Source\Abstract\SysObject.cs" />
@@ -127,13 +130,15 @@
     <Compile Include="Unary_Common\Source\Shared\DataSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\DownloadsSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\RandomSys.cs" />
+    <Compile Include="Unary_Common\Source\Shared\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Shared\SaveSys.cs" />
-    <Compile Include="Unary_Common\Source\Shared\SysManager.cs" />
+    <Compile Include="Unary_Common\Source\Structs\SysManager.cs" />
     <Compile Include="Unary_Common\Source\Shared\TempSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\EntryDebug.cs" />
     <Compile Include="Unary_Common\Source\Structs\RareTickSubscriber.cs" />
     <Compile Include="Unary_Common\Source\Structs\Mod.cs" />
     <Compile Include="Unary_Common\Source\Structs\Registry.cs" />
+    <Compile Include="Unary_Common\Source\Structs\RPCEntry.cs" />
     <Compile Include="Unary_Common\Source\Structs\Save.cs" />
     <Compile Include="Unary_Common\Source\Structs\Singletones.cs" />
     <Compile Include="Unary_Common\Source\Structs\Categories.cs" />

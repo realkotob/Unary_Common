@@ -23,12 +23,101 @@ SOFTWARE.
 */
 
 using System.Collections.Generic;
+using System.Linq;
+
+using Newtonsoft.Json;
 
 namespace Unary_Common.Structs
 {
     public struct Registry
     {
-        public List<uint> Free;
-        public Dictionary<string, uint> Busy;
+        public List<uint> Free { get; set; }
+        public Dictionary<string, uint> Busy { get; set; }
+
+        [JsonIgnore]
+        [MessagePack.IgnoreMember]
+        private uint Counter;
+
+        public void Init()
+        {
+            Counter = 0;
+
+            if (Busy.Count != 0)
+            {
+                foreach(var Index in Busy)
+                {
+                    if(Index.Value > Counter)
+                    {
+                        Counter = Index.Value;
+                    }
+                }
+            }
+        }
+
+        public void Clear()
+        {
+            Busy.Clear();
+            Free.Clear();
+        }
+
+        public bool Add(string Entry)
+        {
+            if(!Busy.ContainsKey(Entry))
+            {
+                if (Free.Count != 0)
+                {
+                    Busy[Entry] = Free[0];
+                    Free.RemoveAt(0);
+                }
+                else
+                {
+                    Busy[Entry] = Counter;
+                    Counter++;
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool Remove(string Entry)
+        {
+            if (Busy.ContainsKey(Entry))
+            {
+                Free.Add(Busy[Entry]);
+                Busy.Remove(Entry);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void RemoveIfStartsWith(string Start)
+        {
+            foreach(var Entry in Busy.ToList())
+            {
+                if(Entry.Key.StartsWith(Start))
+                {
+                    Remove(Entry.Key);
+                }
+            }
+        }
+
+        public uint Get(string Entry)
+        {
+            if(Busy.ContainsKey(Entry))
+            {
+                return Busy[Entry];
+            }
+            else
+            {
+                return uint.MaxValue;
+            }
+        }
     }
 }

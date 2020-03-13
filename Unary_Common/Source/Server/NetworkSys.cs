@@ -27,6 +27,7 @@ using Unary_Common.Shared;
 using Unary_Common.Structs;
 using Unary_Common.Arguments;
 using Unary_Common.Abstract;
+using Unary_Common.Utils;
 
 using System;
 using System.Collections.Generic;
@@ -100,7 +101,7 @@ namespace Unary_Common.Server
 
             NetworkedMultiplayerENet NewPeer = new NetworkedMultiplayerENet();
             NewPeer.CreateServer(Port, MaxPlayers);
-
+            NewPeer.TransferMode = NetworkedMultiplayerPeer.TransferModeEnum.Reliable;
             GetTree().NetworkPeer = NewPeer;
             GetTree().Connect("network_peer_connected", this, nameof(OnPlayerConnected));
             GetTree().Connect("network_peer_disconnected", this, nameof(OnPlayerDisconnected));
@@ -189,7 +190,7 @@ namespace Unary_Common.Server
             }
             else
             {
-                ValidatedPeers[Arguments.Peer] = true;
+                SyncInfo(Arguments.Peer);
 
                 RPCIDAll("Unary_Common.Join", new PlayerJoined
                 {
@@ -197,6 +198,8 @@ namespace Unary_Common.Server
                     Nickname = SteamSys.GetNickname(Arguments.Peer),
                     SteamID = SteamSys.GetSteamID(Arguments.Peer)
                 });
+
+                ValidatedPeers[Arguments.Peer] = true;
             }
         }
 
@@ -246,6 +249,16 @@ namespace Unary_Common.Server
             RemovePeer(Peer);
         }
 
+        public void SyncInfo(int Peer)
+        {
+            foreach (var Entry in Sys.Ref.Server.GetAll())
+            {
+                string ModIDEntry = ModIDUtil.FromType(Entry.GetType());
+
+                RPCID("Unary_Common.Sync." + ModIDUtil.ModIDTarget(ModIDEntry), Peer, Entry.Sync());
+            }
+        }
+
         [Remote]
         public void S(string EventName, Args Arguments)
         {
@@ -266,5 +279,6 @@ namespace Unary_Common.Server
                 }
             }
         }
+
     }
 }

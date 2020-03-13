@@ -24,6 +24,8 @@ SOFTWARE.
 
 using Unary_Common.Interfaces;
 using Unary_Common.Abstract;
+using Unary_Common.Arguments;
+using Unary_Common.Shared;
 
 using System;
 using System.Collections.Generic;
@@ -32,16 +34,45 @@ namespace Unary_Common.Client
 {
     public class RegistrySys : SysObject
     {
-        private Dictionary<string, uint> Registry;
+        private Shared.RegistrySys RegistrySysShared;
+        private EventSys EventSys;
 
         public override void Init()
         {
+            RegistrySysShared = Sys.Ref.Shared.GetObject<Shared.RegistrySys>();
+            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
 
+            EventSys.SubscribeRPC(this, nameof(AddEntry), "Unary_Common.RegistrySys.AddEntry");
+            EventSys.SubscribeRPC(this, nameof(RemoveEntry), "Unary_Common.RegistrySys.RemoveEntry");
         }
 
         public override void Clear()
         {
+            Sys.Ref.Shared.GetObject<Shared.RegistrySys>().Synced = false;
+        }
 
+        public override void Sync(Args Arguments)
+        {
+            if (Arguments is RegistrySysSync Sync)
+            {
+                Sys.Ref.Shared.GetObject<Shared.RegistrySys>().Registry = Sync.Registry;
+            }
+        }
+
+        public void AddEntry(Args Args)
+        {
+            if(Args is RegistrySysEntry Entry)
+            {
+                RegistrySysShared.AddEntry(Entry.RegistryName, Entry.ModIDEntry);
+            }
+        }
+
+        public void RemoveEntry(Args Args)
+        {
+            if (Args is RegistrySysEntry Entry)
+            {
+                RegistrySysShared.RemoveEntry(Entry.RegistryName, Entry.ModIDEntry);
+            }
         }
     }
 }
