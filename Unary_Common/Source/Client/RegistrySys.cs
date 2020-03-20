@@ -48,14 +48,14 @@ namespace Unary_Common.Client
 
         public override void Clear()
         {
-            Sys.Ref.Shared.GetObject<Shared.RegistrySys>().Synced = false;
+            RegistrySysShared.Synced = false;
         }
 
         public override void Sync(Args Arguments)
         {
             if (Arguments is RegistrySysSync Sync)
             {
-                Sys.Ref.Shared.GetObject<Shared.RegistrySys>().Registry = Sync.Registry;
+                RegistrySysShared.Registry = Sync.Registry;
             }
         }
 

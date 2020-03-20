@@ -43,11 +43,13 @@ namespace Unary_Common.Client
     {
         private EventSys EventSys;
         private SteamSys SteamSys;
+        private Shared.RegistrySys RegistrySys;
 
         public override void Init()
         {
             EventSys = Sys.Ref.Shared.GetNode<EventSys>();
             SteamSys = Sys.Ref.Client.GetObject<SteamSys>();
+            RegistrySys = Sys.Ref.Shared.GetObject<Shared.RegistrySys>();
         }
 
         public void Start(string Address = "127.0.0.1", int Port = 0, int MaxPlayers = 0)
@@ -91,17 +93,18 @@ namespace Unary_Common.Client
 
         public void RPC(string EventName, Args Arguments)
         {
-            Rpc("S", EventName, Arguments);
+            Rpc("S", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
         }
 
         public void RPCUnreliable(string EventName, Args Arguments)
         {
-            RpcUnreliable("S", EventName, Arguments);
+            RpcUnreliable("S", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
         }
 
         [Remote]
-        public void C(string EventName, Args Arguments)
+        public void C(uint EventIndex, Args Arguments)
         {
+            string EventName = RegistrySys.GetEntry("Unary_Common.Events", EventIndex);
             Arguments.Peer = Multiplayer.GetRpcSenderId();
             EventSys.InvokeRPC(EventName, Arguments);
         }

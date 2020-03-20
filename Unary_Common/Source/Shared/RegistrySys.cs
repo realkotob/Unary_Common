@@ -106,5 +106,10 @@ namespace Unary_Common.Shared
         {
             return GetRegistry(RegistryName).Get(ModIDEntry);
         }
+
+        public string GetEntry(string RegistryName, uint Index)
+        {
+            return GetRegistry(RegistryName).Get(Index);
+        }
     }
 }

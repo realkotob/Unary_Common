@@ -40,6 +40,7 @@ namespace Unary_Common.Server
     {
         private EventSys EventSys;
         private SteamSys SteamSys;
+        private Shared.RegistrySys RegistrySys;
 
         private Dictionary<int, bool> ValidatedPeers;
 
@@ -47,6 +48,7 @@ namespace Unary_Common.Server
         {
             EventSys = Sys.Ref.Shared.GetNode<EventSys>();
             SteamSys = Sys.Ref.Server.GetObject<SteamSys>();
+            RegistrySys = Sys.Ref.Shared.GetObject<Shared.RegistrySys>();
 
             ValidatedPeers = new Dictionary<int, bool>();
 
@@ -124,7 +126,7 @@ namespace Unary_Common.Server
             }
             else
             {
-                RpcId(PeerID, "C", EventName, Arguments);
+                RpcId(PeerID, "C", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
             }
         }
 
@@ -136,7 +138,7 @@ namespace Unary_Common.Server
             }
             else
             {
-                RpcUnreliableId(PeerID, "C", EventName, Arguments);
+                RpcUnreliableId(PeerID, "C", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
             }
         }
 
@@ -144,7 +146,7 @@ namespace Unary_Common.Server
         {
             int[] Peers = Multiplayer.GetNetworkConnectedPeers();
 
-            foreach(var PeerID in Peers)
+            foreach (var PeerID in Peers)
             {
                 if (PeerID == 1)
                 {
@@ -152,7 +154,7 @@ namespace Unary_Common.Server
                 }
                 else
                 {
-                    RpcId(PeerID, "C", EventName, Arguments);
+                    RpcId(PeerID, "C", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
                 }
             }
         }
@@ -169,7 +171,7 @@ namespace Unary_Common.Server
                 }
                 else
                 {
-                    RpcUnreliableId(PeerID, "C", EventName, Arguments);
+                    RpcUnreliableId(PeerID, "C", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
                 }
             }
         }
@@ -260,9 +262,11 @@ namespace Unary_Common.Server
         }
 
         [Remote]
-        public void S(string EventName, Args Arguments)
+        public void S(uint EventIndex, Args Arguments)
         {
-            if(ValidatedPeers[Multiplayer.GetRpcSenderId()] == true)
+            string EventName = RegistrySys.GetEntry("Unary_Common.Events", EventIndex);
+
+            if (ValidatedPeers[Multiplayer.GetRpcSenderId()] == true)
             {
                 Arguments.Peer = Multiplayer.GetRpcSenderId();
                 EventSys.InvokeRPC(EventName, Arguments);
@@ -279,6 +283,5 @@ namespace Unary_Common.Server
                 }
             }
         }
-
     }
 }

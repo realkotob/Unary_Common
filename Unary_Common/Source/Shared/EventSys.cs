@@ -38,11 +38,16 @@ namespace Unary_Common.Shared
 {
     public class EventSys : SysNode
     {
+
+        private RegistrySys RegistrySys;
+
         private Dictionary<string, List<Subscriber>> EventSubscribers;
         private Dictionary<string, List<Subscriber>> RPCSubscribers;
 
         public override void Init()
         {
+            RegistrySys = Sys.Ref.Shared.GetObject<RegistrySys>();
+
             EventSubscribers = new Dictionary<string, List<Subscriber>>();
             RPCSubscribers = new Dictionary<string, List<Subscriber>>();
         }
@@ -94,6 +99,7 @@ namespace Unary_Common.Shared
             if (!RPCSubscribers.ContainsKey(EventName))
             {
                 RPCSubscribers[EventName] = new List<Subscriber>();
+                RegistrySys.AddEntry("Unary_Common.Events", EventName);
             }
 
             Subscriber NewSubscriber = new Subscriber
@@ -163,6 +169,7 @@ namespace Unary_Common.Shared
         
         public void InvokeRPC(string Name, Args Arguments)
         {
+            RegistrySys.AddEntry("Unary_Common.Events", Name);
             if (RPCSubscribers.ContainsKey(Name))
             {
                 Invoke(Name, Arguments, ref RPCSubscribers);
