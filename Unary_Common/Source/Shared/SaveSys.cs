@@ -125,7 +125,8 @@ namespace Unary_Common.Shared
                 Registry = new Registry()
                 {
                     Free = new List<uint>(),
-                    Busy = NewRegistry
+                    UIntToString = NewRegistry,
+                    StringToUInt = 
                 }
             };
 

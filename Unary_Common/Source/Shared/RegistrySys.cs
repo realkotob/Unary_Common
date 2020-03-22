@@ -78,12 +78,9 @@ namespace Unary_Common.Shared
         {
             if(GetRegistry(RegistryName).Add(ModIDEntry))
             {
-                if (Synced)
+                if (Sys.Ref.MultiplayerType == Enums.SysMultiplayer.Server && Synced)
                 {
-                    if (Sys.Ref.MultiplayerType == Enums.SysMultiplayer.Server)
-                    {
-                        Sys.Ref.Server.GetObject<Server.RegistrySys>().AddEntry(RegistryName, ModIDEntry);
-                    }
+                    Sys.Ref.Server.GetObject<Server.RegistrySys>().AddEntry(RegistryName, ModIDEntry);
                 }
             }
         }
@@ -92,12 +89,9 @@ namespace Unary_Common.Shared
         {
             if (GetRegistry(RegistryName).Remove(ModIDEntry))
             {
-                if (Synced)
+                if (Sys.Ref.MultiplayerType == Enums.SysMultiplayer.Server && Synced)
                 {
-                    if (Sys.Ref.MultiplayerType == Enums.SysMultiplayer.Server)
-                    {
-                        Sys.Ref.Server.GetObject<Server.RegistrySys>().RemoveEntry(RegistryName, ModIDEntry);
-                    }
+                    Sys.Ref.Server.GetObject<Server.RegistrySys>().RemoveEntry(RegistryName, ModIDEntry);
                 }
             }
         }

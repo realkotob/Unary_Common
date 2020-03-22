@@ -99,6 +99,7 @@
     <Compile Include="Unary_Common\Source\Abstract\SysUI.cs" />
     <Compile Include="Unary_Common\Source\Arguments\RegistrySysEntry.cs" />
     <Compile Include="Unary_Common\Source\Arguments\RegistrySysSync.cs" />
+    <Compile Include="Unary_Common\Source\Collections\BiDictionary.cs" />
     <Compile Include="Unary_Common\Source\Enums\NetworkRPCType.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\ISysEntry.cs" />
     <Compile Include="Unary_Common\Source\Abstract\SysNode.cs" />
