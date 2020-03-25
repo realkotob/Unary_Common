@@ -107,5 +107,39 @@ namespace Unary_Common.Collections
                 return GetValue(Key);
             }
         }
+
+        public List<K> GetAllKeys()
+        {
+            List<K> Result = new List<K>();
+
+            foreach(var Entry in KeyToValue)
+            {
+                Result.Add(Entry.Key);
+            }
+
+            return Result;
+        }
+
+        public List<V> GetAllValues()
+        {
+            List<V> Result = new List<V>();
+
+            foreach (var Entry in ValueToKey)
+            {
+                Result.Add(Entry.Key);
+            }
+
+            return Result;
+        }
+
+        public bool KeyExists(K Key)
+        {
+            return KeyToValue.ContainsKey(Key);
+        }
+
+        public bool ValueExists(V Value)
+        {
+            return ValueToKey.ContainsKey(Value);
+        }
     }
 }

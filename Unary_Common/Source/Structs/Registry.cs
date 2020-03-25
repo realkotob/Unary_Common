@@ -27,55 +27,42 @@ using System.Linq;
 
 using Newtonsoft.Json;
 
+using Unary_Common.Collections;
+
 namespace Unary_Common.Structs
 {
     public struct Registry
     {
         public List<uint> Free { get; set; }
-        public Dictionary<string, uint> StringToUInt { get; set; }
-        public Dictionary<uint, string> UIntToString { get; set; }
-
-        [JsonIgnore]
-        [MessagePack.IgnoreMember]
+        public BiDictionary<string, uint> Entries;
         private uint Counter;
 
         public void Init()
         {
+            Free = new List<uint>();
+            Entries = new BiDictionary<string, uint>();
             Counter = 0;
-
-            if (StringToUInt.Count != 0)
-            {
-                foreach(var Index in StringToUInt)
-                {
-                    if(Index.Value > Counter)
-                    {
-                        Counter = Index.Value;
-                    }
-                }
-            }
         }
 
         public void Clear()
         {
-            StringToUInt.Clear();
-            UIntToString.Clear();
+            Free.Clear();
+            Entries.Clear();
             Free.Clear();
         }
 
         public bool Add(string Entry)
         {
-            if(!StringToUInt.ContainsKey(Entry))
+            if(!Entries.KeyExists(Entry))
             {
                 if (Free.Count != 0)
                 {
-                    StringToUInt[Entry] = Free[0];
-                    UIntToString[Free[0]] = Entry;
+                    Entries.Set(Entry, Free[0]);
                     Free.RemoveAt(0);
                 }
                 else
                 {
-                    StringToUInt[Entry] = Counter;
-                    UIntToString[Counter] = Entry;
+                    Entries.Set(Entry, Counter);
                     Counter++;
                 }
 
@@ -89,11 +76,10 @@ namespace Unary_Common.Structs
 
         public bool Remove(string Entry)
         {
-            if (StringToUInt.ContainsKey(Entry))
+            if(Entries.KeyExists(Entry))
             {
-                Free.Add(StringToUInt[Entry]);
-                UIntToString.Remove(StringToUInt[Entry]);
-                StringToUInt.Remove(Entry);
+                Free.Add(Entries.GetValue(Entry));
+                Entries.Remove(Entry);
                 return true;
             }
             else
@@ -104,11 +90,10 @@ namespace Unary_Common.Structs
 
         public bool Remove(uint Index)
         {
-            if (UIntToString.ContainsKey(Index))
+            if (Entries.ValueExists(Index))
             {
                 Free.Add(Index);
-                StringToUInt.Remove(UIntToString[Index]);
-                UIntToString.Remove(Index);
+                Entries.Remove(Index);
                 return true;
             }
             else
@@ -119,37 +104,23 @@ namespace Unary_Common.Structs
 
         public void RemoveIfStartsWith(string Start)
         {
-            foreach(var Entry in StringToUInt.ToList())
+            foreach(var Entry in Entries.GetAllKeys())
             {
-                if(Entry.Key.StartsWith(Start))
+                if(Entry.StartsWith(Start))
                 {
-                    Remove(Entry.Key);
+                    Entries.Remove(Entry);
                 }
             }
         }
 
         public uint Get(string Entry)
         {
-            if(StringToUInt.ContainsKey(Entry))
-            {
-                return StringToUInt[Entry];
-            }
-            else
-            {
-                return uint.MaxValue;
-            }
+            return Entries.GetValue(Entry);
         }
 
         public string Get(uint Index)
         {
-            if (UIntToString.ContainsKey(Index))
-            {
-                return UIntToString[Index];
-            }
-            else
-            {
-                return default;
-            }
+            return Entries.GetKey(Index);
         }
     }
 }
