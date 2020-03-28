@@ -44,6 +44,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiteNetLib">
+      <HintPath>$(SolutionDir)\LiteNetLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Discord">
       <HintPath>$(SolutionDir)\Discord.dll</HintPath>
       <Private>False</Private>
@@ -101,6 +105,7 @@
     <Compile Include="Unary_Common\Source\Arguments\RegistrySysSync.cs" />
     <Compile Include="Unary_Common\Source\Collections\BiDictionary.cs" />
     <Compile Include="Unary_Common\Source\Enums\NetworkRPCType.cs" />
+    <Compile Include="Unary_Common\Source\Interfaces\IConsoleSys.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\ISysEntry.cs" />
     <Compile Include="Unary_Common\Source\Abstract\SysNode.cs" />
     <Compile Include="Unary_Common\Source\Abstract\SysObject.cs" />
@@ -123,6 +128,7 @@
     <Compile Include="Unary_Common\Source\Enums\SysType.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\IBoot.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\ITreeStateEntry.cs" />
+    <Compile Include="Unary_Common\Source\Server\ConsoleSys.cs" />
     <Compile Include="Unary_Common\Source\Server\DownloadSys.cs" />
     <Compile Include="Unary_Common\Source\Server\NetworkSys.cs" />
     <Compile Include="Unary_Common\Source\Server\RegistrySys.cs" />
@@ -143,7 +149,7 @@
     <Compile Include="Unary_Common\Source\Structs\Save.cs" />
     <Compile Include="Unary_Common\Source\Structs\Singletones.cs" />
     <Compile Include="Unary_Common\Source\Structs\Categories.cs" />
-    <Compile Include="Unary_Common\Source\Shared\DiscordSys.cs" />
+    <Compile Include="Unary_Common\Source\Client\DiscordSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\EventSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\Binds.cs" />
     <Compile Include="Unary_Common\Source\Structs\Config.cs" />
@@ -166,13 +172,13 @@
     <Compile Include="Unary_Common\Source\Utils\StringUtil.cs" />
     <Compile Include="Unary_Common\Source\Utils\TreeStateUtil.cs" />
     <Compile Include="Unary_Common\Source\Shared\AssemblySys.cs" />
-    <Compile Include="Unary_Common\Source\Shared\BindSys.cs" />
+    <Compile Include="Unary_Common\Source\Client\BindSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\EntriesSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\ConfigSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\FilesystemSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\HarmonySys.cs" />
     <Compile Include="Unary_Common\Source\Shared\InterpreterSys.cs" />
-    <Compile Include="Unary_Common\Source\Shared\LocaleSys.cs" />
+    <Compile Include="Unary_Common\Source\Client\LocaleSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\OSSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\Sys.cs" />
     <Compile Include="Unary_Common\Source\UI\ProfilerEntry.cs" />
@@ -181,7 +187,7 @@
     <Compile Include="Unary_Common\Source\Shared\SteamSys.cs" />
     <Compile Include="Unary_Common\Source\Common.cs" />
     <Compile Include="Unary_Common\Source\Main.cs" />
-    <Compile Include="Unary_Common\Source\Shared\ConsoleSys.cs" />
+    <Compile Include="Unary_Common\Source\Client\ConsoleSys.cs" />
     <Compile Include="Unary_Common\Source\AssemblyInfo.cs" />
     <Compile Include="Unary_Common\Source\UI\ModListEntry.cs" />
     <Compile Include="Unary_Common\Source\UI\ModsList.cs" />

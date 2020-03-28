@@ -115,6 +115,9 @@ namespace Unary_Common.Shared
                 Counter++;
             }
 
+            Registry Registry = new Registry();
+            Registry.Init();
+
             Save NewSave = new Save
             {
                 Description = Description,
@@ -122,12 +125,7 @@ namespace Unary_Common.Shared
                 Dependency = Sys.Ref.Shared.GetObject<ModSys>().LoadOrder,
                 Time = DateTime.Now.ToString(),
                 Path = "Saves/" + Name,
-                Registry = new Registry()
-                {
-                    Free = new List<uint>(),
-                    UIntToString = NewRegistry,
-                    StringToUInt = 
-                }
+                Registry = Registry
             };
 
             FilesystemUtil.SystemDirCreate("Saves/" + Name);

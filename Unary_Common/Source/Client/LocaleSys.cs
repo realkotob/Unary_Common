@@ -36,7 +36,7 @@ using System.Linq;
 
 using Newtonsoft.Json;
 
-namespace Unary_Common.Shared
+namespace Unary_Common.Client
 {
 	public class LocaleSys : SysObject
 	{
@@ -50,7 +50,7 @@ namespace Unary_Common.Shared
 		private string FallbackLocale;
 		private Dictionary<string, string> FallbackLocaleEntries;
 
-		private ConsoleSys ConsoleSys;
+		private IConsoleSys ConsoleSys;
 
 		public override void Init()
 		{

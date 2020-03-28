@@ -34,17 +34,17 @@ using System.Collections.Generic;
 
 using Discord;
 
-namespace Unary_Common.Shared
+namespace Unary_Common.Client
 {
     class DiscordSys : SysNode
     {
-        private ConsoleSys ConsoleSys;
+        private IConsoleSys ConsoleSys;
 
         public Discord.Discord Client { get; private set; }
 
         public override void Init()
         {
-            ConsoleSys = Sys.Ref.ConsoleSys;
+            ConsoleSys = Shared.Sys.Ref.ConsoleSys;
 
             try
             {

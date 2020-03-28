@@ -43,7 +43,7 @@ namespace Unary_Common.Shared
 {
 	public class InterpreterSys : SysNode
 	{
-		private ConsoleSys ConsoleSys;
+		private IConsoleSys ConsoleSys;
 
 		private List<string> ModIDs;
 

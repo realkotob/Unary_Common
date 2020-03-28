@@ -42,7 +42,7 @@ namespace Unary_Common.Shared
 		public Dictionary<Mod, ModManifest> ExistingMods { get; set; }
 		public List<Mod> LoadOrder { get; set; }
 
-		private ConsoleSys ConsoleSys;
+		private IConsoleSys ConsoleSys;
 		private SteamSys SteamSys;
 
 		public override void Init()

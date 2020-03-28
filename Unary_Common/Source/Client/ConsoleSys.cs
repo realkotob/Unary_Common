@@ -35,9 +35,9 @@ using Unary_Common.Utils;
 using Unary_Common.Interfaces;
 using Unary_Common.Structs;
 
-namespace Unary_Common.Shared
+namespace Unary_Common.Client
 {
-	public class ConsoleSys : SysUI
+	public class ConsoleSys : SysUI, IConsoleSys
 	{
 		private enum ConsoleColors
 		{
@@ -110,7 +110,7 @@ namespace Unary_Common.Shared
 			{
 				if (ConsoleVisible)
 				{
-					Sys.Ref.Shared.GetNode<InterpreterSys>().ProcessCommand(ConsoleLine.Text);
+					Shared.Sys.Ref.Shared.GetNode<Shared.InterpreterSys>().ProcessCommand(ConsoleLine.Text);
 					ConsoleLine.Clear();
 				}
 			}
@@ -152,7 +152,7 @@ namespace Unary_Common.Shared
 			ScrollBar.Value = ScrollBar.MaxValue;
 		}
 
-		public void WriteToLog(string Type, string Text)
+		private void WriteToLog(string Type, string Text)
 		{
 			var Time = OS.GetTime();
 			string Result = "[" + Time["hour"] + ':' + Time["minute"] + ':' + Time["second"] + "][" + Type + "]: " + Text + System.Environment.NewLine;

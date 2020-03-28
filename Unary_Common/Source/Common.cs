@@ -46,18 +46,15 @@ namespace Unary_Common
 			Sys.Shared.Add(new AssemblySys());
 			Sys.Shared.Add(new ConfigSys());
 			Sys.Shared.Add(new Shared.SteamSys());
-			Sys.Shared.Add(new DiscordSys());
 			Sys.Shared.Add(new FilesystemSys());
-			Sys.Shared.Add(new LocaleSys());
 			Sys.Shared.Add(new EntriesSys());
 			Sys.Shared.Add(new InterpreterSys());
-			Sys.Shared.Add(new BindSys());
 			Sys.Shared.Add(new HarmonySys());
 			Sys.Shared.Add(new OSSys());
 			Sys.Shared.Add(new RandomSys());
 			Sys.Shared.Add(new TempSys());
 			Sys.Shared.Add(new DataSys());
-			//Sys.AddShared<DownloadsSys>();
+			Sys.Shared.Add(new Shared.DownloadsSys());
 			Sys.Shared.Add(new SaveSys());
 			//Sys.(new ProfilerManager());
 			Sys.Shared.Add(new SceneSys());
@@ -66,6 +63,9 @@ namespace Unary_Common
 		public void AddClient()
 		{
 			// Adding client systems
+			Sys.Client.Add(new Client.DiscordSys());
+			Sys.Client.Add(new Client.LocaleSys());
+			Sys.Client.Add(new Client.BindSys());
 			Sys.Client.Add(new Client.SteamSys());
 			Sys.Client.Add(new MusicSys());
 			Sys.Client.Add(new AlertSys(), "Alert");

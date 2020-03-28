@@ -41,7 +41,7 @@ namespace Unary_Common.Shared
     {
         public static Sys Ref { get; private set; }
 
-        public ConsoleSys ConsoleSys { get; private set; }
+        public IConsoleSys ConsoleSys { get; private set; }
 
         public SysManager Shared { get; private set; }
         public SysManager Server { get; private set; }
@@ -54,8 +54,6 @@ namespace Unary_Common.Shared
         public void Init()
         {
             Ref = this;
-
-            ConsoleSys = NodeUtil.NewNode<ConsoleSys>("Unary_Common", "Console");
 
             Shared = new SysManager();
             Server = new SysManager();
@@ -72,7 +70,18 @@ namespace Unary_Common.Shared
                 MultiplayerType = SysMultiplayer.Client;
             }
 
-            Shared.Add(ConsoleSys);
+            if (MultiplayerType == SysMultiplayer.Server)
+            {
+                Server.ConsoleSys ConsoleSys = new Server.ConsoleSys();
+                this.ConsoleSys = ConsoleSys;
+                Server.Add(ConsoleSys);
+            }
+            else
+            {
+                Client.ConsoleSys ConsoleSys = NodeUtil.NewNode<Client.ConsoleSys>("Unary_Common", "Console");
+                this.ConsoleSys = ConsoleSys;
+                Client.Add(ConsoleSys);
+            }
 
             Common NewCommon = new Common();
             NewCommon.AddShared();

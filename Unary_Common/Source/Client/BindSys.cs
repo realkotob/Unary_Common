@@ -34,17 +34,17 @@ using Godot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Unary_Common.Shared
+namespace Unary_Common.Client
 {
     public class BindSys : SysNode
     {
-        private ConsoleSys ConsoleSys;
+        private IConsoleSys ConsoleSys;
 
         private Dictionary<string, Binds> Entries;
 
         public override void Init()
         {
-            ConsoleSys = Sys.Ref.ConsoleSys;
+            ConsoleSys = Shared.Sys.Ref.ConsoleSys;
 
             Entries = new Dictionary<string, Binds>();
 

@@ -37,7 +37,7 @@ namespace Unary_Common.Shared
 {
     class AssemblySys : SysObject
     {
-        private ConsoleSys ConsoleSys;
+        private IConsoleSys ConsoleSys;
 
         Dictionary<string, Assembly> Assemblies;
         Dictionary<string, Type> NamedTypes;
