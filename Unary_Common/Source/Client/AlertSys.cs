@@ -34,7 +34,7 @@ using Godot;
 
 namespace Unary_Common.Client
 {
-    public class AlertSys : SysNode
+    public class AlertSys : SysUI
     {
         private LocaleSys LocaleSys;
         private WindowDialog Window;
@@ -43,7 +43,7 @@ namespace Unary_Common.Client
 
         public override void Init()
         {
-            LocaleSys = Sys.Ref.Shared.GetObject<LocaleSys>();
+            LocaleSys = Sys.Ref.Client.GetObject<LocaleSys>();
         }
 
         public override void _Ready()
@@ -52,6 +52,11 @@ namespace Unary_Common.Client
             Text = GetNode<RichTextLabel>("Window/Container/Text");
             Button = GetNode<Button>("Window/Container/Button");
             Button.Connect("pressed", this, nameof(OnClose));
+        }
+
+        public override void Clear()
+        {
+            Button.Disconnect("pressed", this, nameof(OnClose));
         }
 
         private void OnClose()

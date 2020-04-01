@@ -120,7 +120,6 @@
     <Compile Include="Unary_Common\Source\Arguments\SteamPlayer.cs" />
     <Compile Include="Unary_Common\Source\Arguments\TicketResponse.cs" />
     <Compile Include="Unary_Common\Source\Client\AlertSys.cs" />
-    <Compile Include="Unary_Common\Source\Client\DownloadsSys.cs" />
     <Compile Include="Unary_Common\Source\Client\MusicSys.cs" />
     <Compile Include="Unary_Common\Source\Client\NetworkSys.cs" />
     <Compile Include="Unary_Common\Source\Client\RegistrySys.cs" />
@@ -128,14 +127,11 @@
     <Compile Include="Unary_Common\Source\Enums\SysType.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\IBoot.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\ITreeStateEntry.cs" />
-    <Compile Include="Unary_Common\Source\Server\ConsoleSys.cs" />
-    <Compile Include="Unary_Common\Source\Server\DownloadSys.cs" />
     <Compile Include="Unary_Common\Source\Server\NetworkSys.cs" />
     <Compile Include="Unary_Common\Source\Server\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Server\SteamSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\BootSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\DataSys.cs" />
-    <Compile Include="Unary_Common\Source\Shared\DownloadsSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\RandomSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Shared\SaveSys.cs" />
@@ -143,7 +139,6 @@
     <Compile Include="Unary_Common\Source\Structs\Command.cs" />
     <Compile Include="Unary_Common\Source\Structs\EventPacket.cs" />
     <Compile Include="Unary_Common\Source\Shared\SysManager.cs" />
-    <Compile Include="Unary_Common\Source\Shared\TempSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\EntryDebug.cs" />
     <Compile Include="Unary_Common\Source\Structs\RareTickSubscriber.cs" />
     <Compile Include="Unary_Common\Source\Structs\Mod.cs" />
@@ -190,8 +185,7 @@
     <Compile Include="Unary_Common\Source\Shared\SceneSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\SteamSys.cs" />
     <Compile Include="Unary_Common\Source\Common.cs" />
-    <Compile Include="Unary_Common\Source\Main.cs" />
-    <Compile Include="Unary_Common\Source\Client\ConsoleSys.cs" />
+    <Compile Include="Unary_Common\Source\Shared\ConsoleSys.cs" />
     <Compile Include="Unary_Common\Source\AssemblyInfo.cs" />
     <Compile Include="Unary_Common\Source\UI\ModListEntry.cs" />
     <Compile Include="Unary_Common\Source\UI\ModsList.cs" />

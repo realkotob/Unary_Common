@@ -26,6 +26,7 @@ using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Structs;
 using Unary_Common.Abstract;
+using Unary_Common.Shared;
 
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace Unary_Common.Client
 {
     public class BindSys : SysNode
     {
-        private IConsoleSys ConsoleSys;
+        private ConsoleSys ConsoleSys;
 
         private Dictionary<string, Binds> Entries;
 

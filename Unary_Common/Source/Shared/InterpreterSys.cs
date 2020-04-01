@@ -43,7 +43,7 @@ namespace Unary_Common.Shared
 {
 	public class InterpreterSys : SysNode
 	{
-		private IConsoleSys ConsoleSys;
+		private ConsoleSys ConsoleSys;
 
 		private Dictionary<string, List<Command>> RegisteredCommands;
 		private Dictionary<int, List<BoundPath>> Paths;
@@ -574,32 +574,12 @@ namespace Unary_Common.Shared
 
 		public override void InitCore(Mod Mod)
 		{
-			if(!RegisteredCommands.ContainsKey(Mod.ModID))
-			{
-				RegisteredCommands[Mod.ModID] = new List<Command>();
-			}
-
-			string ScriptPath = Mod.Path + '/' + "Autoexec.usl";
-
-			if (FilesystemUtil.SystemFileExists(ScriptPath))
-			{
-				ProcessScript(ScriptPath);
-			}
+			ProcessFiles(Mod.ModID, Mod.Path);
 		}
 
 		public override void InitMod(Mod Mod)
 		{
-			if (!RegisteredCommands.ContainsKey(Mod.ModID))
-			{
-				RegisteredCommands[Mod.ModID] = new List<Command>();
-			}
-
-			string ScriptPath = Mod.Path + '/' + "Autoexec.usl";
-
-			if (FilesystemUtil.SystemFileExists(ScriptPath))
-			{
-				ProcessScript(ScriptPath);
-			}
+			ProcessFiles(Mod.ModID, Mod.Path);
 		}
 	}
 }

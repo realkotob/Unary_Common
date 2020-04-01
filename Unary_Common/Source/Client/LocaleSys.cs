@@ -50,7 +50,7 @@ namespace Unary_Common.Client
 		private string FallbackLocale;
 		private Dictionary<string, string> FallbackLocaleEntries;
 
-		private IConsoleSys ConsoleSys;
+		private ConsoleSys ConsoleSys;
 
 		public override void Init()
 		{

@@ -52,32 +52,36 @@ namespace Unary_Common
 			Sys.Shared.Add(new HarmonySys());
 			Sys.Shared.Add(new OSSys());
 			Sys.Shared.Add(new RandomSys());
-			Sys.Shared.Add(new TempSys());
 			Sys.Shared.Add(new DataSys());
-			Sys.Shared.Add(new Shared.DownloadsSys());
 			Sys.Shared.Add(new SaveSys());
-			//Sys.(new ProfilerManager());
-			Sys.Shared.Add(new SceneSys());
+			//Sys.Shared.Add(new ProfilerManager());
 		}
 
 		public void AddClient()
 		{
 			// Adding client systems
+
 			Sys.Client.Add(new Client.DiscordSys());
 			Sys.Client.Add(new Client.LocaleSys());
 			Sys.Client.Add(new Client.BindSys());
 			Sys.Client.Add(new Client.SteamSys());
 			Sys.Client.Add(new MusicSys());
 			Sys.Client.Add(new AlertSys(), "Alert");
+
 			Sys.Client.Add(new Client.NetworkSys());
 			Sys.Client.Add(new Client.RegistrySys());
+			
+			Sys.Client.Add(new SceneSys());
 		}
 
 		public void AddServer()
 		{
+
 			Sys.Server.Add(new Server.SteamSys());
 			Sys.Server.Add(new Server.NetworkSys());
 			Sys.Server.Add(new Server.RegistrySys());
+
+			Sys.Server.Add(new SceneSys());
 		}
 	}
 }

@@ -36,12 +36,10 @@ namespace Unary_Common.Server
     public class RegistrySys : SysObject
     {
         Shared.RegistrySys RegistrySysShared;
-        NetworkSys NetworkSys;
 
         public override void Init()
         {
             RegistrySysShared = Sys.Ref.Shared.GetObject<Shared.RegistrySys>();
-            NetworkSys = Sys.Ref.Server.GetNode<NetworkSys>();
         }
 
         public override void Clear()

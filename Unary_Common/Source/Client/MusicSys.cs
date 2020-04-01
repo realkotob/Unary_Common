@@ -51,7 +51,7 @@ namespace Unary_Common.Client
                 GetChild(0).QueueFree();
             }
 
-            AddChild(Player);
+            CallDeferred("add_child", Player);
         }
 
         public override void Clear()

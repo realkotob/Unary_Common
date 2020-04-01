@@ -30,7 +30,7 @@ margin_bottom = 224.0
 size_flags_vertical = 3
 bbcode_enabled = true
 bbcode_text = "This is a test"
-text = "Poop feast starts in 15 minutes!"
+text = "This is a test"
 
 [node name="Button" type="Button" parent="Window/Container"]
 margin_top = 228.0

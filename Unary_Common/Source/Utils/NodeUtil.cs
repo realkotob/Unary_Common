@@ -93,7 +93,7 @@ namespace Unary_Common.Utils
                     ActualNode.AddChild(Child);
                 }
 
-                NewNode.Free();
+                NewNode.QueueFree();
 
                 return ActualNode;
             }
@@ -125,7 +125,7 @@ namespace Unary_Common.Utils
                     Object.AddChild(Child);
                 }
 
-                NewNode.Free();
+                NewNode.QueueFree();
 
                 return Object;
             }

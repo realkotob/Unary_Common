@@ -46,7 +46,7 @@ namespace Unary_Common.Shared
         public Entries Entries { get; private set; }
         public Categories Categories { get; private set; }
 
-        private IConsoleSys ConsoleSys;
+        private ConsoleSys ConsoleSys;
         private AssemblySys AssemblySys;
 
         public override void Init()

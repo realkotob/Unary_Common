@@ -35,9 +35,9 @@ using Unary_Common.Utils;
 using Unary_Common.Interfaces;
 using Unary_Common.Structs;
 
-namespace Unary_Common.Client
+namespace Unary_Common.Shared
 {
-	public class ConsoleSys : SysUI, IConsoleSys
+	public class ConsoleSys : SysUI
 	{
 		private enum ConsoleColors
 		{
@@ -79,19 +79,9 @@ namespace Unary_Common.Client
 			}
 		}
 
-		public override void Clear()
-		{
-			int Count = ConsoleHistory.GetChildCount();
-
-			for (int i = 0; i < Count; ++i)
-			{
-				ConsoleHistory.GetChild(i).QueueFree();
-			}
-		}
-
 		public override void ClearedMods()
 		{
-			Clear();
+			Message("Cleared mods!");
 		}
 
 		public override void _Input(InputEvent @event)
@@ -135,7 +125,7 @@ namespace Unary_Common.Client
 				Autofill.GetChild(i).QueueFree();
 			}
 
-			List<Command> Commands = Shared.Sys.Ref.Shared.GetNode<Shared.InterpreterSys>().AutofillCommand(NewCommand);
+			List<Command> Commands = Sys.Ref.Shared.GetNode<InterpreterSys>().AutofillCommand(NewCommand);
 
 			foreach(var Command in Commands)
 			{
@@ -251,7 +241,7 @@ namespace Unary_Common.Client
 			AddEntry(Text, ConsoleColors.Error);
 			WriteToLog("Panic", Text);
 			GD.PushError(Text);
-			Main.Ref.Quit();
+			Sys.Ref.Quit();
 		}
 		
 		public override void _Ready()

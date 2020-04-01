@@ -41,23 +41,27 @@ namespace Unary_Common.Shared
     {
         public static Sys Ref { get; private set; }
 
-        public IConsoleSys ConsoleSys { get; private set; }
+        public ConsoleSys ConsoleSys { get; private set; }
 
         public SysManager Shared { get; private set; }
         public SysManager Server { get; private set; }
         public SysManager Client { get; private set; }
 
-        public SysAppType AppType { get; set; }
+        public SysAppType AppType { get; private set; }
 
         public List<string> LaunchArguments { get; private set; }
 
-        public void Init()
+        public override void _Ready()
         {
             Ref = this;
 
             Shared = new SysManager();
             Server = new SysManager();
             Client = new SysManager();
+
+            AddChild(Shared);
+            AddChild(Server);
+            AddChild(Client);
 
             LaunchArguments = OS.GetCmdlineArgs().ToList();
 
@@ -72,23 +76,15 @@ namespace Unary_Common.Shared
                 AppType.SetClient(true);
             }
 
-            if (AppType.IsServer())
-            {
-                Server.ConsoleSys ConsoleSys = new Server.ConsoleSys();
-                this.ConsoleSys = ConsoleSys;
-                Shared.Add(ConsoleSys, ModIDEntry: "Unary_Common.Shared.ConsoleSys");
-            }
-            else
-            {
-                Client.ConsoleSys ConsoleSys = NodeUtil.NewNode<Client.ConsoleSys>("Unary_Common", "Console");
-                this.ConsoleSys = ConsoleSys;
-                Shared.Add(ConsoleSys, ModIDEntry: "Unary_Common.Shared.ConsoleSys");
-            }
+            Shared.Add(NodeUtil.NewNode<ConsoleSys>("Unary_Common", "Console"));
+
+            ConsoleSys = Shared.GetUI<ConsoleSys>();
 
             Common NewCommon = new Common();
             NewCommon.AddShared();
 
             Shared.Add(new BootSys());
+
             Shared.GetObject<BootSys>().Add("Unary_Common", NewCommon);
 
             if(AppType.IsServer())
@@ -102,10 +98,32 @@ namespace Unary_Common.Shared
 
             Shared.Add(new ModSys());
 
-            Shared.InitCore(Shared.GetObject<ModSys>().Core.Mod);
+            Mod CoreMod = Shared.GetObject<ModSys>().Core.Mod;
+
+            Shared.InitCore(CoreMod);
+
+            if (AppType.IsServer())
+            {
+                Server.InitCore(CoreMod);
+            }
+            else
+            {
+                Client.InitCore(CoreMod);
+            }
+
+            Shared.GetObject<BootSys>().AddShared(CoreMod.ModID);
+
+            if (AppType.IsServer())
+            {
+                Shared.GetObject<BootSys>().AddServer(CoreMod.ModID);
+            }
+            else
+            {
+                Shared.GetObject<BootSys>().AddClient(CoreMod.ModID);
+            }
         }
 
-        public void Clear()
+        public void Quit()
         {
             Server.ClearMods();
             Client.ClearMods();
@@ -114,6 +132,18 @@ namespace Unary_Common.Shared
             Server.Clear();
             Client.Clear();
             Shared.Clear();
+
+            ConsoleSys = null;
+
+            Ref = null;
+        }
+
+        public override void _Notification(int what)
+        {
+            if (what == MainLoop.NotificationWmQuitRequest)
+            {
+                Quit();
+            }
         }
 
     }

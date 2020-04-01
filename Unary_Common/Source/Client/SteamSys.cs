@@ -48,7 +48,6 @@ namespace Unary_Common.Client
             CallbackGameOverlayActivated = Callback<GameOverlayActivated_t>.Create(OnOverlayActivated);
 
             EventSys.SubscribeEvent(this, nameof(OnConnected), "Unary_Common.Connected");
-            EventSys.SubscribeEvent(this, nameof(OnDisconnected), "Unary_Common.ConnectionFailed");
             EventSys.SubscribeEvent(this, nameof(OnDisconnected), "Unary_Common.Disconnected");
         }
 

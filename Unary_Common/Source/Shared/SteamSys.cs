@@ -39,7 +39,7 @@ namespace Unary_Common.Shared
 {
     public class SteamSys : SysNode
     {
-        private static IConsoleSys ConsoleSys;
+        private static ConsoleSys ConsoleSys;
 
         public List<SteamInstallInfo> WorkshopEntries { get; private set; }
 

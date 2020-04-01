@@ -36,12 +36,20 @@ using Godot;
 
 namespace Unary_Common.Structs
 {
-    public class SysManager
+    public class SysManager : Node
     {
-        private Dictionary<string, SysObject> Objects = new Dictionary<string, SysObject>();
-        private Dictionary<string, NodeID> Nodes = new Dictionary<string, NodeID>();
-        private Dictionary<string, SysType> Types = new Dictionary<string, SysType>();
-        public List<string> Order { get; private set; } = new List<string>();
+        private Dictionary<string, SysObject> Objects;
+        private Dictionary<string, NodeID> Nodes;
+        private Dictionary<string, SysType> Types;
+        public List<string> Order { get; private set; }
+
+        public override void _Ready()
+        {
+            Objects = new Dictionary<string, SysObject>();
+            Nodes = new Dictionary<string, NodeID>();
+            Types = new Dictionary<string, SysType>();
+            Order = new List<string>();
+        }
 
         public void Clear()
         {
@@ -64,7 +72,7 @@ namespace Unary_Common.Structs
                 }
                 else
                 {
-                    Result.Add(Sys.Ref.GetChild<ISysEntry>(Nodes[OrderEntry].ID));
+                    Result.Add(GetChild<ISysEntry>(Nodes[OrderEntry].ID));
                 }
             }
 
@@ -119,16 +127,17 @@ namespace Unary_Common.Structs
             {
                 if (LoadPath != null)
                 {
+                    Node.QueueFree();
                     Node = NodeUtil.NewNode<SysNode>(ModIDUtil.ModID(ModIDEntry), LoadPath);
                 }
 
                 Node.Init();
                 Node.Name = ModIDEntry;
-                Sys.Ref.AddChild(Node, true);
+                AddChild(Node, true);
 
                 Nodes[ModIDEntry] = new NodeID()
                 {
-                    ID = Sys.Ref.GetChildCount() - 1
+                    ID = GetChildCount() - 1
                 };
 
                 Types[ModIDEntry] = SysType.Node;
@@ -138,16 +147,17 @@ namespace Unary_Common.Structs
             {
                 if (LoadPath != null)
                 {
+                    UI.QueueFree();
                     UI = NodeUtil.NewNode<SysUI>(ModIDUtil.ModID(ModIDEntry), LoadPath);
                 }
 
                 UI.Init();
                 UI.Name = ModIDEntry;
-                Sys.Ref.AddChild(UI, true);
+                AddChild(UI, true);
 
                 Nodes[ModIDEntry] = new NodeID()
                 {
-                    ID = Sys.Ref.GetChildCount() - 1
+                    ID = GetChildCount() - 1
                 };
 
                 Types[ModIDEntry] = SysType.UI;
@@ -165,7 +175,7 @@ namespace Unary_Common.Structs
             return Get(ModIDUtil.FromType(typeof(T)));
         }
 
-        public ISysEntry Get(string ModIDEntry)
+        public new ISysEntry Get(string ModIDEntry)
         {
             if (!ModIDUtil.Validate(ModIDEntry))
             {
@@ -181,7 +191,7 @@ namespace Unary_Common.Structs
                 }
                 else
                 {
-                    return Sys.Ref.GetChild<ISysEntry>(Nodes[ModIDEntry].ID);
+                    return GetChild<ISysEntry>(Nodes[ModIDEntry].ID);
                 }
             }
             else
@@ -230,7 +240,7 @@ namespace Unary_Common.Structs
 
             if (Nodes.ContainsKey(ModIDEntry))
             {
-                return Sys.Ref.GetChild<SysNode>(Nodes[ModIDEntry].ID);
+                return GetChild<SysNode>(Nodes[ModIDEntry].ID);
             }
             else
             {
@@ -254,7 +264,7 @@ namespace Unary_Common.Structs
 
             if (Nodes.ContainsKey(ModIDEntry))
             {
-                return Sys.Ref.GetChild<SysUI>(Nodes[ModIDEntry].ID);
+                return GetChild<SysUI>(Nodes[ModIDEntry].ID);
             }
             else
             {
@@ -295,10 +305,9 @@ namespace Unary_Common.Structs
 
                 if (Type != SysType.Object)
                 {
-                    Sys.Ref.GetChild(Nodes[OrderEntry].ID).
+                    GetChild(Nodes[OrderEntry].ID).
                     ReplaceBy(NodeUtil.ReloadNode(Nodes[OrderEntry].Path, Sys.Ref.GetChild(Nodes[OrderEntry].ID)), false);
-
-                    Sys.Ref.GetChild(Nodes[OrderEntry].ID)._Ready();
+                    GetChild(Nodes[OrderEntry].ID)._Ready();
                 }
             }
         }
@@ -320,8 +329,8 @@ namespace Unary_Common.Structs
             }
             else if (Nodes.ContainsKey(ModIDEntry))
             {
-                Sys.Ref.GetChild<ISysEntry>(Nodes[ModIDEntry].ID).Clear();
-                Sys.Ref.GetChild(Nodes[ModIDEntry].ID).QueueFree();
+                GetChild<ISysEntry>(Nodes[ModIDEntry].ID).Clear();
+                GetChild(Nodes[ModIDEntry].ID).QueueFree();
                 Nodes.Remove(ModIDEntry);
                 Types.Remove(ModIDEntry);
             }
