@@ -1,6 +1,7 @@
 [
 	{
 		"Target": "Unary_Common.Shared.ConsoleSys.Message",
+		"Arguments": "string Text",
 		"Alias": "Message",
 		"AliasColor": "White",
 		"Description": "Outputs messages in the console",
@@ -8,6 +9,7 @@
 	},
 	{
 		"Target": "Unary_Common.Shared.ConsoleSys.Warning",
+		"Arguments": "string Text",
 		"Alias": "Warning",
 		"AliasColor": "Yellow",
 		"Description": "Outputs warnings in the console",
@@ -15,6 +17,7 @@
 	},
 	{
 		"Target": "Unary_Common.Shared.ConsoleSys.Error",
+		"Arguments": "string Text",
 		"Alias": "Error",
 		"AliasColor": "Red",
 		"Description": "Outputs errors in the console",
@@ -22,6 +25,7 @@
 	},
 	{
 		"Target": "Unary_Common.Shared.ConsoleSys.Panic",
+		"Arguments": "string Text",
 		"Alias": "Panic",
 		"AliasColor": "Red",
 		"Description": "Closes application due to an unresolvable error",
@@ -50,6 +54,7 @@
 	},
 	{
 		"Target": "Unary_Common.Shared.InterpreterSys.ListSystems",
+		"Arguments": "string Text",
 		"Alias": "ListSystems",
 		"AliasColor": "Green",
 		"Description": "Outputs all of the available systems of chosen type",
@@ -57,8 +62,9 @@
 	},
 	{
 		"Target": "Unary_Common.Shared.InterpreterSys.BindFile",
+		"Arguments": "string ModID, string Key, string FilePath",
 		"Alias": "BindFile",
-		"AliasColor": "Purple",
+		"AliasColor": "Pink",
 		"Description": "Allows to bind specific script to a key",
 		"DescriptionColor": "White"
 	}

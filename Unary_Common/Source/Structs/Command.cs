@@ -8,6 +8,7 @@ namespace Unary_Common.Structs
     public struct Command
     {
         public string Target;
+        public string Arguments;
         public string Alias;
         public string AliasColor;
         public string Description;

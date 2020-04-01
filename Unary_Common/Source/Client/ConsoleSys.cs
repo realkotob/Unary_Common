@@ -155,6 +155,15 @@ namespace Unary_Common.Client
 
 				Alias.Text = Command.Alias;
 
+				if(Command.Arguments == null)
+				{
+					Alias.Text += "()";
+				}
+				else
+				{
+					Alias.Text += '(' + Command.Arguments + ')';
+				}
+
 				Label Description = NewEntry.GetNode<Label>("Description");
 
 				System.Drawing.Color DescriptionColor = System.Drawing.Color.FromName(Command.DescriptionColor);
