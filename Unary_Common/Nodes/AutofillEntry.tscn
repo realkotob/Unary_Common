@@ -1,0 +1,23 @@
+[gd_scene format=2]
+
+[node name="AutofillEntry" type="HBoxContainer"]
+margin_right = 670.0
+margin_bottom = 34.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Alias" type="Label" parent="."]
+margin_top = 10.0
+margin_right = 31.0
+margin_bottom = 24.0
+text = "Alias"
+
+[node name="Description" type="Label" parent="."]
+margin_left = 35.0
+margin_right = 670.0
+margin_bottom = 34.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "Description"
+clip_text = true

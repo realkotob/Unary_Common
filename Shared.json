@@ -1,8 +1,4 @@
 {
-  "Unary_Common.Headless": {
-    "Type": "System.Boolean",
-    "Value": false
-  },
   "Unary_Common.Window.VSync": {
     "Type": "System.Boolean",
     "Value": false
@@ -34,13 +30,9 @@
     "Type": "System.Int32",
     "Value": 33000
   },
-  "Unary_Common.Network.DownloadPort": {
-    "Type": "System.Int32",
-    "Value": 33001
-  },
   "Unary_Common.Network.RCONPort": {
     "Type": "System.Int32",
-    "Value": 33002
+    "Value": 33001
   },
   "Unary_Common.Network.MaxPlayers": {
     "Type": "System.Int32",
@@ -53,5 +45,13 @@
   "Unary_Common.Random.RareTickRange": {
     "Type": "System.UInt32",
     "Value": 500000
+  },
+  "Unary_Common.Profiler.Update": {
+    "Type": "System.Single",
+    "Value": 1.0
+  },
+  "Unary_Common.Console.AutofillLimit": {
+    "Type": "System.Int32",
+    "Value": 5
   }
 }

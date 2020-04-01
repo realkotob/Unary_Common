@@ -1,1 +1,1 @@
-Unary_Common.Shared.ConsoleSys.Message("This is a message")
+Message("This is a message")

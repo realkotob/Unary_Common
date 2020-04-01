@@ -76,24 +76,12 @@ namespace Unary_Common.Shared
 
         public void AddEntry(string RegistryName, string ModIDEntry)
         {
-            if(GetRegistry(RegistryName).Add(ModIDEntry))
-            {
-                if (Sys.Ref.MultiplayerType == Enums.SysMultiplayer.Server && Synced)
-                {
-                    Sys.Ref.Server.GetObject<Server.RegistrySys>().AddEntry(RegistryName, ModIDEntry);
-                }
-            }
+            GetRegistry(RegistryName).Add(ModIDEntry);
         }
 
         public void RemoveEntry(string RegistryName, string ModIDEntry)
         {
-            if (GetRegistry(RegistryName).Remove(ModIDEntry))
-            {
-                if (Sys.Ref.MultiplayerType == Enums.SysMultiplayer.Server && Synced)
-                {
-                    Sys.Ref.Server.GetObject<Server.RegistrySys>().RemoveEntry(RegistryName, ModIDEntry);
-                }
-            }
+            GetRegistry(RegistryName).Remove(ModIDEntry);
         }
 
         public uint GetEntry(string RegistryName, string ModIDEntry)

@@ -52,9 +52,7 @@ namespace Unary_Common.Shared
         public override void Init()
         {
             Entries = new Entries();
-            Entries.Init();
             Categories = new Categories();
-            Categories.Init();
 
             ConsoleSys = Sys.Ref.ConsoleSys;
             AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();

@@ -45,33 +45,144 @@ namespace Unary_Common.Shared
 	{
 		private IConsoleSys ConsoleSys;
 
-		private List<string> ModIDs;
+		private Dictionary<string, List<Command>> RegisteredCommands;
+		private Dictionary<int, List<BoundPath>> Paths;
+
+		private int AutofillLimit;
+
+		private static readonly string CommandsPath = "/Commands.json";
+		private static readonly string ScriptPath = "/Autoexec.usl";
 
 		public override void Init()
 		{
 			ConsoleSys = Sys.Ref.ConsoleSys;
 
-			ModIDs = new List<string>();
-			ModIDs.Add("Unary_Common");
+			RegisteredCommands = new Dictionary<string, List<Command>>();
+			Paths = new Dictionary<int, List<BoundPath>>();
 
-			string ScriptPath = "Autoexec.usl";
+			AutofillLimit = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<int>("Unary_Common.Console.AutofillLimit");
 
-			if (FilesystemUtil.SystemFileExists(ScriptPath))
+			ProcessFiles("Unary_Common", ".");
+		}
+
+		public override void _Process(float delta)
+		{
+			if(Sys.Ref.AppType.IsClient())
 			{
-				ProcessScript(ScriptPath);
+				foreach (var Bound in Paths)
+				{
+					if (Input.IsKeyPressed(Bound.Key))
+					{
+						foreach (var Path in Bound.Value)
+						{
+							ProcessScriptFile(Path.Path);
+						}
+					}
+				}
+			}
+		}
+
+		public void Help()
+		{
+			string Result = "ListModID() \n" +
+					"ListSystemTypes() \n" +
+					"ListSystems(%Type%)";
+			ConsoleSys.Message(Result);
+		}
+
+		public void ListModID()
+		{
+			ConsoleSys.Message(GetModIDs());
+		}
+
+		public void ListSystemTypes()
+		{
+			ConsoleSys.Message(GetSystemTypes());
+		}
+
+		public void ListSystems(string Type)
+		{
+			List<string> Systems;
+
+			Type = Type.ToLower();
+
+			if (Type == "shared")
+			{
+				Systems = Sys.Ref.Shared.Order;
+			}
+			else if (Type == "server")
+			{
+				Systems = Sys.Ref.Server.Order;
+			}
+			else if (Type == "client")
+			{
+				Systems = Sys.Ref.Client.Order;
+			}
+			else
+			{
+				ConsoleSys.Error("Invalid system type");
+				ConsoleSys.Message(GetSystemTypes());
+				return;
+			}
+
+			ConsoleSys.Message(GetSystems(char.ToUpper(Type[0]) + Type.Substring(1), Systems));
+		}
+
+		public void BindFile(string ModID, string Key, string FilePath)
+		{
+			if (Sys.Ref.AppType.IsClient())
+			{
+				BoundPath NewBoundPath = new BoundPath()
+				{
+					ModID = ModID,
+					Path = FilePath
+				};
+
+				int Scancode = EnumUtil.GetKeyFromString<int, KeyList>(Key);
+
+				if(Paths.ContainsKey(Scancode))
+				{
+					if(Paths[Scancode].Contains(NewBoundPath))
+					{
+						ConsoleSys.Error("Tried binding file " + FilePath + " to the same file from the same namespace");
+					}
+					else
+					{
+						Paths[Scancode].Add(NewBoundPath);
+					}
+				}
+				else
+				{
+					Paths[Scancode] = new List<BoundPath>
+					{
+						NewBoundPath
+					};
+				}
 			}
 		}
 
 		public override void Clear()
 		{
-			ModIDs.Clear();
+			RegisteredCommands.Clear();
+			Paths.Clear();
 		}
 
 		public override void ClearMod(Mod Mod)
 		{
-			if(ModIDs.Contains(Mod.ModID))
+			if(RegisteredCommands.ContainsKey(Mod.ModID))
 			{
-				ModIDs.Remove(Mod.ModID);
+				RegisteredCommands.Remove(Mod.ModID);
+			}
+
+			foreach(var Key in Paths)
+			{
+				for(int i = Key.Value.Count - 1; i >= 0; --i)
+				{
+					if(Key.Value[i].ModID == Mod.ModID)
+					{
+						Key.Value.RemoveAt(i);
+					}
+				}
 			}
 		}
 
@@ -126,9 +237,9 @@ namespace Unary_Common.Shared
 		{
 			string Result = "Available ModID's: \n";
 
-			foreach(var ModID in ModIDs)
+			foreach(var ModID in RegisteredCommands)
 			{
-				Result += ModID + ", ";
+				Result += ModID.Key + ", ";
 			}
 
 			Result = Result.Substring(0, Result.Length - 2);
@@ -136,259 +247,272 @@ namespace Unary_Common.Shared
 			return Result;
 		}
 
-		public void ProcessCommand(string Command)
+		public void ProcessCommandFile(string Path, string ModID)
 		{
-			if(!Command.StartsWith("Unary_Common.Shared.ConsoleSys.Message") &&
-			   !Command.StartsWith("Unary_Common.Shared.ConsoleSys.Warning") &&
-			   !Command.StartsWith("Unary_Common.Shared.ConsoleSys.Error") &&
-			   !Command.StartsWith("Unary_Common.Shared.ConsoleSys.Panic"))
+			try
 			{
-				ConsoleSys.Message("> " + Command);
-			}
-
-			if (Command.ToLower() == "help")
-			{
-				string Result = "list modid" + '\n' +
-					"list type" + '\n' +
-					"list system [type]";
-				ConsoleSys.Message(Result);
-				return;
-			}
-			else if(Command.ToLower().StartsWith("list "))
-			{
-				string NewCommand = Command.ToLower();
-
-				if(NewCommand == "list modid")
+				if(RegisteredCommands.ContainsKey(ModID))
 				{
-					ConsoleSys.Message(GetModIDs());
-				}
-				else if(NewCommand == "list type")
-				{
-					ConsoleSys.Message(GetSystemTypes());
-				}
-				else if(NewCommand.StartsWith("list system"))
-				{
-					NewCommand = NewCommand.Replace("list system ", "");
-
-					List<string> Systems;
-
-					if(NewCommand == "shared")
-					{
-						Systems = Sys.Ref.Shared.Order;
-					}
-					else if(NewCommand == "server")
-					{
-						Systems = Sys.Ref.Server.Order;
-					}
-					else if(NewCommand == "client")
-					{
-						Systems = Sys.Ref.Client.Order;
-					}
-					else
-					{
-						ConsoleSys.Error("Invalid system type");
-						ConsoleSys.Message(GetSystemTypes());
-						return;
-					}
-
-					ConsoleSys.Message(GetSystems(char.ToUpper(NewCommand[0]) + NewCommand.Substring(1), Systems));
-				}
-				else
-				{
-					ConsoleSys.Error("Invalid list command usage");
-				}
-
-				return;
-			}
-
-			Regex Regex = new Regex(@"(.*?)\.(.*?)\.(.*?)\.(.*?)\((.*?)\)");
-
-			MatchCollection Matches = Regex.Matches(Command);
-
-			if(Matches.Count == 0)
-			{
-				ConsoleSys.Error("Unrecognized command");
-				ConsoleSys.Error("Have you tried using \"help\"?");
-				return;
-			}
-
-			foreach(Match Match in Matches)
-			{
-				GroupCollection Group = Match.Groups;
-
-				string ModID;
-
-				if(!ModIDs.Contains(Group[1].Value))
-				{
-					ConsoleSys.Error(Group[1].Value + " is an invalid ModID");
-					ConsoleSys.Error(GetModIDs());
 					return;
 				}
 				else
 				{
-					ModID = Group[1].Value;
+					RegisteredCommands[ModID] = new List<Command>();
 				}
+
+				List<Command> Commands = JsonConvert.DeserializeObject<List<Command>>(FilesystemUtil.SystemFileRead(Path));
+
+				foreach (var CommandEntry in Commands)
+				{
+					bool Duped = false;
+
+					foreach (var RegisteredModID in RegisteredCommands)
+					{
+						foreach (var RegisteredCommand in RegisteredModID.Value)
+						{
+							if (CommandEntry.Alias == RegisteredCommand.Alias)
+							{
+								ConsoleSys.Error(ModID + " tried declaring already taken command alias " + CommandEntry.Alias);
+								Duped = true;
+							}
+						}
+					}
+
+					if(!Duped)
+					{
+						RegisteredCommands[ModID].Add(CommandEntry);
+					}
+				}
+
 				
-				List<string> Systems;
+			}
+			catch(Exception)
+			{
+				return;
+			}
+		}
 
-				if (Group[2].Value == "Shared")
+		private string ProcessCommandBinding(string Command)
+		{
+			foreach (var TargetModID in RegisteredCommands)
+			{
+				foreach (var BoundCommand in TargetModID.Value)
 				{
-					Systems = Sys.Ref.Shared.Order;
-				}
-				else if (Group[2].Value == "Client")
-				{
-					Systems = Sys.Ref.Client.Order;
-				}
-				else if(Group[2].Value == "Server")
-				{
-					Systems = Sys.Ref.Server.Order;
-				}
-				else
-				{
-					ConsoleSys.Error(Group[2].Value + " is an invalid System type");
-					ConsoleSys.Error(GetSystemTypes());
-					return;
-				}
-
-				string ModIDEntry;
-				SysType Type;
-
-				if(Systems.Contains(Group[1].Value + '.' + Group[2].Value + '.' + Group[3].Value))
-				{
-					ModIDEntry = Group[1].Value + '.' + Group[2].Value + '.' + Group[3].Value;
-				}
-				else
-				{
-					ConsoleSys.Error(Group[3].Value + " is an invalid System ModIDEntry");
-					ConsoleSys.Error(GetSystems(Group[2].Value, Systems));
-					return;
-				}
-
-				Godot.Object TargetSystem = default;
-
-				if (Group[2].Value == "Shared")
-				{
-					Type = Sys.Ref.Shared.GetType(ModIDEntry);
-
-					switch(Type)
+					if (Command == BoundCommand.Alias)
 					{
-						case SysType.Object:
-							TargetSystem = Sys.Ref.Shared.GetObject(ModIDEntry);
-							break;
-						case SysType.Node:
-							TargetSystem = Sys.Ref.Shared.GetNode(ModIDEntry);
-							break;
-						case SysType.UI:
-							TargetSystem = Sys.Ref.Shared.GetUI(ModIDEntry);
-							break;
+						return BoundCommand.Target;
 					}
 				}
-				else if (Group[2].Value == "Client")
+			}
+
+			return null;
+		}
+
+		public void ProcessScript(string Command)
+		{
+			List<string> CommandParts;
+			string Arguments = null;
+
+			if (Command.Contains('(') && Command.Contains(')') && Command[Command.Length - 1] == ')')
+			{
+				string TargetCommand = default;
+
+				for (int i = 0; i < Command.Length - 1; ++i)
 				{
-					Type = Sys.Ref.Client.GetType(ModIDEntry);
-
-					switch (Type)
+					if (Command[i] == '(')
 					{
-						case SysType.Object:
-							TargetSystem = Sys.Ref.Client.GetObject(ModIDEntry);
-							break;
-						case SysType.Node:
-							TargetSystem = Sys.Ref.Client.GetNode(ModIDEntry);
-							break;
-						case SysType.UI:
-							TargetSystem = Sys.Ref.Client.GetUI(ModIDEntry);
-							break;
-					}
-				}
-				else if (Group[2].Value == "Server")
-				{
-					Type = Sys.Ref.Server.GetType(ModIDEntry);
+						TargetCommand = Command.Substring(0, i);
 
-					switch (Type)
-					{
-						case SysType.Object:
-							TargetSystem = Sys.Ref.Server.GetObject(ModIDEntry);
-							break;
-						case SysType.Node:
-							TargetSystem = Sys.Ref.Server.GetNode(ModIDEntry);
-							break;
-						case SysType.UI:
-							TargetSystem = Sys.Ref.Server.GetUI(ModIDEntry);
-							break;
-					}
-				}
+						if (i + 1 != Command.Length - 1)
+						{
+							Arguments = Command.Substring(i + 1, Command.Length - ( i + 2 ));
+						}
 
-				Type TargetType = TargetSystem.GetType();
-
-				MethodInfo[] Methods = TargetType.GetMethods().Where(m => m.DeclaringType == TargetType).ToArray();
-
-				MethodInfo TargetMethod = null;
-
-				foreach(var Method in Methods)
-				{
-					if(Method.Name == Group[4].Value)
-					{
-						TargetMethod = Method;
 						break;
 					}
 				}
 
-				if(TargetMethod == null)
+				// Check for command bind
+				string ResultCommand = ProcessCommandBinding(TargetCommand);
+
+				if(ResultCommand != null)
 				{
-					ConsoleSys.Error(Group[4].Value + " is an invalid method");
-					ConsoleSys.Error(GetMethods(Methods));
+					TargetCommand = ResultCommand;
+				}
+
+				CommandParts = TargetCommand.Split('.').ToList();
+
+				if (CommandParts.Count != 4)
+				{
+					ConsoleSys.Error("Invalid command syntax");
+					ConsoleSys.Error("Have you tried using \"Help()\"?");
 					return;
 				}
 
-				ParameterInfo[] ArgumentsInfo = TargetMethod.GetParameters();
-				string ArgumentValues = '[' + Group[5].Value + ']';
-				JArray Array;
+				if (TargetCommand != "Unary_Common.Shared.ConsoleSys.Message" &&
+					TargetCommand != "Unary_Common.Shared.ConsoleSys.Warning" &&
+					TargetCommand != "Unary_Common.Shared.ConsoleSys.Error" &&
+					TargetCommand != "Unary_Common.Shared.ConsoleSys.Panic")
+				{
+					ConsoleSys.Message("> " + Command);
+				}
+			}
+			else
+			{
+				ConsoleSys.Error("Invalid command syntax");
+				ConsoleSys.Error("Have you tried using \"Help()\"?");
+				return;
+			}
 
+			string ModID;
+
+			if (!RegisteredCommands.ContainsKey(CommandParts[0]))
+			{
+				ConsoleSys.Error(CommandParts[0] + " is an invalid ModID");
+				ConsoleSys.Error(GetModIDs());
+				return;
+			}
+			else
+			{
+				ModID = CommandParts[0];
+			}
+
+			List<string> Systems;
+
+			if (CommandParts[1] == "Shared")
+			{
+				Systems = Sys.Ref.Shared.Order;
+			}
+			else if (CommandParts[1] == "Client")
+			{
+				Systems = Sys.Ref.Client.Order;
+			}
+			else if (CommandParts[1] == "Server")
+			{
+				Systems = Sys.Ref.Server.Order;
+			}
+			else
+			{
+				ConsoleSys.Error(CommandParts[1] + " is an invalid System type");
+				ConsoleSys.Error(GetSystemTypes());
+				return;
+			}
+
+			string ModIDEntry;
+			SysType Type;
+
+			if (Systems.Contains(CommandParts[0] + '.' + CommandParts[1] + '.' + CommandParts[2]))
+			{
+				ModIDEntry = CommandParts[0] + '.' + CommandParts[1] + '.' + CommandParts[2];
+			}
+			else
+			{
+				ConsoleSys.Error(CommandParts[2] + " is an invalid System ModIDEntry");
+				ConsoleSys.Error(GetSystems(CommandParts[1], Systems));
+				return;
+			}
+
+			Godot.Object TargetSystem = default;
+			SysManager TargetManager;
+
+			if (CommandParts[1] == "Shared")
+			{
+				TargetManager = Sys.Ref.Shared;
+			}
+			else if (CommandParts[1] == "Client")
+			{
+				TargetManager = Sys.Ref.Client;
+			}
+			else
+			{
+				TargetManager = Sys.Ref.Server;
+			}
+
+			Type = TargetManager.GetType(ModIDEntry);
+
+			switch (Type)
+			{
+				case SysType.Object:
+					TargetSystem = TargetManager.GetObject(ModIDEntry);
+					break;
+				case SysType.Node:
+					TargetSystem = TargetManager.GetNode(ModIDEntry);
+					break;
+				case SysType.UI:
+					TargetSystem = TargetManager.GetUI(ModIDEntry);
+					break;
+			}
+
+			Type TargetType = TargetSystem.GetType();
+
+			MethodInfo[] Methods = TargetType.GetMethods().Where(m => m.DeclaringType == TargetType).ToArray();
+
+			MethodInfo TargetMethod = null;
+
+			foreach (var Method in Methods)
+			{
+				if (Method.Name == CommandParts[3])
+				{
+					TargetMethod = Method;
+					break;
+				}
+			}
+
+			if (TargetMethod == null)
+			{
+				ConsoleSys.Error(CommandParts[3] + " is an invalid method");
+				ConsoleSys.Error(GetMethods(Methods));
+				return;
+			}
+
+			ParameterInfo[] ArgumentsInfo = TargetMethod.GetParameters();
+			string ArgumentValues = '[' + Arguments + ']';
+			JArray Array;
+
+			try
+			{
+				Array = JArray.Parse(ArgumentValues);
+			}
+			catch (Exception)
+			{
+				ConsoleSys.Error(Arguments + " is an invalid set of arguments");
+				ConsoleSys.Error(GetArguments(ArgumentsInfo));
+				return;
+			}
+
+			if (Array.Count != ArgumentsInfo.Length)
+			{
+				ConsoleSys.Error("Invalid ammount of arguments");
+				ConsoleSys.Error(GetArguments(ArgumentsInfo));
+				return;
+			}
+
+			List<object> FinalArguments = new List<object>();
+
+			for (int i = 0; i < Array.Count; ++i)
+			{
 				try
 				{
-					Array = JArray.Parse(ArgumentValues);
+					object Argument = JsonConvert.DeserializeObject(Array[i].ToString(Formatting.None), ArgumentsInfo[i].ParameterType);
+					FinalArguments.Add(Argument);
 				}
-				catch(Exception)
+				catch (Exception)
 				{
-					ConsoleSys.Error(Group[5].Value + " is an invalid set of arguments");
+					ConsoleSys.Error(Array[i].ToString() + " is not matching an argument type of " + ArgumentsInfo[i].ParameterType);
 					ConsoleSys.Error(GetArguments(ArgumentsInfo));
 					return;
 				}
+			}
 
-				if(Array.Count != ArgumentsInfo.Length)
-				{
-					ConsoleSys.Error("Invalid ammount of arguments");
-					ConsoleSys.Error(GetArguments(ArgumentsInfo));
-					return;
-				}
+			object CallResult = TargetSystem.Call(CommandParts[3], FinalArguments.ToArray());
 
-				List<object> FinalArguments = new List<object>();
-
-				for(int i = 0; i < Array.Count; ++i)
-				{
-					try
-					{
-						object Argument = JsonConvert.DeserializeObject(Array[i].ToString(Formatting.None),  ArgumentsInfo[i].ParameterType);
-						FinalArguments.Add(Argument);
-					}
-					catch(Exception)
-					{
-						ConsoleSys.Error(Array[i].ToString() + " is not matching an argument type of " + ArgumentsInfo[i].ParameterType);
-						ConsoleSys.Error(GetArguments(ArgumentsInfo));
-						return;
-					}
-				}
-
-				object CallResult = TargetSystem.Call(Group[4].Value, FinalArguments.ToArray());
-
-				if(CallResult != null)
-				{
-					ConsoleSys.Message(CallResult.ToString());
-				}
+			if (CallResult != null)
+			{
+				ConsoleSys.Message(CallResult.ToString());
 			}
 		}
 
-		public void ProcessScript(string Path)
+		public void ProcessScriptFile(string Path)
 		{
 			string File = FilesystemUtil.SystemFileRead(Path);
 
@@ -402,16 +526,57 @@ namespace Unary_Common.Shared
 				}
 				else
 				{
-					ProcessCommand(Line);
+					ProcessScript(Line);
 				}
+			}
+		}
+
+		public List<Command> AutofillCommand(string Command)
+		{
+			List<Command> Result = new List<Command>();
+
+			if(!string.IsNullOrEmpty(Command) || string.IsNullOrWhiteSpace(Command))
+			{
+				foreach(var ModID in RegisteredCommands)
+				{
+					foreach(var RegistredCommand in ModID.Value)
+					{
+						if(RegistredCommand.Alias.BeginsWith(Command) || RegistredCommand.Alias == Command)
+						{
+							if(Result.Count < AutofillLimit)
+							{
+								Result.Add(RegistredCommand);
+							}
+							else
+							{
+								return Result;
+							}
+						}
+					}
+				}
+			}
+
+			return Result;
+		}
+
+		public void ProcessFiles(string ModID, string Path)
+		{
+			if (FilesystemUtil.SystemFileExists(Path + CommandsPath))
+			{
+				ProcessCommandFile(Path + CommandsPath, ModID);
+			}
+
+			if (FilesystemUtil.SystemFileExists(Path + ScriptPath))
+			{
+				ProcessScriptFile(Path + ScriptPath);
 			}
 		}
 
 		public override void InitCore(Mod Mod)
 		{
-			if(!ModIDs.Contains(Mod.ModID))
+			if(!RegisteredCommands.ContainsKey(Mod.ModID))
 			{
-				ModIDs.Add(Mod.ModID);
+				RegisteredCommands[Mod.ModID] = new List<Command>();
 			}
 
 			string ScriptPath = Mod.Path + '/' + "Autoexec.usl";
@@ -424,9 +589,9 @@ namespace Unary_Common.Shared
 
 		public override void InitMod(Mod Mod)
 		{
-			if (!ModIDs.Contains(Mod.ModID))
+			if (!RegisteredCommands.ContainsKey(Mod.ModID))
 			{
-				ModIDs.Add(Mod.ModID);
+				RegisteredCommands[Mod.ModID] = new List<Command>();
 			}
 
 			string ScriptPath = Mod.Path + '/' + "Autoexec.usl";

@@ -94,7 +94,7 @@ namespace Unary_Common.Server
             {
                 if(SteamID.Value == Arguments.m_SteamID.m_SteamID)
                 {
-                    NewResponse.Peer = SteamID.Key;
+                    NewResponse.ID = SteamID.Key;
                 }
             }
 
@@ -109,8 +109,8 @@ namespace Unary_Common.Server
 
             if(NewResponse.Response != "OK")
             {
-                EndAuthSession(SteamIDs[NewResponse.Peer]);
-                SteamIDs.Remove(NewResponse.Peer);
+                EndAuthSession(SteamIDs[NewResponse.ID]);
+                SteamIDs.Remove(NewResponse.ID);
             }
 
             EventSys.InvokeEvent("Unary_Common.TicketResponse", NewResponse);
@@ -124,7 +124,7 @@ namespace Unary_Common.Server
 
             foreach(var Peer in SteamIDs)
             {
-                if(Peer.Value == Arguments.SteamID || Peer.Key == Arguments.Peer)
+                if(Peer.Value == Arguments.SteamID || Peer.Key == Arguments.ID)
                 {
                     Exists = true;
                 }
@@ -141,7 +141,7 @@ namespace Unary_Common.Server
 
             if(NewResponse.Response == "OK")
             {
-                SteamIDs[Arguments.Peer] = Arguments.SteamID;
+                SteamIDs[Arguments.ID] = Arguments.SteamID;
             }
 
             EventSys.InvokeEvent("Unary_Common.AuthResponse", NewResponse);
@@ -149,12 +149,12 @@ namespace Unary_Common.Server
 
         public void OnDisconnected(Args Arguments)
         {
-            if (SteamIDs.ContainsKey(Arguments.Peer))
+            if (SteamIDs.ContainsKey(Arguments.ID))
             {
-                if (Arguments.Peer != 1)
+                if (Arguments.ID != 1)
                 {
-                    EndAuthSession(SteamIDs[Arguments.Peer]);
-                    SteamIDs.Remove(Arguments.Peer);
+                    EndAuthSession(SteamIDs[Arguments.ID]);
+                    SteamIDs.Remove(Arguments.ID);
                 }
                 else
                 {

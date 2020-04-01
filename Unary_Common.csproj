@@ -98,6 +98,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Unary_Common\Source\Abstract\SysUI.cs" />
@@ -124,7 +125,6 @@
     <Compile Include="Unary_Common\Source\Client\NetworkSys.cs" />
     <Compile Include="Unary_Common\Source\Client\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Client\SteamSys.cs" />
-    <Compile Include="Unary_Common\Source\Enums\SysMultiplayer.cs" />
     <Compile Include="Unary_Common\Source\Enums\SysType.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\IBoot.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\ITreeStateEntry.cs" />
@@ -139,7 +139,10 @@
     <Compile Include="Unary_Common\Source\Shared\RandomSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Shared\SaveSys.cs" />
-    <Compile Include="Unary_Common\Source\Structs\SysManager.cs" />
+    <Compile Include="Unary_Common\Source\Structs\BoundPath.cs" />
+    <Compile Include="Unary_Common\Source\Structs\Command.cs" />
+    <Compile Include="Unary_Common\Source\Structs\EventPacket.cs" />
+    <Compile Include="Unary_Common\Source\Shared\SysManager.cs" />
     <Compile Include="Unary_Common\Source\Shared\TempSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\EntryDebug.cs" />
     <Compile Include="Unary_Common\Source\Structs\RareTickSubscriber.cs" />
@@ -147,8 +150,8 @@
     <Compile Include="Unary_Common\Source\Structs\Registry.cs" />
     <Compile Include="Unary_Common\Source\Structs\RPCEntry.cs" />
     <Compile Include="Unary_Common\Source\Structs\Save.cs" />
-    <Compile Include="Unary_Common\Source\Structs\Singletones.cs" />
-    <Compile Include="Unary_Common\Source\Structs\Categories.cs" />
+    <Compile Include="Unary_Common\Source\Subsystems\Singletones.cs" />
+    <Compile Include="Unary_Common\Source\Subsystems\Categories.cs" />
     <Compile Include="Unary_Common\Source\Client\DiscordSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\EventSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\Binds.cs" />
@@ -159,12 +162,13 @@
     <Compile Include="Unary_Common\Source\Structs\Output.cs" />
     <Compile Include="Unary_Common\Source\Structs\SteamInstallInfo.cs" />
     <Compile Include="Unary_Common\Source\Structs\Subscriber.cs" />
+    <Compile Include="Unary_Common\Source\Shared\SysMultiplayer.cs" />
     <Compile Include="Unary_Common\Source\Structs\Variable.cs" />
     <Compile Include="Unary_Common\Source\Shared\ModSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\Version.cs" />
     <Compile Include="Unary_Common\Source\Utils\AssemblyUtil.cs" />
     <Compile Include="Unary_Common\Source\Utils\Converter.cs" />
-    <Compile Include="Unary_Common\Source\Structs\Entries.cs" />
+    <Compile Include="Unary_Common\Source\Subsystems\Entries.cs" />
     <Compile Include="Unary_Common\Source\Utils\EnumUtil.cs" />
     <Compile Include="Unary_Common\Source\Utils\ModIDUtil.cs" />
     <Compile Include="Unary_Common\Source\Utils\NetworkUtil.cs" />

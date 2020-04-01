@@ -48,12 +48,17 @@ namespace Unary_Common.Client
 
 		public int ConsoleMaxLines { get; set; } = 36;
 
+		private PackedScene ConsoleEntry;
+		private PackedScene AutofillEntry;
+
 		private WindowDialog Window;
 		private LineEdit ConsoleLine;
-		private PackedScene ConsoleEntry;
+		
 		private VBoxContainer ConsoleHistory;
 		private VScrollBar ScrollBar;
 
+		private VBoxContainer Autofill;
+		
 		private bool ConsoleVisible = false;
 
 		public override void Init()
@@ -110,9 +115,61 @@ namespace Unary_Common.Client
 			{
 				if (ConsoleVisible)
 				{
-					Shared.Sys.Ref.Shared.GetNode<Shared.InterpreterSys>().ProcessCommand(ConsoleLine.Text);
+					Shared.Sys.Ref.Shared.GetNode<Shared.InterpreterSys>().ProcessScript(ConsoleLine.Text);
 					ConsoleLine.Clear();
 				}
+			}
+		}
+
+		public void OnTextChanged(string NewCommand)
+		{
+			if(string.IsNullOrEmpty(NewCommand) || string.IsNullOrWhiteSpace(NewCommand))
+			{
+				return;
+			}
+
+			int Count = Autofill.GetChildCount();
+
+			for (int i = 0; i < Count; ++i)
+			{
+				Autofill.GetChild(i).QueueFree();
+			}
+
+			List<Command> Commands = Shared.Sys.Ref.Shared.GetNode<Shared.InterpreterSys>().AutofillCommand(NewCommand);
+
+			foreach(var Command in Commands)
+			{
+				Node NewEntry = AutofillEntry.Instance();
+
+				Label Alias = NewEntry.GetNode<Label>("Alias");
+
+				System.Drawing.Color AliasColor = System.Drawing.Color.FromName(Command.AliasColor);
+
+				Alias.AddColorOverride("font_color", new Color()
+				{
+					r8 = AliasColor.R,
+					g8 = AliasColor.G,
+					b8 = AliasColor.B,
+					a8 = AliasColor.A
+				});
+
+				Alias.Text = Command.Alias;
+
+				Label Description = NewEntry.GetNode<Label>("Description");
+
+				System.Drawing.Color DescriptionColor = System.Drawing.Color.FromName(Command.DescriptionColor);
+
+				Description.AddColorOverride("font_color", new Color()
+				{
+					r8 = DescriptionColor.R,
+					g8 = DescriptionColor.G,
+					b8 = DescriptionColor.B,
+					a8 = DescriptionColor.A
+				});
+
+				Description.Text = Command.Description;
+
+				Autofill.AddChild(NewEntry);
 			}
 		}
 
@@ -191,14 +248,19 @@ namespace Unary_Common.Client
 		public override void _Ready()
 		{
 			ConsoleEntry = GD.Load<PackedScene>("Unary_Common/Nodes/ConsoleEntry.tscn");
+			AutofillEntry = GD.Load<PackedScene>("Unary_Common/Nodes/AutofillEntry.tscn");
 
-			Window = GetNode<WindowDialog>("Console");
+			Window = GetNode<WindowDialog>("Window");
 
-			ConsoleLine = GetNode<LineEdit>("Console/Container/ConsoleLine");
+			ConsoleLine = GetNode<LineEdit>("Window/Container/ConsoleLine");
+			ConsoleLine.Connect("text_changed", this, nameof(OnTextChanged));
 
-			ConsoleHistory = GetNode<VBoxContainer>("Console/Container/ScrollContainer/ConsoleHistory");
+			ConsoleHistory = GetNode<VBoxContainer>("Window/Container/ScrollContainer/ConsoleHistory");
 
-			ScrollBar = GetNode<ScrollContainer>("Console/Container/ScrollContainer").GetVScrollbar();
+			ScrollBar = GetNode<ScrollContainer>("Window/Container/ScrollContainer").GetVScrollbar();
+
+			Autofill = GetNode<VBoxContainer>("Window/Container/Autofill");
+
 			Message("Reinitialized console!");
 		}
 	}

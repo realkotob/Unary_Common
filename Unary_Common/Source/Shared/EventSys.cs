@@ -78,7 +78,11 @@ namespace Unary_Common.Shared
 
         public void RegisterRPC(string EventName)
         {
-            RegistrySys.AddEntry("Unary_Common.Events", EventName);
+            if (!RPCSubscribers.ContainsKey(EventName))
+            {
+                RPCSubscribers[EventName] = new List<Subscriber>();
+                RegistrySys.AddEntry("Unary_Common.Events", EventName);
+            }
         }
 
         public void SubscribeEvent(Godot.Object Target, string MemberName, string EventName)
@@ -100,11 +104,6 @@ namespace Unary_Common.Shared
 
         public void SubscribeRPC(Godot.Object Target, string MemberName, string EventName)
         {
-            if (!RPCSubscribers.ContainsKey(EventName))
-            {
-                RPCSubscribers[EventName] = new List<Subscriber>();
-            }
-
             Subscriber NewSubscriber = new Subscriber
             {
                 Target = Target,

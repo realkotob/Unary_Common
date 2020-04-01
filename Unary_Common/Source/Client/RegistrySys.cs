@@ -41,9 +41,6 @@ namespace Unary_Common.Client
         {
             RegistrySysShared = Sys.Ref.Shared.GetObject<Shared.RegistrySys>();
             EventSys = Sys.Ref.Shared.GetNode<EventSys>();
-
-            EventSys.SubscribeRPC(this, nameof(AddEntry), "Unary_Common.RegistrySys.AddEntry");
-            EventSys.SubscribeRPC(this, nameof(RemoveEntry), "Unary_Common.RegistrySys.RemoveEntry");
         }
 
         public override void Clear()

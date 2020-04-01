@@ -31,7 +31,6 @@ namespace Unary_Common.Structs
     {
         public string Name;
         public string Description;
-        public string Path;
         public Mod Mod;
         public List<Mod> Dependency;
         public List<string> Overrides;
@@ -43,7 +42,6 @@ namespace Unary_Common.Structs
             string Result = default;
             Result += "Name: " + Name + Environment.NewLine;
             Result += "Description: " + Description + Environment.NewLine;
-            Result += "Path: " + Path + Environment.NewLine;
             Result += "Mod: " + Mod + Environment.NewLine;
             Result += "Dependency: " + Dependency + Environment.NewLine;
             Result += "Overrides: " + Overrides + Environment.NewLine;

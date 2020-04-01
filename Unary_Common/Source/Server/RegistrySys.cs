@@ -54,24 +54,5 @@ namespace Unary_Common.Server
             RegistrySysShared.Synced = true;
             return new RegistrySysSync { Registry = RegistrySysShared.Registry };
         }
-
-        public void AddEntry(string RegistryName, string ModIDEntry)
-        {
-            NetworkSys.RPCIDAll("Unary_Common.RegistrySys.AddEntry", new RegistrySysEntry()
-            {
-                RegistryName = RegistryName,
-                ModIDEntry = ModIDEntry
-            });
-        }
-
-        public void RemoveEntry(string RegistryName, string ModIDEntry)
-        {
-            NetworkSys.RPCIDAll("Unary_Common.RegistrySys.RemoveEntry", new RegistrySysEntry()
-            {
-                RegistryName = RegistryName,
-                ModIDEntry = ModIDEntry
-            });
-        }
-
     }
 }

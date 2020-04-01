@@ -36,6 +36,7 @@ using Godot;
 
 using Steamworks;
 using MessagePack;
+using LiteNetLib;
 
 namespace Unary_Common.Client
 {
@@ -105,7 +106,7 @@ namespace Unary_Common.Client
         public void C(uint EventIndex, Args Arguments)
         {
             string EventName = RegistrySys.GetEntry("Unary_Common.Events", EventIndex);
-            Arguments.Peer = Multiplayer.GetRpcSenderId();
+            Arguments.ID = Multiplayer.GetRpcSenderId();
             EventSys.InvokeRPC(EventName, Arguments);
         }
     }

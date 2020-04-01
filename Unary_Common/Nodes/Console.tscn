@@ -27,10 +27,13 @@ __meta__ = {
 [node name="Container" type="VBoxContainer" parent="Window"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Window/Container"]
 margin_right = 670.0
-margin_bottom = 468.0
+margin_bottom = 464.0
 grow_horizontal = 0
 grow_vertical = 0
 size_flags_vertical = 3
@@ -38,16 +41,16 @@ scroll_horizontal_enabled = false
 
 [node name="ConsoleHistory" type="VBoxContainer" parent="Window/Container/ScrollContainer"]
 margin_right = 670.0
-margin_bottom = 468.0
+margin_bottom = 464.0
 grow_horizontal = 0
 grow_vertical = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ConsoleLine" type="LineEdit" parent="Window/Container"]
-margin_top = 472.0
+margin_top = 468.0
 margin_right = 670.0
-margin_bottom = 506.0
+margin_bottom = 502.0
 focus_neighbour_top = NodePath(".")
 focus_neighbour_right = NodePath(".")
 focus_neighbour_bottom = NodePath(".")
@@ -57,3 +60,11 @@ size_flags_horizontal = 3
 placeholder_text = "Enter commands..."
 placeholder_alpha = 0.484
 caret_blink = true
+
+[node name="Autofill" type="VBoxContainer" parent="Window/Container"]
+margin_top = 506.0
+margin_right = 670.0
+margin_bottom = 506.0
+__meta__ = {
+"_edit_use_anchors_": false
+}

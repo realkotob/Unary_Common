@@ -27,6 +27,6 @@ namespace Unary_Common.Arguments
     public class Args
     {
         public bool Canceled;
-        public int Peer;
+        public int ID;
     }
 }

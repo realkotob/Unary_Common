@@ -1,0 +1,65 @@
+[
+	{
+		"Target": "Unary_Common.Shared.ConsoleSys.Message",
+		"Alias": "Message",
+		"AliasColor": "White",
+		"Description": "Outputs messages in the console",
+		"DescriptionColor": "White"
+	},
+	{
+		"Target": "Unary_Common.Shared.ConsoleSys.Warning",
+		"Alias": "Warning",
+		"AliasColor": "Yellow",
+		"Description": "Outputs warnings in the console",
+		"DescriptionColor": "White"
+	},
+	{
+		"Target": "Unary_Common.Shared.ConsoleSys.Error",
+		"Alias": "Error",
+		"AliasColor": "Red",
+		"Description": "Outputs errors in the console",
+		"DescriptionColor": "White"
+	},
+	{
+		"Target": "Unary_Common.Shared.ConsoleSys.Panic",
+		"Alias": "Panic",
+		"AliasColor": "Red",
+		"Description": "Closes application due to an unresolvable error",
+		"DescriptionColor": "White"
+	},
+	{
+		"Target": "Unary_Common.Shared.InterpreterSys.Help",
+		"Alias": "Help",
+		"AliasColor": "Green",
+		"Description": "Outputs a few helpful commands to setup .json usage",
+		"DescriptionColor": "White"
+	},
+	{
+		"Target": "Unary_Common.Shared.InterpreterSys.ListModID",
+		"Alias": "ListModID",
+		"AliasColor": "Green",
+		"Description": "Outputs all of the currently registered ModID's",
+		"DescriptionColor": "White"
+	},
+	{
+		"Target": "Unary_Common.Shared.InterpreterSys.ListSystemTypes",
+		"Alias": "ListSystemTypes",
+		"AliasColor": "Green",
+		"Description": "Outputs all of the available system types to use in ListSystems()",
+		"DescriptionColor": "White"
+	},
+	{
+		"Target": "Unary_Common.Shared.InterpreterSys.ListSystems",
+		"Alias": "ListSystems",
+		"AliasColor": "Green",
+		"Description": "Outputs all of the available systems of chosen type",
+		"DescriptionColor": "White"
+	},
+	{
+		"Target": "Unary_Common.Shared.InterpreterSys.BindFile",
+		"Alias": "BindFile",
+		"AliasColor": "Purple",
+		"Description": "Allows to bind specific script to a key",
+		"DescriptionColor": "White"
+	}
+]

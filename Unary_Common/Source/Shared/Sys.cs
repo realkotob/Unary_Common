@@ -47,7 +47,7 @@ namespace Unary_Common.Shared
         public SysManager Server { get; private set; }
         public SysManager Client { get; private set; }
 
-        public SysMultiplayer MultiplayerType { get; set; }
+        public SysAppType AppType { get; set; }
 
         public List<string> LaunchArguments { get; private set; }
 
@@ -61,26 +61,28 @@ namespace Unary_Common.Shared
 
             LaunchArguments = OS.GetCmdlineArgs().ToList();
 
-            if(LaunchArguments.Contains("server"))
+            AppType = new SysAppType();
+
+            if (LaunchArguments.Contains("server"))
             {
-                MultiplayerType = SysMultiplayer.Server;
+                AppType.SetServer(true);
             }
             else
             {
-                MultiplayerType = SysMultiplayer.Client;
+                AppType.SetClient(true);
             }
 
-            if (MultiplayerType == SysMultiplayer.Server)
+            if (AppType.IsServer())
             {
                 Server.ConsoleSys ConsoleSys = new Server.ConsoleSys();
                 this.ConsoleSys = ConsoleSys;
-                Server.Add(ConsoleSys);
+                Shared.Add(ConsoleSys, ModIDEntry: "Unary_Common.Shared.ConsoleSys");
             }
             else
             {
                 Client.ConsoleSys ConsoleSys = NodeUtil.NewNode<Client.ConsoleSys>("Unary_Common", "Console");
                 this.ConsoleSys = ConsoleSys;
-                Client.Add(ConsoleSys);
+                Shared.Add(ConsoleSys, ModIDEntry: "Unary_Common.Shared.ConsoleSys");
             }
 
             Common NewCommon = new Common();
@@ -89,7 +91,7 @@ namespace Unary_Common.Shared
             Shared.Add(new BootSys());
             Shared.GetObject<BootSys>().Add("Unary_Common", NewCommon);
 
-            if(MultiplayerType == SysMultiplayer.Server)
+            if(AppType.IsServer())
             {
                 Shared.GetObject<BootSys>().AddServer("Unary_Common");
             }

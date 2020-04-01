@@ -28,5 +28,52 @@ namespace Unary_Common.Arguments
     {
         public ulong SteamID;
         public byte[] Ticket;
+
+        public static bool operator==(SteamPlayer Current, SteamPlayer Target)
+        {
+            if(Current.SteamID == Target.SteamID && Current.Ticket == Target.Ticket)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool operator !=(SteamPlayer Current, SteamPlayer Target)
+        {
+            if (Current.SteamID != Target.SteamID && Current.Ticket != Target.Ticket)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is SteamPlayer Target)
+            {
+                if (SteamID == Target.SteamID && Ticket == Target.Ticket)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+        public override string ToString()
+        {
+            string Result = default;
+            Result += "SteamID: " + SteamID + " Ticket: " + Ticket;
+            return Result;
+        }
+
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
     }
 }

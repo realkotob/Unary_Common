@@ -79,11 +79,12 @@ namespace Unary_Common.Shared
 			{
 				string Manifest = FilesystemUtil.SystemFileRead(Path + '/' + "Manifest.json");
 				NewMod = JsonConvert.DeserializeObject<ModManifest>(Manifest);
-				NewMod.Path = Path;
+				NewMod.Mod.Path = Path;
 			}
-			catch (System.Exception)
+			catch (System.Exception Exception)
 			{
 				ConsoleSys.Error("Failed to parse " + Path + '/' + "Manifest.json");
+				ConsoleSys.Error(Exception.Message);
 				return;
 			}
 
