@@ -79,6 +79,16 @@ namespace Unary_Common.Structs
             return Result;
         }
 
+        public bool Contains<T>()
+        {
+            return Contains(ModIDUtil.FromType(typeof(T)));
+        }
+
+        public bool Contains(string ModIDEntry)
+        {
+            return Order.Contains(ModIDEntry);
+        }
+
         public SysType GetType<T>() where T : ISysEntry
         {
             return GetType(ModIDUtil.FromType(typeof(T)));
@@ -222,7 +232,7 @@ namespace Unary_Common.Structs
             if (!ModIDUtil.Validate(ModIDEntry))
             {
                 Sys.Ref.ConsoleSys.Error("Failed to verify " + ModIDEntry);
-                return default;
+                return null;
             }
 
             if(Types.ContainsKey(ModIDEntry))
@@ -239,7 +249,7 @@ namespace Unary_Common.Structs
             else
             {
                 Sys.Ref.ConsoleSys.Error("Failed to get type of " + ModIDEntry);
-                return default;
+                return null;
             }
         }
 
@@ -253,7 +263,7 @@ namespace Unary_Common.Structs
             if (!ModIDUtil.Validate(ModIDEntry))
             {
                 Sys.Ref.ConsoleSys.Error("Failed to verify " + ModIDEntry);
-                return default;
+                return null;
             }
 
             if (Objects.ContainsKey(ModIDEntry))
@@ -263,7 +273,7 @@ namespace Unary_Common.Structs
             else
             {
                 Sys.Ref.ConsoleSys.Error("Failed to find " + ModIDEntry + " as an object");
-                return default;
+                return null;
             }
         }
 
@@ -277,7 +287,7 @@ namespace Unary_Common.Structs
             if (!ModIDUtil.Validate(ModIDEntry))
             {
                 Sys.Ref.ConsoleSys.Error("Failed to verify " + ModIDEntry);
-                return default;
+                return null;
             }
 
             if (Nodes.ContainsKey(ModIDEntry))
@@ -287,7 +297,7 @@ namespace Unary_Common.Structs
             else
             {
                 Sys.Ref.ConsoleSys.Error("Failed to find " + ModIDEntry + " as a node");
-                return default;
+                return null;
             }
         }
 
@@ -301,7 +311,7 @@ namespace Unary_Common.Structs
             if (!ModIDUtil.Validate(ModIDEntry))
             {
                 Sys.Ref.ConsoleSys.Error("Failed to verify " + ModIDEntry);
-                return default;
+                return null;
             }
 
             if (Nodes.ContainsKey(ModIDEntry))
@@ -311,7 +321,7 @@ namespace Unary_Common.Structs
             else
             {
                 Sys.Ref.ConsoleSys.Error("Failed to find " + ModIDEntry + " as an UI");
-                return default;
+                return null;
             }
         }
 

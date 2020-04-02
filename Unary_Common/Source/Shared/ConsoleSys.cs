@@ -39,7 +39,7 @@ namespace Unary_Common.Shared
 {
 	public class ConsoleSys : SysUI
 	{
-		private enum ConsoleColors
+		public enum ConsoleColors : byte
 		{
 			Message,
 			Warning,
@@ -198,7 +198,10 @@ namespace Unary_Common.Shared
 
 			ConsoleEntryLabel.Text = Text;
 
-			//Sys.Ref.Shared.GetNode<RCONSys>()?.Send(Text);
+			if (Sys.Ref.Shared.Contains<RCONSys>())
+			{
+				Sys.Ref.Shared.GetNode<RCONSys>().Send(Text, TextColor);
+			}
 
 			ConsoleHistory.AddChild(ConsoleEntryLabel);
 

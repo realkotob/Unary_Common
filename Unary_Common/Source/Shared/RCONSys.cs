@@ -81,12 +81,13 @@ namespace Unary_Common.Shared
             request.AcceptIfKey(Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<string>("Unary_Common.Network.RCONPassword"));
         }
 
-        public void Send(string Result)
+        public void Send(string Result, ConsoleSys.ConsoleColors Color)
         {
             NetDataWriter Writer = new NetDataWriter();
-            Writer.Put(Result);
+            Writer.Put((byte)Color);
+            Writer.Put(Encoding.UTF8.GetBytes(Result));
 
-            foreach (var Peer in Server.GetPeers(ConnectionState.Connected))
+            foreach (var Peer in Server.GetPeers(ConnectionState.Any))
             {
                 Peer.Send(Writer, DeliveryMethod.ReliableOrdered);
             }
