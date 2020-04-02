@@ -198,6 +198,8 @@ namespace Unary_Common.Shared
 
 			ConsoleEntryLabel.Text = Text;
 
+			//Sys.Ref.Shared.GetNode<RCONSys>()?.Send(Text);
+
 			ConsoleHistory.AddChild(ConsoleEntryLabel);
 
 			CallDeferred(nameof(SetScrollbar));

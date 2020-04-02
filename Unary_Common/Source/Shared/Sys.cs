@@ -1,4 +1,4 @@
-﻿/*
+/*
 MIT License
 
 Copyright (c) 2020 Unary Incorporated
@@ -37,114 +37,114 @@ using Godot;
 
 namespace Unary_Common.Shared
 {
-    public class Sys : Node
-    {
-        public static Sys Ref { get; private set; }
+	public class Sys : Node
+	{
+		public static Sys Ref { get; private set; }
 
-        public ConsoleSys ConsoleSys { get; private set; }
+		public ConsoleSys ConsoleSys { get; private set; }
 
-        public SysManager Shared { get; private set; }
-        public SysManager Server { get; private set; }
-        public SysManager Client { get; private set; }
+		public SysManager Shared { get; private set; }
+		public SysManager Server { get; private set; }
+		public SysManager Client { get; private set; }
 
-        public SysAppType AppType { get; private set; }
+		public SysAppType AppType { get; private set; }
 
-        public List<string> LaunchArguments { get; private set; }
+		public List<string> LaunchArguments { get; private set; }
 
-        public override void _Ready()
-        {
-            Ref = this;
+		public override void _Ready()
+		{
+			Ref = this;
 
-            Shared = new SysManager();
-            Server = new SysManager();
-            Client = new SysManager();
+			Shared = new SysManager();
+			Server = new SysManager();
+			Client = new SysManager();
 
-            AddChild(Shared);
-            AddChild(Server);
-            AddChild(Client);
+			AddChild(Shared);
+			AddChild(Server);
+			AddChild(Client);
 
-            LaunchArguments = OS.GetCmdlineArgs().ToList();
+			LaunchArguments = OS.GetCmdlineArgs().ToList();
 
-            AppType = new SysAppType();
+			AppType = new SysAppType();
 
-            if (LaunchArguments.Contains("server"))
-            {
-                AppType.SetServer(true);
-            }
-            else
-            {
-                AppType.SetClient(true);
-            }
+			if (LaunchArguments.Contains("server"))
+			{
+				AppType.SetServer(true);
+			}
+			else
+			{
+				AppType.SetClient(true);
+			}
 
-            Shared.Add(NodeUtil.NewNode<ConsoleSys>("Unary_Common", "Console"));
+			Shared.AddUI(new ConsoleSys(), "Console");
 
-            ConsoleSys = Shared.GetUI<ConsoleSys>();
+			ConsoleSys = Shared.GetUI<ConsoleSys>();
 
-            Common NewCommon = new Common();
-            NewCommon.AddShared();
+			Common NewCommon = new Common();
+			NewCommon.AddShared();
 
-            Shared.Add(new BootSys());
+			Shared.AddObject(new BootSys());
 
-            Shared.GetObject<BootSys>().Add("Unary_Common", NewCommon);
+			Shared.GetObject<BootSys>().Add("Unary_Common", NewCommon);
 
-            if(AppType.IsServer())
-            {
-                Shared.GetObject<BootSys>().AddServer("Unary_Common");
-            }
-            else
-            {
-                Shared.GetObject<BootSys>().AddClient("Unary_Common");
-            }
+			if(AppType.IsServer())
+			{
+				Shared.GetObject<BootSys>().AddServer("Unary_Common");
+			}
+			else
+			{
+				Shared.GetObject<BootSys>().AddClient("Unary_Common");
+			}
 
-            Shared.Add(new ModSys());
+			Shared.AddObject(new ModSys());
 
-            Mod CoreMod = Shared.GetObject<ModSys>().Core.Mod;
+			Mod CoreMod = Shared.GetObject<ModSys>().Core.Mod;
 
-            Shared.InitCore(CoreMod);
+			Shared.InitCore(CoreMod);
 
-            if (AppType.IsServer())
-            {
-                Server.InitCore(CoreMod);
-            }
-            else
-            {
-                Client.InitCore(CoreMod);
-            }
+			if (AppType.IsServer())
+			{
+				Server.InitCore(CoreMod);
+			}
+			else
+			{
+				Client.InitCore(CoreMod);
+			}
 
-            Shared.GetObject<BootSys>().AddShared(CoreMod.ModID);
+			Shared.GetObject<BootSys>().AddShared(CoreMod.ModID);
 
-            if (AppType.IsServer())
-            {
-                Shared.GetObject<BootSys>().AddServer(CoreMod.ModID);
-            }
-            else
-            {
-                Shared.GetObject<BootSys>().AddClient(CoreMod.ModID);
-            }
-        }
+			if (AppType.IsServer())
+			{
+				Shared.GetObject<BootSys>().AddServer(CoreMod.ModID);
+			}
+			else
+			{
+				Shared.GetObject<BootSys>().AddClient(CoreMod.ModID);
+			}
+		}
 
-        public void Quit()
-        {
-            Server.ClearMods();
-            Client.ClearMods();
-            Shared.ClearMods();
+		public void Quit()
+		{
+			Server.ClearMods();
+			Client.ClearMods();
+			Shared.ClearMods();
 
-            Server.Clear();
-            Client.Clear();
-            Shared.Clear();
+			Server.Clear();
+			Client.Clear();
+			Shared.Clear();
 
-            ConsoleSys = null;
+			ConsoleSys = null;
 
-            Ref = null;
-        }
+			Ref = null;
+		}
 
-        public override void _Notification(int what)
-        {
-            if (what == MainLoop.NotificationWmQuitRequest)
-            {
-                Quit();
-            }
-        }
+		public override void _Notification(int what)
+		{
+			if (what == MainLoop.NotificationWmQuitRequest)
+			{
+				Quit();
+			}
+		}
 
-    }
+	}
 }

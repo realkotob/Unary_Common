@@ -34,6 +34,10 @@
     "Type": "System.Int32",
     "Value": 33001
   },
+  "Unary_Common.Network.RCONPassword": {
+    "Type": "System.String",
+    "Value": "Password"
+  },
   "Unary_Common.Network.MaxPlayers": {
     "Type": "System.Int32",
     "Value": 4

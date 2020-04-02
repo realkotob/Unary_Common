@@ -41,19 +41,20 @@ namespace Unary_Common
 			Sys = Sys.Ref;
 
 			// Adding shared systems
-			Sys.Shared.Add(new Shared.RegistrySys());
-			Sys.Shared.Add(new EventSys());
-			Sys.Shared.Add(new AssemblySys());
-			Sys.Shared.Add(new ConfigSys());
-			Sys.Shared.Add(new Shared.SteamSys());
-			Sys.Shared.Add(new FilesystemSys());
-			Sys.Shared.Add(new EntriesSys());
-			Sys.Shared.Add(new InterpreterSys());
-			Sys.Shared.Add(new HarmonySys());
-			Sys.Shared.Add(new OSSys());
-			Sys.Shared.Add(new RandomSys());
-			Sys.Shared.Add(new DataSys());
-			Sys.Shared.Add(new SaveSys());
+			Sys.Shared.AddObject(new Shared.RegistrySys());
+			Sys.Shared.AddNode(new EventSys());
+			Sys.Shared.AddObject(new AssemblySys());
+			Sys.Shared.AddObject(new ConfigSys());
+			Sys.Shared.AddNode(new Shared.SteamSys());
+			Sys.Shared.AddObject(new FilesystemSys());
+			Sys.Shared.AddObject(new EntriesSys());
+			Sys.Shared.AddNode(new InterpreterSys());
+			Sys.Shared.AddNode(new RCONSys());
+			Sys.Shared.AddObject(new HarmonySys());
+			Sys.Shared.AddNode(new OSSys());
+			Sys.Shared.AddNode(new RandomSys());
+			Sys.Shared.AddObject(new DataSys());
+			Sys.Shared.AddObject(new SaveSys());
 			//Sys.Shared.Add(new ProfilerManager());
 		}
 
@@ -61,27 +62,27 @@ namespace Unary_Common
 		{
 			// Adding client systems
 
-			Sys.Client.Add(new Client.DiscordSys());
-			Sys.Client.Add(new Client.LocaleSys());
-			Sys.Client.Add(new Client.BindSys());
-			Sys.Client.Add(new Client.SteamSys());
-			Sys.Client.Add(new MusicSys());
-			Sys.Client.Add(new AlertSys(), "Alert");
+			Sys.Client.AddNode(new Client.DiscordSys());
+			Sys.Client.AddObject(new Client.LocaleSys());
+			Sys.Client.AddNode(new Client.BindSys());
+			Sys.Client.AddObject(new Client.SteamSys());
+			Sys.Client.AddNode(new MusicSys());
+			Sys.Client.AddUI(new AlertSys(), "Alert");
 
-			Sys.Client.Add(new Client.NetworkSys());
-			Sys.Client.Add(new Client.RegistrySys());
+			Sys.Client.AddNode(new Client.NetworkSys());
+			Sys.Client.AddObject(new Client.RegistrySys());
 			
-			Sys.Client.Add(new SceneSys());
+			Sys.Client.AddNode(new SceneSys());
 		}
 
 		public void AddServer()
 		{
 
-			Sys.Server.Add(new Server.SteamSys());
-			Sys.Server.Add(new Server.NetworkSys());
-			Sys.Server.Add(new Server.RegistrySys());
+			Sys.Server.AddObject(new Server.SteamSys());
+			Sys.Server.AddNode(new Server.NetworkSys());
+			Sys.Server.AddObject(new Server.RegistrySys());
 
-			Sys.Server.Add(new SceneSys());
+			Sys.Server.AddNode(new SceneSys());
 		}
 	}
 }

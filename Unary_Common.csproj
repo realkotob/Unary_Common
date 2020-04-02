@@ -133,6 +133,7 @@
     <Compile Include="Unary_Common\Source\Shared\BootSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\DataSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\RandomSys.cs" />
+    <Compile Include="Unary_Common\Source\Shared\RCONSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Shared\SaveSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\BoundPath.cs" />

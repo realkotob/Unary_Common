@@ -97,9 +97,9 @@ namespace Unary_Common.Structs
             }
         }
 
-        public void Add(ISysEntry NewSystem, string LoadPath = null, string ModIDEntry = null)
+        public void AddObject<T>(T NewSystem, string ModIDEntry = null) where T : SysObject
         {
-            if(ModIDEntry == null)
+            if (ModIDEntry == null)
             {
                 ModIDEntry = ModIDUtil.FromType(NewSystem.GetType());
             }
@@ -116,58 +116,100 @@ namespace Unary_Common.Structs
                 return;
             }
 
-            if (NewSystem is SysObject Object)
+            NewSystem.Init();
+            Objects[ModIDEntry] = NewSystem;
+            Types[ModIDEntry] = SysType.Object;
+            Order.Add(ModIDEntry);
+        }
+
+        public void AddNode<T>(T NewNode, string LoadPath = null, string ModIDEntry = null) where T : SysNode
+        {
+            if (ModIDEntry == null)
             {
-                Object.Init();
-                Objects[ModIDEntry] = Object;
-                Types[ModIDEntry] = SysType.Object;
-                Order.Add(ModIDEntry);
-            }
-            else if (NewSystem is SysNode Node)
-            {
-                if (LoadPath != null)
-                {
-                    Node.QueueFree();
-                    Node = NodeUtil.NewNode<SysNode>(ModIDUtil.ModID(ModIDEntry), LoadPath);
-                }
-
-                Node.Init();
-                Node.Name = ModIDEntry;
-                AddChild(Node, true);
-
-                Nodes[ModIDEntry] = new NodeID()
-                {
-                    ID = GetChildCount() - 1
-                };
-
-                Types[ModIDEntry] = SysType.Node;
-                Order.Add(ModIDEntry);
-            }
-            else if(NewSystem is SysUI UI)
-            {
-                if (LoadPath != null)
-                {
-                    UI.QueueFree();
-                    UI = NodeUtil.NewNode<SysUI>(ModIDUtil.ModID(ModIDEntry), LoadPath);
-                }
-
-                UI.Init();
-                UI.Name = ModIDEntry;
-                AddChild(UI, true);
-
-                Nodes[ModIDEntry] = new NodeID()
-                {
-                    ID = GetChildCount() - 1
-                };
-
-                Types[ModIDEntry] = SysType.UI;
-                Order.Add(ModIDEntry);
-            }
-            else
-            {
-                Sys.Ref.ConsoleSys.Error("Failed to register " + ModIDEntry);
+                ModIDEntry = ModIDUtil.FromType(NewNode.GetType());
             }
 
+            if (!ModIDUtil.Validate(ModIDEntry))
+            {
+                Sys.Ref.ConsoleSys.Error("Failed to validate " + ModIDEntry);
+                return;
+            }
+
+            if (Types.ContainsKey(ModIDEntry))
+            {
+                Sys.Ref.ConsoleSys.Error(ModIDEntry + " is already registered.");
+                return;
+            }
+
+            if (LoadPath != null)
+            {
+                NewNode.QueueFree();
+                NewNode = NodeUtil.NewNode<T>(ModIDUtil.ModID(ModIDEntry), LoadPath);
+            }
+
+            NewNode.Init();
+            NewNode.Name = ModIDEntry;
+            AddChild(NewNode, true);
+
+            NodeID NewNodeID = new NodeID()
+            {
+                ID = GetChildCount() - 1
+            };
+
+            if (LoadPath != null)
+            {
+                NewNodeID.Path = LoadPath;
+            }
+
+            Nodes[ModIDEntry] = NewNodeID;
+
+            Types[ModIDEntry] = SysType.Node;
+            Order.Add(ModIDEntry);
+        }
+
+        public void AddUI<T>(T NewUI, string LoadPath = null, string ModIDEntry = null) where T : SysUI
+        {
+            if (ModIDEntry == null)
+            {
+                ModIDEntry = ModIDUtil.FromType(NewUI.GetType());
+            }
+
+            if (!ModIDUtil.Validate(ModIDEntry))
+            {
+                Sys.Ref.ConsoleSys.Error("Failed to validate " + ModIDEntry);
+                return;
+            }
+
+            if (Types.ContainsKey(ModIDEntry))
+            {
+                Sys.Ref.ConsoleSys.Error(ModIDEntry + " is already registered.");
+                return;
+            }
+
+            if (LoadPath != null)
+            {
+                NewUI.QueueFree();
+                NewUI = NodeUtil.NewNode<T>(ModIDUtil.ModID(ModIDEntry), LoadPath);
+            }
+
+            NewUI.Init();
+            NewUI.Name = ModIDEntry;
+            AddChild(NewUI, true);
+
+            NodeID NewNodeID = new NodeID()
+            {
+                ID = GetChildCount() - 1
+            };
+
+            if (LoadPath != null)
+            {
+                NewNodeID.Path = LoadPath;
+            }
+
+            Nodes[ModIDEntry] = NewNodeID;
+
+            Types[ModIDEntry] = SysType.UI;
+            Order.Add(ModIDEntry);
         }
 
         public ISysEntry Get<T>() where T : ISysEntry
