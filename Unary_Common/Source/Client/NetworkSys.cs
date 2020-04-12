@@ -50,14 +50,14 @@ namespace Unary_Common.Client
         {
             EventSys = Sys.Ref.Shared.GetNode<EventSys>();
             SteamSys = Sys.Ref.Client.GetObject<SteamSys>();
-            RegistrySys = Sys.Ref.Shared.GetObject<Shared.RegistrySys>();
+            RegistrySys = Sys.Ref.Shared.GetObject<RegistrySys>();
         }
 
         public void Start(string Address = "127.0.0.1", int Port = 0, int MaxPlayers = 0)
         {
             if (Port == 0)
             {
-                Port = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<int>("Unary_Common.Network.Port");
+                Port = Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<int>("Unary_Common.Network.Port");
             }
             
             NetworkedMultiplayerENet NewPeer = new NetworkedMultiplayerENet();
@@ -79,35 +79,35 @@ namespace Unary_Common.Client
 
         public void OnConnectedToServer()
         {
-            EventSys.InvokeEvent("Unary_Common.Connected", null);
+            EventSys.Internal.Invoke("Unary_Common.Connected", null);
         }
 
         public void OnConnectionFailed()
         {
-            EventSys.InvokeEvent("Unary_Common.ConnectionFailed", null);
+            EventSys.Internal.Invoke("Unary_Common.ConnectionFailed", null);
         }
 
         public void OnServerDisconnected()
         {
-            EventSys.InvokeEvent("Unary_Common.Disconnected", null);
+            EventSys.Internal.Invoke("Unary_Common.Disconnected", null);
         }
 
         public void RPC(string EventName, Args Arguments)
         {
-            Rpc("S", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
+            Rpc("S", RegistrySys.Client.GetEntry("Unary_Common.Events", EventName), Arguments);
         }
 
         public void RPCUnreliable(string EventName, Args Arguments)
         {
-            RpcUnreliable("S", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
+            RpcUnreliable("S", RegistrySys.Client.GetEntry("Unary_Common.Events", EventName), Arguments);
         }
 
         [Remote]
         public void C(uint EventIndex, Args Arguments)
         {
-            string EventName = RegistrySys.GetEntry("Unary_Common.Events", EventIndex);
+            string EventName = RegistrySys.Client.GetEntry("Unary_Common.Events", EventIndex);
             Arguments.ID = Multiplayer.GetRpcSenderId();
-            EventSys.InvokeRPC(EventName, Arguments);
+            EventSys.Remote.Invoke(EventName, Arguments);
         }
     }
 }

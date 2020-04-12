@@ -27,267 +27,44 @@ using Unary_Common.Structs;
 using Unary_Common.Shared;
 using Unary_Common.Utils;
 using Unary_Common.Abstract;
-
-using Godot;
-
-using System;
-using System.IO;
-using System.Collections.Generic;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Unary_Common.Subsystems;
 
 namespace Unary_Common.Shared
 {
 	public class ConfigSys : SysObject
 	{
-		private Dictionary<string, Config> SharedConfigs;
-		private Dictionary<string, Config> ClientConfigs;
-		private Dictionary<string, Config> ServerConfigs;
+		public ConfigManager Server { get; private set; }
+		public ConfigManager Client { get; private set; }
+		public ConfigManager Shared { get; private set; }
 
 		public override void Init()
 		{
-			SharedConfigs = new Dictionary<string, Config>();
-			ClientConfigs = new Dictionary<string, Config>();
-			ServerConfigs = new Dictionary<string, Config>();
+			Server = new ConfigManager("Server");
+			Client = new ConfigManager("Client");
+			Shared = new ConfigManager("Shared");
 
-			LoadConfig("Unary_Common", ".");
+			Shared.Load("Unary_Common", ".");
 		}
 
 		public override void Clear()
 		{
-			SharedConfigs.Clear();
-			ClientConfigs.Clear();
-			ServerConfigs.Clear();
+			Server.Clear();
+			Client.Clear();
+			Shared.Clear();
 		}
 
 		public override void ClearMod(Mod Mod)
 		{
-			if(ServerConfigs.ContainsKey(Mod.ModID))
-			{
-				ServerConfigs[Mod.ModID].Save();
-				ServerConfigs.Remove(Mod.ModID);
-			}
-
-			if (ClientConfigs.ContainsKey(Mod.ModID))
-			{
-				ClientConfigs[Mod.ModID].Save();
-				ClientConfigs.Remove(Mod.ModID);
-			}
-
-			if (SharedConfigs.ContainsKey(Mod.ModID))
-			{
-				SharedConfigs[Mod.ModID].Save();
-				SharedConfigs.Remove(Mod.ModID);
-			}
+			Server.ClearMod(Mod);
+			Client.ClearMod(Mod);
+			Shared.ClearMod(Mod);
 		}
 
 		private void LoadConfig(string ModID, string Path)
 		{
-			string SharedPath = Path + '/' + "Shared.json";
-			string ClientPath = Path + '/' + "Client.json";
-			string ServerPath = Path + '/' + "Server.json";
-
-			if (FilesystemUtil.SystemFileExists(SharedPath))
-			{
-				if (!SharedConfigs.ContainsKey(ModID))
-				{
-					Config NewConfig = new Config();
-					NewConfig.Init(SharedPath);
-					SharedConfigs[ModID] = NewConfig;
-				}
-			}
-
-			if (FilesystemUtil.SystemFileExists(ClientPath))
-			{
-				if (!ClientConfigs.ContainsKey(ModID))
-				{
-					Config NewConfig = new Config();
-					NewConfig.Init(ClientPath);
-					ClientConfigs[ModID] = NewConfig;
-				}
-			}
-
-			if (FilesystemUtil.SystemFileExists(ServerPath))
-			{
-				if (!ServerConfigs.ContainsKey(ModID))
-				{
-					Config NewConfig = new Config();
-					NewConfig.Init(ServerPath);
-					ServerConfigs[ModID] = NewConfig;
-				}
-			}
-		}
-
-		public void SubscribeShared(Godot.Object Target, string MemberName, string ConfigVariable, SubscriberType Type)
-		{
-			if (!ModIDUtil.Validate(ConfigVariable))
-			{
-				return;
-			}
-
-			string NewModID = ModIDUtil.ModID(ConfigVariable);
-
-			if (SharedConfigs.ContainsKey(NewModID))
-			{
-				SharedConfigs[NewModID].Subscribe(Target, MemberName, ConfigVariable, Type);
-			}
-		}
-
-		public void SubscribeClient(Godot.Object Target, string MemberName, string ConfigVariable, SubscriberType Type)
-		{
-			if (!ModIDUtil.Validate(ConfigVariable))
-			{
-				return;
-			}
-
-			string NewModID = ModIDUtil.ModID(ConfigVariable);
-
-			if (ClientConfigs.ContainsKey(NewModID))
-			{
-				ClientConfigs[NewModID].Subscribe(Target, MemberName, ConfigVariable, Type);
-			}
-		}
-
-		public void SubscribeServer(Godot.Object Target, string MemberName, string ConfigVariable, SubscriberType Type)
-		{
-			if (!ModIDUtil.Validate(ConfigVariable))
-			{
-				return;
-			}
-
-			string NewModID = ModIDUtil.ModID(ConfigVariable);
-
-			if (ServerConfigs.ContainsKey(NewModID))
-			{
-				ServerConfigs[NewModID].Subscribe(Target, MemberName, ConfigVariable, Type);
-			}
-		}
-
-		public T GetShared<T>(string ConfigVariable)
-		{
-			if (!ModIDUtil.Validate(ConfigVariable))
-			{
-				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
-				return default;
-			}
-
-			string NewModID = ModIDUtil.ModID(ConfigVariable);
-
-			if (SharedConfigs.ContainsKey(NewModID))
-			{
-				return (T)SharedConfigs[NewModID].Get(ConfigVariable);
-			}
-			else
-			{
-				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
-				return default;
-			}
-		}
-
-		public T GetClient<T>(string ConfigVariable)
-		{
-			if (ModIDUtil.Validate(ConfigVariable))
-			{
-				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
-				return default;
-			}
-
-			string NewModID = ModIDUtil.ModID(ConfigVariable);
-
-			if (ClientConfigs.ContainsKey(NewModID))
-			{
-				return (T)ClientConfigs[NewModID].Get(ConfigVariable);
-			}
-			else
-			{
-				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
-				return default;
-			}
-		}
-
-		public T GetServer<T>(string ConfigVariable)
-		{
-			if (!ModIDUtil.Validate(ConfigVariable))
-			{
-				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
-				return default;
-			}
-
-			string NewModID = ModIDUtil.ModID(ConfigVariable);
-
-			if (ServerConfigs.ContainsKey(NewModID))
-			{
-				return (T)ServerConfigs[NewModID].Get(ConfigVariable);
-			}
-			else
-			{
-				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
-				return default;
-			}
-		}
-
-		public void SetShared(string ConfigVariable, object Value)
-		{
-			if (!ModIDUtil.Validate(ConfigVariable))
-			{
-				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
-				return;
-			}
-
-			string NewModID = ModIDUtil.ModID(ConfigVariable);
-
-			if (SharedConfigs.ContainsKey(NewModID))
-			{
-				SharedConfigs[NewModID].Set(ConfigVariable, Value);
-			}
-			else
-			{
-				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
-				return;
-			}
-		}
-
-		public void SetClient(string ConfigVariable, object Value)
-		{
-			if (!ModIDUtil.Validate(ConfigVariable))
-			{
-				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
-				return;
-			}
-
-			string NewModID = ModIDUtil.ModID(ConfigVariable);
-
-			if (ClientConfigs.ContainsKey(NewModID))
-			{
-				ClientConfigs[NewModID].Set(ConfigVariable, Value);
-			}
-			else
-			{
-				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
-				return;
-			}
-		}
-
-		public void SetServer(string ConfigVariable, object Value)
-		{
-			if (!ModIDUtil.Validate(ConfigVariable))
-			{
-				Sys.Ref.ConsoleSys.Error("Failed to validate " + ConfigVariable);
-				return;
-			}
-
-			string NewModID = ModIDUtil.ModID(ConfigVariable);
-
-			if (ServerConfigs.ContainsKey(NewModID))
-			{
-				ServerConfigs[NewModID].Set(ConfigVariable, Value);
-			}
-			else
-			{
-				Sys.Ref.ConsoleSys.Error("Tried to access non-existing config variable " + ConfigVariable);
-				return;
-			}
+			Server.Load(ModID, Path);
+			Client.Load(ModID, Path);
+			Shared.Load(ModID, Path);
 		}
 
 		public override void InitCore(Mod Mod)
@@ -302,20 +79,9 @@ namespace Unary_Common.Shared
 
 		public void Reload()
 		{
-			foreach (var Config in ServerConfigs)
-			{
-				Config.Value.Load();
-			}
-
-			foreach (var Config in ClientConfigs)
-			{
-				Config.Value.Load();
-			}
-
-			foreach (var Config in SharedConfigs)
-			{
-				Config.Value.Load();
-			}
+			Server.Reload();
+			Client.Reload();
+			Shared.Reload();
 		}
 	}
 }

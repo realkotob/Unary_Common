@@ -47,8 +47,8 @@ namespace Unary_Common.Client
             EventSys = Sys.Ref.Shared.GetNode<EventSys>();
             CallbackGameOverlayActivated = Callback<GameOverlayActivated_t>.Create(OnOverlayActivated);
 
-            EventSys.SubscribeEvent(this, nameof(OnConnected), "Unary_Common.Connected");
-            EventSys.SubscribeEvent(this, nameof(OnDisconnected), "Unary_Common.Disconnected");
+            EventSys.Internal.Subscribe(this, nameof(OnConnected), "Unary_Common.Connected");
+            EventSys.Internal.Subscribe(this, nameof(OnDisconnected), "Unary_Common.Disconnected");
         }
 
         public override void Clear()
@@ -60,7 +60,7 @@ namespace Unary_Common.Client
         {
             OverlayActivated NewResponse = new OverlayActivated();
             NewResponse.Active = Callback.m_bActive;
-            EventSys.InvokeEvent("Unary_Common.Overlay", NewResponse);
+            EventSys.Internal.Invoke("Unary_Common.Overlay", NewResponse);
         }
 
         public string GetNickname()

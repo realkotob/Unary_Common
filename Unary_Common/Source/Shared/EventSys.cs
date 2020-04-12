@@ -27,6 +27,7 @@ using Unary_Common.Structs;
 using Unary_Common.Utils;
 using Unary_Common.Arguments;
 using Unary_Common.Abstract;
+using Unary_Common.Subsystems;
 
 using Godot;
 
@@ -38,143 +39,25 @@ namespace Unary_Common.Shared
 {
     public class EventSys : SysNode
     {
-        private RegistrySys RegistrySys;
-
-        private Dictionary<string, List<Subscriber>> EventSubscribers;
-        private Dictionary<string, List<Subscriber>> RPCSubscribers;
+        public SubscriberManager Internal { get; private set; }
+        public SubscriberManager Remote { get; private set; }
 
         public override void Init()
         {
-            RegistrySys = Sys.Ref.Shared.GetObject<RegistrySys>();
-
-            EventSubscribers = new Dictionary<string, List<Subscriber>>();
-            RPCSubscribers = new Dictionary<string, List<Subscriber>>();
+            Internal = new SubscriberManager();
+            Remote = new SubscriberManager();
         }
 
         public override void Clear()
         {
-            EventSubscribers.Clear();
-            RPCSubscribers.Clear();
+            Internal.Clear();
+            Remote.Clear();
         }
 
         public override void ClearMod(Mod Mod)
         {
-            foreach (var Name in EventSubscribers.ToList())
-            {
-                if(Name.Key.BeginsWith(Mod.ModID + '.'))
-                {
-                    EventSubscribers.Remove(Name.Key);
-                }
-            }
-
-            foreach (var Name in RPCSubscribers.ToList())
-            {
-                if (Name.Key.BeginsWith(Mod.ModID + '.'))
-                {
-                    RPCSubscribers.Remove(Name.Key);
-                }
-            }
-        }
-
-        public void RegisterRPC(string EventName)
-        {
-            if (!RPCSubscribers.ContainsKey(EventName))
-            {
-                RPCSubscribers[EventName] = new List<Subscriber>();
-                RegistrySys.AddEntry("Unary_Common.Events", EventName);
-            }
-        }
-
-        public void SubscribeEvent(Godot.Object Target, string MemberName, string EventName)
-        {
-            if(!EventSubscribers.ContainsKey(EventName))
-            {
-                EventSubscribers[EventName] = new List<Subscriber>();
-            }
-
-            Subscriber NewSubscriber = new Subscriber
-            {
-                Target = Target,
-                MemberName = MemberName,
-                Type = SubscriberType.Method
-            };
-
-            EventSubscribers[EventName].Add(NewSubscriber);
-        }
-
-        public void SubscribeRPC(Godot.Object Target, string MemberName, string EventName)
-        {
-            Subscriber NewSubscriber = new Subscriber
-            {
-                Target = Target,
-                MemberName = MemberName,
-                Type = SubscriberType.Method
-            };
-
-            RPCSubscribers[EventName].Add(NewSubscriber);
-        }
-
-        private void Invoke(string EventName, Args Arguments, ref Dictionary<string, List<Subscriber>> Subscribers)
-        {
-            if (Subscribers.ContainsKey(EventName))
-            {
-                for (int i = Subscribers[EventName].Count - 1; i >= 0; --i)
-                {
-                    Subscriber Subscriber = Subscribers[EventName][i];
-
-                    if (IsInstanceValid(Subscriber.Target))
-                    {
-                        object Result;
-
-                        if(Arguments == null)
-                        {
-                            Result = Subscriber.Target.Call(Subscriber.MemberName);
-                        }
-                        else
-                        {
-                            Result = Subscriber.Target.Call(Subscriber.MemberName, Arguments);
-                        }
-
-                        if (Result == null)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            Arguments = (Args)Result;
-
-                            if (Arguments.Canceled)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Subscribers[EventName].RemoveAt(i);
-                    }
-                }
-            }
-            else
-            {
-                Sys.Ref.ConsoleSys.Warning("Tried invoking event with no subscribers");
-            }
-        }
-
-        public void InvokeEvent(string Name, Args Arguments)
-        {
-            if(EventSubscribers.ContainsKey(Name))
-            {
-                Invoke(Name, Arguments, ref EventSubscribers);
-            }
-        }
-        
-        public void InvokeRPC(string Name, Args Arguments)
-        {
-            if (RPCSubscribers.ContainsKey(Name))
-            {
-                Invoke(Name, Arguments, ref RPCSubscribers);
-            }
+            Internal.ClearMod(Mod);
+            Remote.ClearMod(Mod);
         }
     }
 }

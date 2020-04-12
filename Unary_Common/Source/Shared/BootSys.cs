@@ -64,7 +64,7 @@ namespace Unary_Common.Shared
             }
 
             ModSys ModSys = Sys.Ref.Shared.GetObject<ModSys>();
-            AssemblySys AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
+            AssemblySys AssemblySys = Sys.Ref.Shared.GetNode<AssemblySys>();
 
             string BootTarget = ModSys.Core.Boot;
 
@@ -96,7 +96,7 @@ namespace Unary_Common.Shared
             }
 
             ModSys ModSys = Sys.Ref.Shared.GetObject<ModSys>();
-            AssemblySys AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
+            AssemblySys AssemblySys = Sys.Ref.Shared.GetNode<AssemblySys>();
 
             string BootTarget = ModSys.GetManifest(Mod).Boot;
 

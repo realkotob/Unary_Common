@@ -41,9 +41,9 @@ namespace Unary_Common
 			Sys = Sys.Ref;
 
 			// Adding shared systems
-			Sys.Shared.AddObject(new Shared.RegistrySys());
+			Sys.Shared.AddNode(new AssemblySys());
+			Sys.Shared.AddObject(new RegistrySys());
 			Sys.Shared.AddNode(new EventSys());
-			Sys.Shared.AddObject(new AssemblySys());
 			Sys.Shared.AddObject(new ConfigSys());
 			Sys.Shared.AddNode(new Shared.SteamSys());
 			Sys.Shared.AddObject(new FilesystemSys());
@@ -61,26 +61,23 @@ namespace Unary_Common
 		public void AddClient()
 		{
 			// Adding client systems
-
 			Sys.Client.AddNode(new Client.DiscordSys());
-			Sys.Client.AddObject(new Client.LocaleSys());
-			Sys.Client.AddNode(new Client.BindSys());
+			Sys.Client.AddObject(new LocaleSys());
+			Sys.Client.AddNode(new BindSys());
 			Sys.Client.AddObject(new Client.SteamSys());
 			Sys.Client.AddNode(new MusicSys());
 			Sys.Client.AddUI(new AlertSys(), "Alert");
 
 			Sys.Client.AddNode(new Client.NetworkSys());
-			Sys.Client.AddObject(new Client.RegistrySys());
 			
 			Sys.Client.AddNode(new SceneSys());
 		}
 
 		public void AddServer()
 		{
-
 			Sys.Server.AddObject(new Server.SteamSys());
 			Sys.Server.AddNode(new Server.NetworkSys());
-			Sys.Server.AddObject(new Server.RegistrySys());
+			
 
 			Sys.Server.AddNode(new SceneSys());
 		}

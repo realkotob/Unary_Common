@@ -52,8 +52,8 @@ namespace Unary_Common.Server
 
             SteamIDs = new Dictionary<int, ulong>();
 
-            EventSys.SubscribeEvent(this, nameof(OnAuth), "Unary_Common.Auth");
-            EventSys.SubscribeEvent(this, nameof(OnDisconnected), "Unary_Common.Disconnected");
+            EventSys.Internal.Subscribe(this, nameof(OnAuth), "Unary_Common.Auth");
+            EventSys.Internal.Subscribe(this, nameof(OnDisconnected), "Unary_Common.Disconnected");
 
             SteamIDs[1] = SteamUser.GetSteamID().m_SteamID;
         }
@@ -113,7 +113,7 @@ namespace Unary_Common.Server
                 SteamIDs.Remove(NewResponse.ID);
             }
 
-            EventSys.InvokeEvent("Unary_Common.TicketResponse", NewResponse);
+            EventSys.Internal.Invoke("Unary_Common.TicketResponse", NewResponse);
         }
         
         public void OnAuth(SteamPlayer Arguments)
@@ -144,7 +144,7 @@ namespace Unary_Common.Server
                 SteamIDs[Arguments.ID] = Arguments.SteamID;
             }
 
-            EventSys.InvokeEvent("Unary_Common.AuthResponse", NewResponse);
+            EventSys.Internal.Invoke("Unary_Common.AuthResponse", NewResponse);
         }
 
         public void OnDisconnected(Args Arguments)

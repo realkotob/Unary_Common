@@ -74,8 +74,8 @@ namespace Unary_Common.Shared
 
             RareTickSubscribers = new List<RareTickSubscriber>();
 
-            Selector = Config.GetShared<uint>("Unary_Common.Random.RareTickSelector");
-            Range = Config.GetShared<uint>("Unary_Common.Random.RareTickRange");
+            Selector = Config.Shared.Get<uint>("Unary_Common.Random.RareTickSelector");
+            Range = Config.Shared.Get<uint>("Unary_Common.Random.RareTickRange");
         }
 
         public override void Clear()

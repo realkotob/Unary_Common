@@ -44,7 +44,7 @@ namespace Unary_Common.Shared
 
 		public override void Init()
 		{
-			AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
+			AssemblySys = Sys.Ref.Shared.GetNode<AssemblySys>();
 			Instances = new Dictionary<string, HarmonyInstance>();
 		}
 

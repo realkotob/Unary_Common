@@ -60,7 +60,7 @@ namespace Unary_Common.Shared
 			RegisteredCommands = new Dictionary<string, List<Command>>();
 			Paths = new Dictionary<int, List<BoundPath>>();
 
-			AutofillLimit = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<int>("Unary_Common.Console.AutofillLimit");
+			AutofillLimit = Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<int>("Unary_Common.Console.AutofillLimit");
 
 			ProcessFiles("Unary_Common", ".");
 		}

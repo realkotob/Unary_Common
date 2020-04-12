@@ -55,7 +55,7 @@ namespace Unary_Common.Shared
             Categories = new Categories();
 
             ConsoleSys = Sys.Ref.ConsoleSys;
-            AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
+            AssemblySys = Sys.Ref.Shared.GetNode<AssemblySys>();
         }
 
         public override void Clear()

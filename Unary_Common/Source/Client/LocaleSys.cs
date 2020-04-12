@@ -84,8 +84,8 @@ namespace Unary_Common.Client
 			SelectedLocaleEntries = new Dictionary<string, string>();
 			FallbackLocaleEntries = new Dictionary<string, string>();
 
-			SelectedLocale = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<string>("Unary_Common.Locale");
-			FallbackLocale = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<string>("Unary_Common.Locale.Fallback");
+			SelectedLocale = Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<string>("Unary_Common.Locale");
+			FallbackLocale = Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<string>("Unary_Common.Locale.Fallback");
 
 			if (SelectedLocale == FallbackLocale)
 			{

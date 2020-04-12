@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Abstract;
 using Unary_Common.Arguments;
 using Unary_Common.Structs;
+using Unary_Common.Subsystems;
 
 using System;
 using System.Collections.Generic;
@@ -34,64 +35,38 @@ namespace Unary_Common.Shared
 {
     public class RegistrySys : SysObject
     {
-        public bool Synced { get; set; } = false;
-
-        public Dictionary<string, Registry> Registry { get; set; }
+        public RegistryManager Client { get; private set; }
+        public RegistryManager Server { get; private set; }
 
         public override void Init()
         {
-            Registry = new Dictionary<string, Registry>();
-        }
-
-        public override void Clear()
-        {
-            Registry.Clear();
+            Client = new RegistryManager();
+            Server = new RegistryManager();
         }
 
         public override void ClearMod(Mod Mod)
         {
-            foreach(var RegistryManager in Registry.ToList())
+            Client.ClearMod(Mod);
+            Server.ClearMod(Mod);
+        }
+
+        public override void Clear()
+        {
+            Client.Clear();
+            Server.Clear();
+        }
+
+        public override void Sync(Args Arguments)
+        {
+            if(Arguments is RegistrySync Sync)
             {
-                if(RegistryManager.Key.StartsWith(Mod.ModID + '.'))
-                {
-                    Registry.Remove(RegistryManager.Key);
-                }
-                else
-                {
-                    RegistryManager.Value.RemoveIfStartsWith(Mod.ModID + '.');
-                }
+                Client.Registry = Sync.Registry;
             }
         }
 
-        private Registry GetRegistry(string RegistryName)
+        public override Args Sync()
         {
-            if(!Registry.ContainsKey(RegistryName))
-            {
-                Registry[RegistryName] = new Registry();
-                Registry[RegistryName].Init();
-            }
-
-            return Registry[RegistryName];
-        }
-
-        public void AddEntry(string RegistryName, string ModIDEntry)
-        {
-            GetRegistry(RegistryName).Add(ModIDEntry);
-        }
-
-        public void RemoveEntry(string RegistryName, string ModIDEntry)
-        {
-            GetRegistry(RegistryName).Remove(ModIDEntry);
-        }
-
-        public uint GetEntry(string RegistryName, string ModIDEntry)
-        {
-            return GetRegistry(RegistryName).Get(ModIDEntry);
-        }
-
-        public string GetEntry(string RegistryName, uint Index)
-        {
-            return GetRegistry(RegistryName).Get(Index);
+            return new RegistrySync() { Registry = Server.Registry };
         }
     }
 }

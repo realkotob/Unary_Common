@@ -87,7 +87,7 @@ namespace Unary_Common.Structs
                 return;
             }
 
-            AssemblySys AssemblySys = Sys.Ref.Shared.GetObject<AssemblySys>();
+            AssemblySys AssemblySys = Sys.Ref.Shared.GetNode<AssemblySys>();
 
             foreach (var Entry in Entries)
             {

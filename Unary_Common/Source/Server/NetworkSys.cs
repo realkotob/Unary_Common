@@ -68,8 +68,8 @@ namespace Unary_Common.Server
 
             ValidatedPeers = new Dictionary<int, bool>();
 
-            EventSys.SubscribeEvent(this, nameof(OnAuthResponse), "Unary_Common.AuthResponse");
-            EventSys.SubscribeEvent(this, nameof(OnTicketResponse), "Unary_Common.TicketResponse");
+            EventSys.Internal.Subscribe(this, nameof(OnAuthResponse), "Unary_Common.AuthResponse");
+            EventSys.Internal.Subscribe(this, nameof(OnTicketResponse), "Unary_Common.TicketResponse");
         }
 
         public override void Clear()
@@ -81,12 +81,12 @@ namespace Unary_Common.Server
         {
             if(Port == 0)
             {
-                Port = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<int>("Unary_Common.Network.Port");
+                Port = Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<int>("Unary_Common.Network.Port");
             }
 
             if(MaxPlayers == 0)
             {
-                MaxPlayers = Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<int>("Unary_Common.Network.MaxPlayers");
+                MaxPlayers = Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<int>("Unary_Common.Network.MaxPlayers");
             }
 
             Server.Start(Port);
@@ -133,7 +133,7 @@ namespace Unary_Common.Server
 
             if(Sys.Ref.AppType.IsHost())
             {
-                EventSys.InvokeRPC(EventName, Arguments);
+                EventSys.Remote.Invoke(EventName, Arguments);
             }
         }
 
@@ -143,7 +143,7 @@ namespace Unary_Common.Server
 
             if (Sys.Ref.AppType.IsHost())
             {
-                EventSys.InvokeRPC(EventName, Arguments);
+                EventSys.Remote.Invoke(EventName, Arguments);
             }
         }
 
@@ -156,7 +156,7 @@ namespace Unary_Common.Server
 
             if (Sys.Ref.AppType.IsHost())
             {
-                EventSys.InvokeRPC(EventName, Arguments);
+                EventSys.Remote.Invoke(EventName, Arguments);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Unary_Common.Server
 
             if (Sys.Ref.AppType.IsHost())
             {
-                EventSys.InvokeRPC(EventName, Arguments);
+                EventSys.Remote.Invoke(EventName, Arguments);
             }
         }
 
@@ -241,18 +241,18 @@ namespace Unary_Common.Server
         [Remote]
         public void S(uint EventIndex, Args Arguments)
         {
-            string EventName = RegistrySys.GetEntry("Unary_Common.Events", EventIndex);
+            string EventName = RegistrySys.Server.GetEntry("Unary_Common.Events", EventIndex);
 
             if (ValidatedPeers[Multiplayer.GetRpcSenderId()] == true)
             {
                 Arguments.ID = Multiplayer.GetRpcSenderId();
-                EventSys.InvokeRPC(EventName, Arguments);
+                EventSys.Remote.Invoke(EventName, Arguments);
             }
             else
             {
                 if(EventName == "Unary_Common.Auth" && Arguments is SteamPlayer)
                 {
-                    EventSys.InvokeEvent("Unary_Common.Auth", Arguments);
+                    EventSys.Internal.Invoke("Unary_Common.Auth", Arguments);
                 }
                 else
                 {

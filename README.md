@@ -11,6 +11,7 @@ Shared, Client and Server systems.
 ### Used third-party materials:
 ##### [Godot Engine](https://godotengine.org/)
 ##### [Steamworks.NET](https://steamworks.github.io/)
+##### [LiteNetLib](https://github.com/RevenantX/LiteNetLib)
 ##### [Newtonsoft Json](https://www.newtonsoft.com/json)
 ##### [MessagePack](https://github.com/neuecc/MessagePack-CSharp)
 ##### [NotoSans Font](https://www.google.com/get/noto/)

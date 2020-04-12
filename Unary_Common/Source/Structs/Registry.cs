@@ -48,7 +48,6 @@ namespace Unary_Common.Structs
         {
             Free.Clear();
             Entries.Clear();
-            Free.Clear();
         }
 
         public bool Add(string Entry)

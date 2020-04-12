@@ -48,7 +48,7 @@ namespace Unary_Common.Shared
             Listener.PeerDisconnectedEvent += OnPeerDisconnected;
             Listener.NetworkReceiveEvent += OnNetworkReceive;
 
-            Server.Start(Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<int>("Unary_Common.Network.RCONPort"));
+            Server.Start(Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<int>("Unary_Common.Network.RCONPort"));
         }
 
         public override void Clear()
@@ -78,7 +78,7 @@ namespace Unary_Common.Shared
 
         private void OnConnectionRequest(ConnectionRequest request)
         {
-            request.AcceptIfKey(Sys.Ref.Shared.GetObject<ConfigSys>().GetShared<string>("Unary_Common.Network.RCONPassword"));
+            request.AcceptIfKey(Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<string>("Unary_Common.Network.RCONPassword"));
         }
 
         public void Send(string Result, ConsoleSys.ConsoleColors Color)

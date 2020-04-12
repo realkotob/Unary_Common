@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 namespace Unary_Common.Arguments
 {
-    public class RegistrySysSync : Args
+    public class RegistrySync : Args
     {
         public Dictionary<string, Registry> Registry;
     }

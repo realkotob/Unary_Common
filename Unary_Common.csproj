@@ -102,8 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Unary_Common\Source\Abstract\SysUI.cs" />
-    <Compile Include="Unary_Common\Source\Arguments\RegistrySysEntry.cs" />
-    <Compile Include="Unary_Common\Source\Arguments\RegistrySysSync.cs" />
+    <Compile Include="Unary_Common\Source\Arguments\RegistrySync.cs" />
     <Compile Include="Unary_Common\Source\Collections\BiDictionary.cs" />
     <Compile Include="Unary_Common\Source\Enums\NetworkRPCType.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\IConsoleSys.cs" />
@@ -122,13 +121,11 @@
     <Compile Include="Unary_Common\Source\Client\AlertSys.cs" />
     <Compile Include="Unary_Common\Source\Client\MusicSys.cs" />
     <Compile Include="Unary_Common\Source\Client\NetworkSys.cs" />
-    <Compile Include="Unary_Common\Source\Client\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Client\SteamSys.cs" />
     <Compile Include="Unary_Common\Source\Enums\SysType.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\IBoot.cs" />
     <Compile Include="Unary_Common\Source\Interfaces\ITreeStateEntry.cs" />
     <Compile Include="Unary_Common\Source\Server\NetworkSys.cs" />
-    <Compile Include="Unary_Common\Source\Server\RegistrySys.cs" />
     <Compile Include="Unary_Common\Source\Server\SteamSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\BootSys.cs" />
     <Compile Include="Unary_Common\Source\Shared\DataSys.cs" />
@@ -138,14 +135,16 @@
     <Compile Include="Unary_Common\Source\Shared\SaveSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\BoundPath.cs" />
     <Compile Include="Unary_Common\Source\Structs\Command.cs" />
-    <Compile Include="Unary_Common\Source\Structs\EventPacket.cs" />
-    <Compile Include="Unary_Common\Source\Shared\SysManager.cs" />
+    <Compile Include="Unary_Common\Source\Subsystems\ConfigManager.cs" />
+    <Compile Include="Unary_Common\Source\Subsystems\SubscriberManager.cs" />
+    <Compile Include="Unary_Common\Source\Subsystems\SysManager.cs" />
     <Compile Include="Unary_Common\Source\Structs\EntryDebug.cs" />
     <Compile Include="Unary_Common\Source\Structs\RareTickSubscriber.cs" />
     <Compile Include="Unary_Common\Source\Structs\Mod.cs" />
     <Compile Include="Unary_Common\Source\Structs\Registry.cs" />
     <Compile Include="Unary_Common\Source\Structs\RPCEntry.cs" />
     <Compile Include="Unary_Common\Source\Structs\Save.cs" />
+    <Compile Include="Unary_Common\Source\Subsystems\RegistryManager.cs" />
     <Compile Include="Unary_Common\Source\Subsystems\Singletones.cs" />
     <Compile Include="Unary_Common\Source\Subsystems\Categories.cs" />
     <Compile Include="Unary_Common\Source\Client\DiscordSys.cs" />
@@ -158,7 +157,7 @@
     <Compile Include="Unary_Common\Source\Structs\Output.cs" />
     <Compile Include="Unary_Common\Source\Structs\SteamInstallInfo.cs" />
     <Compile Include="Unary_Common\Source\Structs\Subscriber.cs" />
-    <Compile Include="Unary_Common\Source\Shared\SysMultiplayer.cs" />
+    <Compile Include="Unary_Common\Source\Subsystems\SysMultiplayer.cs" />
     <Compile Include="Unary_Common\Source\Structs\Variable.cs" />
     <Compile Include="Unary_Common\Source\Shared\ModSys.cs" />
     <Compile Include="Unary_Common\Source\Structs\Version.cs" />
@@ -193,6 +192,9 @@
     <Compile Include="Unary_Common\Source\UI\ProfilerNamespace.cs" />
     <Compile Include="Unary_Common\Source\Utils\FilesystemUtil.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Unary_Common\Source\Arguments\Internal\" />
+    <Folder Include="Unary_Common\Source\Arguments\Remote\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

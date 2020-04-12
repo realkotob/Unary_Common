@@ -35,7 +35,7 @@ using System.Reflection;
 
 namespace Unary_Common.Shared
 {
-    class AssemblySys : SysObject
+    class AssemblySys : SysNode
     {
         private ConsoleSys ConsoleSys;
 
@@ -154,6 +154,11 @@ namespace Unary_Common.Shared
                     }
                 }
             }
+        }
+
+        public new bool IsInstanceValid(Godot.Object Target)
+        {
+            return IsInstanceValid(Target);
         }
 
         public override void InitCore(Mod Mod)

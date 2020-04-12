@@ -37,13 +37,13 @@ namespace Unary_Common.Shared
         {
             ConfigSys ConfigSys = Sys.Ref.Shared.GetObject<ConfigSys>();
 
-            ConfigSys.SubscribeShared(this, nameof(SetUseVsync), 
+            ConfigSys.Shared.Subscribe(this, nameof(SetUseVsync), 
             "Unary_Common.Window.VSync", SubscriberType.Method);
-            ConfigSys.SubscribeShared(this, nameof(SetWindowFullscreen), 
+            ConfigSys.Shared.Subscribe(this, nameof(SetWindowFullscreen), 
             "Unary_Common.Window.Fullscreen", SubscriberType.Method);
-            ConfigSys.SubscribeShared(this, nameof(SetWindowTitle), 
+            ConfigSys.Shared.Subscribe(this, nameof(SetWindowTitle), 
             "Unary_Common.Window.Title", SubscriberType.Method);
-            ConfigSys.SubscribeShared(this, nameof(SetWindowSize), 
+            ConfigSys.Shared.Subscribe(this, nameof(SetWindowSize), 
             "Unary_Common.Window.Size", SubscriberType.Method);
         }
 

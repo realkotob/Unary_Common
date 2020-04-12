@@ -52,7 +52,6 @@ namespace Unary_Common.Shared
         public override void Init()
         {
             ConsoleSys = Sys.Ref.ConsoleSys;
-
             try
             {
                 if (!Packsize.Test())
@@ -85,7 +84,6 @@ namespace Unary_Common.Shared
                 m_SteamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(SteamAPIDebugTextHook);
                 SteamClient.SetWarningMessageHook(m_SteamAPIWarningMessageHook);
             }
-
         }
 
         public override void Clear()
