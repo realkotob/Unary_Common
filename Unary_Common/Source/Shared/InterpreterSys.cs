@@ -84,8 +84,8 @@ namespace Unary_Common.Shared
 
 		public void Help()
 		{
-			string Result = "ListModID() \n" +
-					"ListSystemTypes() \n" +
+			string Result = "ListModID()\n" +
+					"ListSystemTypes()\n" +
 					"ListSystems(%Type%)";
 			ConsoleSys.Message(Result);
 		}

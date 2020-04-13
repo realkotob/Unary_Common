@@ -78,8 +78,7 @@ namespace Unary_Common.Shared
             {
                 ConsoleSys.Panic("SteamAPI_Init() failed. Refer to Valve's documentation or the comment above this line for more information.");
             }
-
-            if (m_SteamAPIWarningMessageHook == null)
+            else
             {
                 m_SteamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(SteamAPIDebugTextHook);
                 SteamClient.SetWarningMessageHook(m_SteamAPIWarningMessageHook);

@@ -41,6 +41,8 @@ namespace Unary_Common.Shared
 	{
 		public static Sys Ref { get; private set; }
 
+		public bool Running { get; set; } = true;
+
 		public ConsoleSys ConsoleSys { get; private set; }
 
 		public SysManager Shared { get; private set; }
@@ -76,55 +78,65 @@ namespace Unary_Common.Shared
 				AppType.SetClient(true);
 			}
 
-			Shared.AddUI(new ConsoleSys(), "Console");
-
-			ConsoleSys = Shared.GetUI<ConsoleSys>();
-
-			Common NewCommon = new Common();
-			NewCommon.AddShared();
-
-			Shared.AddObject(new BootSys());
-
-			Shared.GetObject<BootSys>().Add("Unary_Common", NewCommon);
-
-			if(AppType.IsServer())
+			try
 			{
-				Shared.GetObject<BootSys>().AddServer("Unary_Common");
+
+				Shared.AddUI(new ConsoleSys(), "Console");
+
+				ConsoleSys = Shared.GetUI<ConsoleSys>();
+
+				Common NewCommon = new Common();
+				NewCommon.AddShared();
+
+				Shared.AddObject(new BootSys());
+
+				Shared.GetObject<BootSys>().Add("Unary_Common", NewCommon);
+
+				if (AppType.IsServer())
+				{
+					Shared.GetObject<BootSys>().AddServer("Unary_Common");
+				}
+				else
+				{
+					Shared.GetObject<BootSys>().AddClient("Unary_Common");
+				}
+
+				Shared.AddObject(new ModSys());
+
+				Mod CoreMod = Shared.GetObject<ModSys>().Core.Mod;
+
+				Shared.InitCore(CoreMod);
+
+				if (AppType.IsServer())
+				{
+					Server.InitCore(CoreMod);
+				}
+				else
+				{
+					Client.InitCore(CoreMod);
+				}
+
+				Shared.GetObject<BootSys>().AddShared(CoreMod.ModID);
+
+				if (AppType.IsServer())
+				{
+					Shared.GetObject<BootSys>().AddServer(CoreMod.ModID);
+				}
+				else
+				{
+					Shared.GetObject<BootSys>().AddClient(CoreMod.ModID);
+				}
 			}
-			else
+			catch(Exception Exception)
 			{
-				Shared.GetObject<BootSys>().AddClient("Unary_Common");
-			}
-
-			Shared.AddObject(new ModSys());
-
-			Mod CoreMod = Shared.GetObject<ModSys>().Core.Mod;
-
-			Shared.InitCore(CoreMod);
-
-			if (AppType.IsServer())
-			{
-				Server.InitCore(CoreMod);
-			}
-			else
-			{
-				Client.InitCore(CoreMod);
-			}
-
-			Shared.GetObject<BootSys>().AddShared(CoreMod.ModID);
-
-			if (AppType.IsServer())
-			{
-				Shared.GetObject<BootSys>().AddServer(CoreMod.ModID);
-			}
-			else
-			{
-				Shared.GetObject<BootSys>().AddClient(CoreMod.ModID);
+				ConsoleSys.Panic(Exception.Message);
 			}
 		}
 
 		public void Quit()
 		{
+			Running = false;
+
 			Server.ClearMods();
 			Client.ClearMods();
 			Shared.ClearMods();
@@ -133,9 +145,7 @@ namespace Unary_Common.Shared
 			Client.Clear();
 			Shared.Clear();
 
-			ConsoleSys = null;
-
-			Ref = null;
+			GetTree().Quit();
 		}
 
 		public override void _Notification(int what)

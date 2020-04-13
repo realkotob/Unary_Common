@@ -109,6 +109,12 @@ namespace Unary_Common.Structs
 
         public void AddObject<T>(T NewSystem, string ModIDEntry = null) where T : SysObject
         {
+            if(!Sys.Ref.Running)
+            {
+                NewSystem.Free();
+                return;
+            }
+
             if (ModIDEntry == null)
             {
                 ModIDEntry = ModIDUtil.FromType(NewSystem.GetType());
@@ -116,17 +122,28 @@ namespace Unary_Common.Structs
 
             if (!ModIDUtil.Validate(ModIDEntry))
             {
+                NewSystem.Free();
                 Sys.Ref.ConsoleSys.Error("Failed to validate " + ModIDEntry);
                 return;
             }
 
             if (Types.ContainsKey(ModIDEntry))
             {
+                NewSystem.Free();
                 Sys.Ref.ConsoleSys.Error(ModIDEntry + " is already registered.");
                 return;
             }
 
-            NewSystem.Init();
+            try
+            {
+                NewSystem.Init();
+            }
+            catch (Exception)
+            {
+                NewSystem.Free();
+                return;
+            }
+            
             Objects[ModIDEntry] = NewSystem;
             Types[ModIDEntry] = SysType.Object;
             Order.Add(ModIDEntry);
@@ -134,6 +151,12 @@ namespace Unary_Common.Structs
 
         public void AddNode<T>(T NewNode, string LoadPath = null, string ModIDEntry = null) where T : SysNode
         {
+            if (!Sys.Ref.Running)
+            {
+                NewNode.QueueFree();
+                return;
+            }
+
             if (ModIDEntry == null)
             {
                 ModIDEntry = ModIDUtil.FromType(NewNode.GetType());
@@ -141,6 +164,7 @@ namespace Unary_Common.Structs
 
             if (!ModIDUtil.Validate(ModIDEntry))
             {
+                NewNode.QueueFree();
                 Sys.Ref.ConsoleSys.Error("Failed to validate " + ModIDEntry);
                 return;
             }
@@ -157,7 +181,16 @@ namespace Unary_Common.Structs
                 NewNode = NodeUtil.NewNode<T>(ModIDUtil.ModID(ModIDEntry), LoadPath);
             }
 
-            NewNode.Init();
+            try
+            {
+                NewNode.Init();
+            }
+            catch(Exception)
+            {
+                NewNode.QueueFree();
+                return;
+            }
+
             NewNode.Name = ModIDEntry;
             AddChild(NewNode, true);
 
@@ -179,6 +212,12 @@ namespace Unary_Common.Structs
 
         public void AddUI<T>(T NewUI, string LoadPath = null, string ModIDEntry = null) where T : SysUI
         {
+            if (!Sys.Ref.Running)
+            {
+                NewUI.QueueFree();
+                return;
+            }
+
             if (ModIDEntry == null)
             {
                 ModIDEntry = ModIDUtil.FromType(NewUI.GetType());
@@ -186,12 +225,14 @@ namespace Unary_Common.Structs
 
             if (!ModIDUtil.Validate(ModIDEntry))
             {
+                NewUI.QueueFree();
                 Sys.Ref.ConsoleSys.Error("Failed to validate " + ModIDEntry);
                 return;
             }
 
             if (Types.ContainsKey(ModIDEntry))
             {
+                NewUI.QueueFree();
                 Sys.Ref.ConsoleSys.Error(ModIDEntry + " is already registered.");
                 return;
             }
@@ -202,7 +243,16 @@ namespace Unary_Common.Structs
                 NewUI = NodeUtil.NewNode<T>(ModIDUtil.ModID(ModIDEntry), LoadPath);
             }
 
-            NewUI.Init();
+            try
+            {
+                NewUI.Init();
+            }
+            catch(Exception)
+            {
+                NewUI.QueueFree();
+                return;
+            }
+
             NewUI.Name = ModIDEntry;
             AddChild(NewUI, true);
 
