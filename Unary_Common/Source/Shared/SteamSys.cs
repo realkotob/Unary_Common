@@ -117,7 +117,7 @@ namespace Unary_Common.Shared
             SteamAPI.Shutdown();
         }
 
-        public static IEnumerable<PublishedFileId_t> GetAllSubscribed()
+        private static IEnumerable<PublishedFileId_t> GetAllSubscribed()
         {
             uint SubCount = SteamUGC.GetNumSubscribedItems();
 
@@ -177,23 +177,29 @@ namespace Unary_Common.Shared
 
         public void OnDownloadedItem(DownloadItemResult_t Response)
         {
-            if(EnumUtil.GetStringFromKey(Response.m_eResult).Replace("k_EResult", "") == "OK")
+            if(Response.m_unAppID == new AppId_t(AppID))
             {
-                ExistingItems.Add(GetItemPath(Response.m_nPublishedFileId));
+                if (EnumUtil.GetStringFromKey(Response.m_eResult).Replace("k_EResult", "") == "OK")
+                {
+                    ExistingItems.Add(GetItemPath(Response.m_nPublishedFileId));
 
-                EventSys.Internal.Invoke("Unary_Common.Steam.DownloadedItem", new DownloadItem()
-                { ItemHandle = Response.m_nPublishedFileId.m_PublishedFileId });
-            }
-            else
-            {
-                DownloadList.Remove(Response.m_nPublishedFileId.m_PublishedFileId);
-                EventSys.Internal.Invoke("Unary_Common.Steam.DownloadedItemFailed", new DownloadItem()
-                { ItemHandle = Response.m_nPublishedFileId.m_PublishedFileId });
-            }
+                    EventSys.Internal.Invoke("Unary_Common.Steam.DownloadedItem", new DownloadItem()
+                    {
+                        Handle = Response.m_nPublishedFileId.m_PublishedFileId,
+                        Path = GetItemPath(Response.m_nPublishedFileId)
+                    });
+                }
+                else
+                {
+                    DownloadList.Remove(Response.m_nPublishedFileId.m_PublishedFileId);
+                    EventSys.Internal.Invoke("Unary_Common.Steam.DownloadedItemFailed", new DownloadItem()
+                    { Handle = Response.m_nPublishedFileId.m_PublishedFileId });
+                }
 
-            if(DownloadList.Count == 0)
-            {
-                EventSys.Internal.Invoke("Unary_Common.Steam.DownloadedAll", null);
+                if (DownloadList.Count == 0)
+                {
+                    EventSys.Internal.Invoke("Unary_Common.Steam.DownloadedAll", null);
+                }
             }
         }
 

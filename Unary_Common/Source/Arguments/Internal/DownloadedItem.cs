@@ -29,6 +29,7 @@ namespace Unary_Common.Arguments.Internal
 {
     public class DownloadItem : Args
     {
-        public ulong ItemHandle;
+        public ulong Handle;
+        public string Path;
     }
 }
