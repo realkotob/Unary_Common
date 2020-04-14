@@ -144,7 +144,6 @@
     <Compile Include="Unary_Common\Source\Structs\Registry.cs" />
     <Compile Include="Unary_Common\Source\Structs\RPCEntry.cs" />
     <Compile Include="Unary_Common\Source\Structs\Save.cs" />
-    <Compile Include="Unary_Common\Source\Subsystems\RegistryManager.cs" />
     <Compile Include="Unary_Common\Source\Subsystems\Singletones.cs" />
     <Compile Include="Unary_Common\Source\Subsystems\Categories.cs" />
     <Compile Include="Unary_Common\Source\Client\DiscordSys.cs" />

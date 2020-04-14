@@ -41,8 +41,8 @@ namespace Unary_Common
 			Sys = Sys.Ref;
 
 			// Adding shared systems
-			Sys.Shared.AddNode(new AssemblySys());
 			Sys.Shared.AddObject(new RegistrySys());
+			Sys.Shared.AddNode(new AssemblySys());
 			Sys.Shared.AddNode(new EventSys());
 			Sys.Shared.AddObject(new ConfigSys());
 			Sys.Shared.AddNode(new Shared.SteamSys());

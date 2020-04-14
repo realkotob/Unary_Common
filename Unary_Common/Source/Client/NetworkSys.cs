@@ -94,18 +94,18 @@ namespace Unary_Common.Client
 
         public void RPC(string EventName, Args Arguments)
         {
-            Rpc("S", RegistrySys.Client.GetEntry("Unary_Common.Events", EventName), Arguments);
+            Rpc("S", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
         }
 
         public void RPCUnreliable(string EventName, Args Arguments)
         {
-            RpcUnreliable("S", RegistrySys.Client.GetEntry("Unary_Common.Events", EventName), Arguments);
+            RpcUnreliable("S", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
         }
 
         [Remote]
         public void C(uint EventIndex, Args Arguments)
         {
-            string EventName = RegistrySys.Client.GetEntry("Unary_Common.Events", EventIndex);
+            string EventName = RegistrySys.GetEntry("Unary_Common.Events", EventIndex);
             Arguments.ID = Multiplayer.GetRpcSenderId();
             EventSys.Remote.Invoke(EventName, Arguments);
         }

@@ -121,5 +121,10 @@ namespace Unary_Common.Structs
         {
             return Entries.GetKey(Index);
         }
+
+        public void Set(string Key, uint Value)
+        {
+            Entries.Set(Key, Value);
+        }
     }
 }

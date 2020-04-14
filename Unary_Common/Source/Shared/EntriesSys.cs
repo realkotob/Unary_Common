@@ -54,9 +54,6 @@ namespace Unary_Common.Shared
             Entries = new Entries();
             Categories = new Categories();
 
-            Sys Test = Sys.Ref;
-            ConsoleSys Example = Test.ConsoleSys;
-            
             ConsoleSys = Sys.Ref.ConsoleSys;
             AssemblySys = Sys.Ref.Shared.GetNode<AssemblySys>();
         }

@@ -45,8 +45,9 @@ namespace Unary_Common.Server
 
         private EventSys EventSys;
         private SteamSys SteamSys;
-        private Shared.RegistrySys RegistrySys;
+        private RegistrySys RegistrySys;
 
+        private Dictionary<int, NetPeer> Peers;
         private Dictionary<int, bool> ValidatedPeers;
 
         public override void Init()
@@ -64,8 +65,9 @@ namespace Unary_Common.Server
 
             EventSys = Sys.Ref.Shared.GetNode<EventSys>();
             SteamSys = Sys.Ref.Server.GetObject<SteamSys>();
-            RegistrySys = Sys.Ref.Shared.GetObject<Shared.RegistrySys>();
+            RegistrySys = Sys.Ref.Shared.GetObject<RegistrySys>();
 
+            Peers = new Dictionary<int, NetPeer>();
             ValidatedPeers = new Dictionary<int, bool>();
 
             EventSys.Internal.Subscribe(this, nameof(OnAuthResponse), "Unary_Common.AuthResponse");
@@ -75,6 +77,8 @@ namespace Unary_Common.Server
         public override void Clear()
         {
             Stop();
+            Peers.Clear();
+            ValidatedPeers.Clear();
         }
 
         public void Start(int Port = 0, int MaxPlayers = 0)
@@ -241,7 +245,7 @@ namespace Unary_Common.Server
         [Remote]
         public void S(uint EventIndex, Args Arguments)
         {
-            string EventName = RegistrySys.Server.GetEntry("Unary_Common.Events", EventIndex);
+            string EventName = RegistrySys.GetEntry("Unary_Common.Events", EventIndex);
 
             if (ValidatedPeers[Multiplayer.GetRpcSenderId()] == true)
             {

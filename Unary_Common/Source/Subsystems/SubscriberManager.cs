@@ -39,18 +39,22 @@ namespace Unary_Common.Subsystems
     {
         private AssemblySys AssemblySys;
         private RegistrySys RegistrySys;
-        private Dictionary<string, List<Subscriber>> Subscribers;
+        private Dictionary<string, Dictionary<IntPtr, Subscriber>> Subscribers;
+        private Dictionary<string, List<IntPtr>> SubscribeOrder;
 
         public SubscriberManager()
         {
             AssemblySys = Sys.Ref.Shared.GetNode<AssemblySys>();
             RegistrySys = Sys.Ref.Shared.GetObject<RegistrySys>();
-            Subscribers = new Dictionary<string, List<Subscriber>>();
+
+            Subscribers = new Dictionary<string, Dictionary<IntPtr, Subscriber>>();
+            SubscribeOrder = new Dictionary<string, List<IntPtr>>();
         }
 
         public void Clear()
         {
             Subscribers.Clear();
+            SubscribeOrder.Clear();
         }
 
         public void ClearMod(Mod Mod)
@@ -60,23 +64,18 @@ namespace Unary_Common.Subsystems
                 if (Name.Key.StartsWith(Mod.ModID + '.'))
                 {
                     Subscribers.Remove(Name.Key);
+                    SubscribeOrder.Remove(Name.Key);
                 }
             }
         }
 
         public void Register(string EventName)
         {
-            if(Sys.Ref.AppType.IsServer())
+            if (!Subscribers.ContainsKey(EventName))
             {
-                if (!Subscribers.ContainsKey(EventName))
-                {
-                    Subscribers[EventName] = new List<Subscriber>();
-                    RegistrySys.Server.AddEntry("Unary_Common.Events", EventName);
-                }
-            }
-            else
-            {
-                Sys.Ref.ConsoleSys.Error("Tried registering " + EventName + " event as a client.");
+                Subscribers[EventName] = new Dictionary<IntPtr, Subscriber>();
+                SubscribeOrder[EventName] = new List<IntPtr>();
+                RegistrySys.AddEntry("Unary_Common.Events", EventName);
             }
         }
 
@@ -84,26 +83,54 @@ namespace Unary_Common.Subsystems
         {
             if (!Subscribers.ContainsKey(EventName))
             {
-                Subscribers[EventName] = new List<Subscriber>();
+                Subscribers[EventName] = new Dictionary<IntPtr, Subscriber>();
+                SubscribeOrder[EventName] = new List<IntPtr>();
             }
 
-            Subscriber NewSubscriber = new Subscriber
+            if(!Subscribers[EventName].ContainsKey(Target.NativeInstance))
             {
-                Target = Target,
-                MemberName = MemberName,
-                Type = SubscriberType.Method
-            };
+                Subscriber NewSubscriber = new Subscriber
+                {
+                    Target = Target,
+                    MemberName = MemberName,
+                    Type = SubscriberType.Method
+                };
 
-            Subscribers[EventName].Add(NewSubscriber);
+                Subscribers[EventName][Target.NativeInstance] = NewSubscriber;
+                SubscribeOrder[EventName].Add(Target.NativeInstance);
+            }
+            else
+            {
+                Sys.Ref.ConsoleSys.Error("You really should not subscribe to the same event " + EventName + " multiple times from the same object.");
+            }
+        }
+
+        public void Unsubscribe(Godot.Object Target, string EventName)
+        {
+            if(!Subscribers.ContainsKey(EventName))
+            {
+                Sys.Ref.ConsoleSys.Error("Tried unsubscribing from event" + EventName + " with no subscribers.");
+                return;
+            }
+
+            if (Subscribers[EventName].ContainsKey(Target.NativeInstance))
+            {
+                Subscribers[EventName].Remove(Target.NativeInstance);
+                SubscribeOrder[EventName].Remove(Target.NativeInstance);
+            }
+            else
+            {
+                Sys.Ref.ConsoleSys.Error("Tried removing non-existing subscriber from event " + EventName);
+            }
         }
 
         public void Invoke(string EventName, Args Arguments)
         {
             if (Subscribers.ContainsKey(EventName))
             {
-                for (int i = Subscribers[EventName].Count - 1; i >= 0; --i)
+                for (int i = SubscribeOrder[EventName].Count - 1; i >= 0; --i)
                 {
-                    Subscriber Subscriber = Subscribers[EventName][i];
+                    Subscriber Subscriber = Subscribers[EventName][SubscribeOrder[EventName][i]];
 
                     if (AssemblySys.IsInstanceValid(Subscriber.Target))
                     {
@@ -134,7 +161,8 @@ namespace Unary_Common.Subsystems
                     }
                     else
                     {
-                        Subscribers[EventName].RemoveAt(i);
+                        Subscribers[EventName].Remove(SubscribeOrder[EventName][i]);
+                        SubscribeOrder[EventName].RemoveAt(i);
                     }
                 }
             }
