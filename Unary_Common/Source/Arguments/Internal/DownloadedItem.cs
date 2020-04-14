@@ -22,16 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using Steamworks;
+using System;
+using System.Collections.Generic;
 
-namespace Unary_Common.Structs
+namespace Unary_Common.Arguments.Internal
 {
-    public struct SteamInstallInfo
+    public class DownloadItem : Args
     {
-        public PublishedFileId_t PublishedFileID;
-        public ulong punSizeOnDisk;
-        public string pchFolder;
-        public uint cchFolderSize;
-        public uint punTimeStamp;
+        public ulong ItemHandle;
     }
 }

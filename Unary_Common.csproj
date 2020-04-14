@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Unary_Common\Source\Abstract\SysUI.cs" />
+    <Compile Include="Unary_Common\Source\Arguments\Internal\DownloadedItem.cs" />
     <Compile Include="Unary_Common\Source\Arguments\RegistrySync.cs" />
     <Compile Include="Unary_Common\Source\Collections\BiDictionary.cs" />
     <Compile Include="Unary_Common\Source\Enums\NetworkRPCType.cs" />
@@ -154,7 +155,6 @@
     <Compile Include="Unary_Common\Source\Structs\ModImages.cs" />
     <Compile Include="Unary_Common\Source\Structs\NodeID.cs" />
     <Compile Include="Unary_Common\Source\Structs\Output.cs" />
-    <Compile Include="Unary_Common\Source\Structs\SteamInstallInfo.cs" />
     <Compile Include="Unary_Common\Source\Structs\Subscriber.cs" />
     <Compile Include="Unary_Common\Source\Subsystems\SysMultiplayer.cs" />
     <Compile Include="Unary_Common\Source\Structs\Variable.cs" />
@@ -192,7 +192,6 @@
     <Compile Include="Unary_Common\Source\Utils\FilesystemUtil.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Unary_Common\Source\Arguments\Internal\" />
     <Folder Include="Unary_Common\Source\Arguments\Remote\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

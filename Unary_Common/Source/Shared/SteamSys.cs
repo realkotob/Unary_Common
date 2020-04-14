@@ -25,6 +25,7 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Structs;
 using Unary_Common.Arguments;
+using Unary_Common.Arguments.Internal;
 using Unary_Common.Utils;
 using Unary_Common.Abstract;
 
@@ -39,9 +40,12 @@ namespace Unary_Common.Shared
 {
     public class SteamSys : SysNode
     {
-        private static ConsoleSys ConsoleSys;
+        public uint AppID { get; private set; }
 
-        public List<SteamInstallInfo> WorkshopEntries { get; private set; }
+        private static ConsoleSys ConsoleSys;
+        private EventSys EventSys;
+
+        public List<string> ExistingItems { get; private set; }
 
         protected SteamAPIWarningMessageHook_t m_SteamAPIWarningMessageHook;
         protected static void SteamAPIDebugTextHook(int nSeverity, System.Text.StringBuilder pchDebugText)
@@ -49,39 +53,62 @@ namespace Unary_Common.Shared
             ConsoleSys.Warning(pchDebugText.ToString());
         }
 
+        private List<ulong> DownloadList;
+        private Callback<DownloadItemResult_t> DownloadItemResponse;
+
         public override void Init()
         {
+            if(!FilesystemUtil.SystemFileExists("steam_appid.txt"))
+            {
+                ConsoleSys.Panic("steam_appid.txt does not exist, could not get AppID.");
+                return;
+            }
+
             ConsoleSys = Sys.Ref.ConsoleSys;
+            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
+
             try
             {
+                AppID = uint.Parse(FilesystemUtil.SystemFileRead("steam_appid.txt"));
+
                 if (!Packsize.Test())
                 {
                     ConsoleSys.Panic("Packsize Test returned false, the wrong version of Steamworks.NET is being run in this platform.");
+                    return;
                 }
 
                 if (!DllCheck.Test())
                 {
                     ConsoleSys.Panic("DllCheck Test returned false, One or more of the Steamworks binaries seems to be the wrong version.");
+                    return;
                 }
 
-                if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid))
+                if (SteamAPI.RestartAppIfNecessary(new AppId_t(AppID)))
                 {
-                    ConsoleSys.Panic("Restarting app");
+                    ConsoleSys.Panic("Steam requested us to restart app");
+                    return;
                 }
             }
             catch (Exception Exception)
             {
                 ConsoleSys.Panic(Exception.Message);
+                return;
             }
 
             if (!SteamAPI.Init())
             {
                 ConsoleSys.Panic("SteamAPI_Init() failed. Refer to Valve's documentation or the comment above this line for more information.");
+                return;
             }
             else
             {
                 m_SteamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(SteamAPIDebugTextHook);
                 SteamClient.SetWarningMessageHook(m_SteamAPIWarningMessageHook);
+
+                ExistingItems = GetModFolders();
+
+                DownloadList = new List<ulong>();
+                DownloadItemResponse = Callback<DownloadItemResult_t>.Create(OnDownloadedItem);
             }
         }
 
@@ -111,25 +138,63 @@ namespace Unary_Common.Shared
         {
             List<string> Result = new List<string>();
 
-            foreach(var Subbed in GetAllSubscribed())
+            foreach (var Subbed in GetAllSubscribed())
             {
-                SteamInstallInfo InstallInfo = new SteamInstallInfo();
+                string Current = GetItemPath(Subbed);
 
-                if(!SteamUGC.GetItemInstallInfo(Subbed, 
-                out InstallInfo.punSizeOnDisk,
-                out InstallInfo.pchFolder,
-                InstallInfo.cchFolderSize,
-                out InstallInfo.punTimeStamp))
+                if(Current != null)
                 {
-                    continue;
-                }
-                else
-                {
-                    Result.Add(InstallInfo.pchFolder);
+                    Result.Add(Current);
                 }
             }
 
             return Result;
+        }
+
+        public void DownloadItems(List<ulong> ItemHandles)
+        {
+            foreach(var ItemHandle in ItemHandles)
+            {
+                if (!DownloadList.Contains(ItemHandle))
+                {
+                    SteamUGC.DownloadItem(new PublishedFileId_t(ItemHandle), true);
+                    DownloadList.Add(ItemHandle);
+                }
+            }
+        }
+
+        private string GetItemPath(PublishedFileId_t Item)
+        {
+            ulong punSizeOnDisk;
+            string Result = null;
+            uint cchFolderSize = default;
+            uint punTimeStamp;
+
+            SteamUGC.GetItemInstallInfo(Item, out punSizeOnDisk, out Result, cchFolderSize, out punTimeStamp);
+
+            return Result;
+        }
+
+        public void OnDownloadedItem(DownloadItemResult_t Response)
+        {
+            if(EnumUtil.GetStringFromKey(Response.m_eResult).Replace("k_EResult", "") == "OK")
+            {
+                ExistingItems.Add(GetItemPath(Response.m_nPublishedFileId));
+
+                EventSys.Internal.Invoke("Unary_Common.Steam.DownloadedItem", new DownloadItem()
+                { ItemHandle = Response.m_nPublishedFileId.m_PublishedFileId });
+            }
+            else
+            {
+                DownloadList.Remove(Response.m_nPublishedFileId.m_PublishedFileId);
+                EventSys.Internal.Invoke("Unary_Common.Steam.DownloadedItemFailed", new DownloadItem()
+                { ItemHandle = Response.m_nPublishedFileId.m_PublishedFileId });
+            }
+
+            if(DownloadList.Count == 0)
+            {
+                EventSys.Internal.Invoke("Unary_Common.Steam.DownloadedAll", null);
+            }
         }
 
         public override void _Process(float delta)
