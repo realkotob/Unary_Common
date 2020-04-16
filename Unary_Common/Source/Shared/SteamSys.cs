@@ -157,8 +157,10 @@ namespace Unary_Common.Shared
             {
                 if (!DownloadList.Contains(ItemHandle))
                 {
-                    SteamUGC.DownloadItem(new PublishedFileId_t(ItemHandle), true);
-                    DownloadList.Add(ItemHandle);
+                    if(SteamUGC.DownloadItem(new PublishedFileId_t(ItemHandle), true))
+                    {
+                        DownloadList.Add(ItemHandle);
+                    }
                 }
             }
         }
@@ -173,6 +175,21 @@ namespace Unary_Common.Shared
             SteamUGC.GetItemInstallInfo(Item, out punSizeOnDisk, out Result, cchFolderSize, out punTimeStamp);
 
             return Result;
+        }
+
+        public float GetItemDownloadInfo(ulong Item)
+        {
+            ulong Downloaded;
+            ulong Total;
+
+            if(SteamUGC.GetItemDownloadInfo(new PublishedFileId_t(Item), out Downloaded, out Total))
+            {
+                return (Downloaded * 100 / Total) / 100.0f;
+            }
+            else
+            {
+                return 0.0f;
+            }
         }
 
         public void OnDownloadedItem(DownloadItemResult_t Response)

@@ -45,7 +45,7 @@ namespace Unary_Common.Client
 
         public override void Init()
         {
-            ConsoleSys = Shared.Sys.Ref.ConsoleSys;
+            ConsoleSys = Sys.Ref.ConsoleSys;
 
             try
             {

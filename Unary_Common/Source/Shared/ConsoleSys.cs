@@ -101,12 +101,23 @@ namespace Unary_Common.Shared
 				}
 			}
 
-			if (@event.IsActionPressed("ui_accept"))
+			if (ConsoleVisible)
 			{
-				if (ConsoleVisible)
+				if (@event.IsActionPressed("ui_accept"))
 				{
-					Shared.Sys.Ref.Shared.GetNode<Shared.InterpreterSys>().ProcessScript(ConsoleLine.Text);
+					Sys.Ref.Shared.GetNode<InterpreterSys>().ProcessScript(ConsoleLine.Text);
 					ConsoleLine.Clear();
+				}
+				
+				if(@event.IsActionPressed("ui_autofill"))
+				{
+					if(Autofill.GetChildCount() != 0)
+					{
+						string Text = Autofill.GetChild<Node>(0).GetNode<Label>("Alias").Text;
+						Text = Text.GetFirstOccurrence("(") + '(';
+						ConsoleLine.Text = Text;
+						ConsoleLine.CaretPosition = Text.Length;
+					}
 				}
 			}
 		}
