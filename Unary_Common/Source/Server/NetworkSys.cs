@@ -26,8 +26,12 @@ using Unary_Common.Interfaces;
 using Unary_Common.Shared;
 using Unary_Common.Structs;
 using Unary_Common.Arguments;
+using Unary_Common.Enums;
+using Unary_Common.Arguments.Internal;
+using Unary_Common.Arguments.Remote;
 using Unary_Common.Abstract;
 using Unary_Common.Utils;
+using System.Text;
 
 using System;
 using System.Collections.Generic;
@@ -35,23 +39,32 @@ using System.Collections.Generic;
 using Godot;
 
 using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace Unary_Common.Server
 {
     public class NetworkSys : SysNode
     {
-        private EventBasedNetListener Listener;
-        private NetManager Server;
-
         private EventSys EventSys;
         private SteamSys SteamSys;
         private RegistrySys RegistrySys;
+        private BanSys BanSys;
 
-        private Dictionary<int, NetPeer> Peers;
-        private Dictionary<int, bool> ValidatedPeers;
+        private EventBasedNetListener Listener;
+        private NetManager Server;
+
+        private Dictionary<int, NetPeer> NonValidatedPeers;
+        private Dictionary<int, NetPeer> ValidatedPeers;
+
+        private int MaxPlayers;
 
         public override void Init()
         {
+            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
+            SteamSys = Sys.Ref.Server.GetObject<SteamSys>();
+            RegistrySys = Sys.Ref.Shared.GetObject<RegistrySys>();
+            BanSys = Sys.Ref.Server.GetObject<BanSys>();
+
             Listener = new EventBasedNetListener();
 
             Listener.ConnectionRequestEvent += OnConnectionRequest;
@@ -63,21 +76,17 @@ namespace Unary_Common.Server
 
             Server = new NetManager(Listener);
 
-            EventSys = Sys.Ref.Shared.GetNode<EventSys>();
-            SteamSys = Sys.Ref.Server.GetObject<SteamSys>();
-            RegistrySys = Sys.Ref.Shared.GetObject<RegistrySys>();
+            NonValidatedPeers = new Dictionary<int, NetPeer>();
+            ValidatedPeers = new Dictionary<int, NetPeer>();
 
-            Peers = new Dictionary<int, NetPeer>();
-            ValidatedPeers = new Dictionary<int, bool>();
-
-            EventSys.Internal.Subscribe(this, nameof(OnAuthResponse), "Unary_Common.AuthResponse");
-            EventSys.Internal.Subscribe(this, nameof(OnTicketResponse), "Unary_Common.TicketResponse");
+            EventSys.Internal.Subscribe(this, nameof(OnAuthResponse), "Unary_Common.Steam.AuthResponse");
+            EventSys.Internal.Subscribe(this, nameof(OnTicketResponse), "Unary_Common.Steam.TicketResponse");
         }
 
         public override void Clear()
         {
             Stop();
-            Peers.Clear();
+            NonValidatedPeers.Clear();
             ValidatedPeers.Clear();
         }
 
@@ -90,90 +99,196 @@ namespace Unary_Common.Server
 
             if(MaxPlayers == 0)
             {
-                MaxPlayers = Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<int>("Unary_Common.Network.MaxPlayers");
+                this.MaxPlayers = Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<int>("Unary_Common.Network.MaxPlayers");
+            }
+            else
+            {
+                this.MaxPlayers = MaxPlayers;
             }
 
             Server.Start(Port);
-        }
-
-        private void OnConnectionRequest(ConnectionRequest request)
-        {
-            //request.
-        }
-
-        private void OnNetworkError(System.Net.IPEndPoint endPoint, System.Net.Sockets.SocketError socketError)
-        {
-
-        }
-
-        private void OnNetworkLatencyUpdate(NetPeer peer, int latency)
-        {
-            
-        }
-
-        private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
-        {
-
-        }
-
-        private void OnPeerConnected(NetPeer peer)
-        {
-
-        }
-
-        private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
-        {
-
+            EventSys.Internal.Invoke("Unary_Common.Network.Start", null);
         }
 
         public void Stop()
         {
             Server.Stop(true);
+            EventSys.Internal.Invoke("Unary_Common.Network.Stop", null);
         }
 
-        public void RPCID(string EventName, int PeerID, Args Arguments)
+        private void OnConnectionRequest(ConnectionRequest request)
         {
-            Server.ConnectedPeerList[PeerID].Send(NetworkUtil.Pack(Arguments), DeliveryMethod.ReliableOrdered);
-
-            if(Sys.Ref.AppType.IsHost())
+            if(ValidatedPeers.Count == MaxPlayers)
             {
-                EventSys.Remote.Invoke(EventName, Arguments);
+                NetDataWriter NewWriter = new NetDataWriter();
+                NewWriter.Put((byte)Enums.DisconnectReason.Full);
+                request.Reject(NewWriter);
+                return;
+            }
+
+            Args Auth = NetworkUtil.Unpack(request.Data.GetRemainingBytes());
+
+            if (Auth is SteamPlayer NewSteamPlayer)
+            {
+                if(BanSys.IsBanned(NewSteamPlayer.SteamID))
+                {
+                    Ban Ban = BanSys.GetBan(NewSteamPlayer.SteamID);
+
+                    if(Ban.Time >= DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+                    {
+                        NetDataWriter NewWriter = new NetDataWriter();
+                        NewWriter.Put((byte)Enums.DisconnectReason.Banned);
+                        NewWriter.Put(Ban.Time);
+                        NewWriter.Put(Encoding.UTF8.GetBytes(Ban.Reason));
+                        request.Reject(NewWriter);
+                        return;
+                    }
+                    else
+                    {
+                        BanSys.Unban(NewSteamPlayer.SteamID);
+                    }
+                }
+
+                NetPeer NewPeer = request.Accept();
+                NonValidatedPeers[NewPeer.Id] = NewPeer;
+
+                EventSys.Internal.Invoke("Unary_Common.Network.Auth", NewSteamPlayer);
+            }
+            else
+            {
+                NetDataWriter NewWriter = new NetDataWriter();
+                NewWriter.Put((byte)Enums.DisconnectReason.Invalid);
+                request.Reject(NewWriter);
+                return;
             }
         }
 
-        public void RPCIDUnreliable(string EventName, int PeerID, Args Arguments)
+        private void OnNetworkError(System.Net.IPEndPoint endPoint, System.Net.Sockets.SocketError socketError)
         {
-            Server.ConnectedPeerList[PeerID].Send(NetworkUtil.Pack(Arguments), DeliveryMethod.Unreliable);
+            Sys.Ref.ConsoleSys.Warning("Reported NetworkError on " + endPoint.ToString() + " with an error " + EnumUtil.GetStringFromKey(socketError));
 
-            if (Sys.Ref.AppType.IsHost())
+            List<int> ResponsiblePeers = new List<int>();
+
+            foreach(var Peer in ValidatedPeers)
             {
-                EventSys.Remote.Invoke(EventName, Arguments);
+                if(Peer.Value.EndPoint == endPoint)
+                {
+                    ResponsiblePeers.Add(Peer.Key);
+                }
+            }
+
+            string ResponsibleString = default;
+
+            for(int i = 0; i < ResponsiblePeers.Count - 1; ++i)
+            {
+                ResponsibleString += ResponsiblePeers[i];
+
+                if(i != ResponsiblePeers.Count - 2)
+                {
+                    ResponsibleString += ", ";
+                }
+            }
+
+            Sys.Ref.ConsoleSys.Warning("Potentially responsible peers are : " + ResponsibleString);
+        }
+
+        private void OnNetworkLatencyUpdate(NetPeer peer, int latency)
+        {
+            EventSys.Internal.Invoke("Unary_Common.Network.LatencyUpdate", new LatencyUpdate() { ID = peer.Id, Latency = latency });
+        }
+
+        private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+        {
+            if(ValidatedPeers.ContainsKey(peer.Id))
+            {
+                uint EventIndex = reader.GetUInt();
+
+            }
+            else
+            {
+                NonValidatedPeers.Remove(peer.Id);
+                NetDataWriter NewWriter = new NetDataWriter();
+                NewWriter.Put((byte)Enums.DisconnectReason.OutOfTurn);
+                peer.Disconnect(NewWriter);
+                return;
             }
         }
 
-        public void RPCIDAll(string EventName, Args Arguments)
+        private void OnPeerConnected(NetPeer peer)
         {
-            foreach(var Peer in Server.ConnectedPeerList)
+            Peers[peer.Id] = peer;
+            ValidatedPeers[peer.Id] = false;
+        }
+
+        private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+        {
+
+
+            if(disconnectInfo.AdditionalData.AvailableBytes != 0)
             {
-                Peer.Send(NetworkUtil.Pack(Arguments), DeliveryMethod.ReliableOrdered);
+
+            }
+            else if(disconnectInfo.SocketErrorCode != System.Net.Sockets.SocketError.Success)
+            {
+
             }
 
-            if (Sys.Ref.AppType.IsHost())
+            if (ValidatedPeers.ContainsKey(Peer))
             {
-                EventSys.Remote.Invoke(EventName, Arguments);
+                SendAll("Unary_Common.Event.PlayerLeft", new PlayerLeft() { ID = Peer, SteamID = SteamSys.GetSteamID(Peer), Reason = Reason });
+            }
+            else if (NonValidatedPeers.ContainsKey(Peer))
+            {
+                NonValidatedPeers[Peer].Disconnect()
+            }
+
+            EventSys.Internal.Invoke("Unary_Common.Network.Disconnected", new PeerDisconnected() { ID = peer.Id, Reason  })
+        }
+
+        private void DisconnectPeer(int Peer, string Reason)
+        {
+            
+        }
+
+        public void Send(string EventName, int PeerID, Args Arguments)
+        {
+            NetDataWriter NewWriter = new NetDataWriter();
+            NewWriter.Put(Netw)
+
+            NewWriter.Put(RegistrySys.GetEntry("Unary_Common.Events", EventName));
+            NewWriter.Put(NetworkUtil.Pack(Arguments));
+            ValidatedPeers[PeerID].Send(NewWriter, DeliveryMethod.ReliableOrdered);
+        }
+
+        public void SendUnreliable(string EventName, int PeerID, Args Arguments)
+        {
+            NetDataWriter NewWriter = new NetDataWriter();
+            NewWriter.Put(RegistrySys.GetEntry("Unary_Common.Events", EventName));
+            NewWriter.Put(NetworkUtil.Pack(Arguments));
+            ValidatedPeers[PeerID].Send(NewWriter, DeliveryMethod.Unreliable);
+        }
+
+        public void SendAll(string EventName, Args Arguments)
+        {
+            NetDataWriter NewWriter = new NetDataWriter();
+            NewWriter.Put(RegistrySys.GetEntry("Unary_Common.Events", EventName));
+            NewWriter.Put(NetworkUtil.Pack(Arguments));
+
+            foreach (var Peer in ValidatedPeers)
+            {
+                Peer.Value.Send(NewWriter, DeliveryMethod.ReliableOrdered);
             }
         }
 
-        public void RPCIDAllUnreliable(string EventName, Args Arguments)
+        public void SendAlllUnreliable(string EventName, Args Arguments)
         {
-            foreach (var Peer in Server.ConnectedPeerList)
-            {
-                Peer.Send(NetworkUtil.Pack(Arguments), DeliveryMethod.Unreliable);
-            }
+            NetDataWriter NewWriter = new NetDataWriter();
+            NewWriter.Put(RegistrySys.GetEntry("Unary_Common.Events", EventName));
+            NewWriter.Put(NetworkUtil.Pack(Arguments));
 
-            if (Sys.Ref.AppType.IsHost())
+            foreach (var Peer in ValidatedPeers)
             {
-                EventSys.Remote.Invoke(EventName, Arguments);
+                Peer.Value.Send(NewWriter, DeliveryMethod.Unreliable);
             }
         }
 
@@ -192,76 +307,13 @@ namespace Unary_Common.Server
             //Server.DisconnectPeer()
         }
 
-        public void ConnectionKick(int ID, string Reason)
-        {
-            RPCID("Unary_Common.Disconnected", ID, new PlayerDisconnected
-            {
-                ID = ID,
-                Reason = Reason
-            });
-            RemovePeer(ID, Reason);
-        }
-
-        public void ConnectionBan(int ID, string Reason)
-        {
-            RPCID("Unary_Common.Disconnected", ID, new PlayerDisconnected
-            {
-                ID = ID,
-                Reason = Reason
-            });
-            RemovePeer(ID, Reason);
-        }
-
-        public void Kick(int ID, string Reason)
-        {
-            RPCIDAll("Unary_Common.Left", new PlayerLeft
-            {
-                ID = ID,
-                Reason = Reason
-            });
-            RemovePeer(ID, Reason);
-        }
-
-        public void Ban(int ID, string Reason)
-        {
-            RPCIDAll("Unary_Common.Left", new PlayerLeft
-            {
-                ID = ID,
-                Reason = Reason
-            });
-            RemovePeer(ID, Reason);
-        }
-
         public void SyncInfo(int Peer)
         {
             foreach (var Entry in Sys.Ref.Server.GetAll())
             {
                 string ModIDEntry = ModIDUtil.FromType(Entry.GetType());
 
-                RPCID("Unary_Common.Sync." + ModIDUtil.ModIDTarget(ModIDEntry), Peer, Entry.Sync());
-            }
-        }
-
-        [Remote]
-        public void S(uint EventIndex, Args Arguments)
-        {
-            string EventName = RegistrySys.GetEntry("Unary_Common.Events", EventIndex);
-
-            if (ValidatedPeers[Multiplayer.GetRpcSenderId()] == true)
-            {
-                Arguments.ID = Multiplayer.GetRpcSenderId();
-                EventSys.Remote.Invoke(EventName, Arguments);
-            }
-            else
-            {
-                if(EventName == "Unary_Common.Auth" && Arguments is SteamPlayer)
-                {
-                    EventSys.Internal.Invoke("Unary_Common.Auth", Arguments);
-                }
-                else
-                {
-                    ConnectionKick(Multiplayer.GetRpcSenderId(), "ByServer");
-                }
+                Send("Unary_Common.Sync." + ModIDUtil.ModIDTarget(ModIDEntry), Peer, Entry.Sync());
             }
         }
     }

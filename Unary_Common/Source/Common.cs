@@ -41,6 +41,7 @@ namespace Unary_Common
 			Sys = Sys.Ref;
 
 			// Adding shared systems
+			Sys.Shared.AddObject(new DataSys());
 			Sys.Shared.AddObject(new RegistrySys());
 			Sys.Shared.AddNode(new AssemblySys());
 			Sys.Shared.AddNode(new EventSys());
@@ -53,7 +54,6 @@ namespace Unary_Common
 			Sys.Shared.AddObject(new HarmonySys());
 			Sys.Shared.AddNode(new OSSys());
 			Sys.Shared.AddNode(new RandomSys());
-			Sys.Shared.AddObject(new DataSys());
 			Sys.Shared.AddObject(new SaveSys());
 			//Sys.Shared.Add(new ProfilerManager());
 		}
@@ -67,18 +67,15 @@ namespace Unary_Common
 			Sys.Client.AddObject(new Client.SteamSys());
 			Sys.Client.AddNode(new MusicSys());
 			Sys.Client.AddUI(new AlertSys(), "Alert");
-
 			Sys.Client.AddNode(new Client.NetworkSys());
-			
 			Sys.Client.AddNode(new SceneSys());
 		}
 
 		public void AddServer()
 		{
+			Sys.Server.AddObject(new Server.BanSys());
 			Sys.Server.AddObject(new Server.SteamSys());
 			Sys.Server.AddNode(new Server.NetworkSys());
-			
-
 			Sys.Server.AddNode(new SceneSys());
 		}
 	}

@@ -22,10 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Arguments
+using Unary_Common.Enums;
+
+namespace Unary_Common.Arguments.Internal
 {
-    public class Data : Args
+    public class PeerDisconnected : Args
     {
-        public byte[] Target;
+        public string Reason;
     }
 }

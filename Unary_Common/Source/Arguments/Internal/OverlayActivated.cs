@@ -22,15 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using Unary_Common.Structs;
-
-using System;
-using System.Collections.Generic;
-
-namespace Unary_Common.Arguments
+namespace Unary_Common.Arguments.Internal
 {
-    public class RegistrySync : Args
+    class OverlayActivated : Args
     {
-        public Dictionary<string, Registry> Registry;
+        public byte Active;
     }
 }

@@ -25,8 +25,11 @@ SOFTWARE.
 using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Arguments;
+using Unary_Common.Arguments.Internal;
+using Unary_Common.Arguments.Remote;
 using Unary_Common.Shared;
 using Unary_Common.Abstract;
+using Unary_Common.Collections;
 
 using System;
 using System.Collections.Generic;
@@ -40,37 +43,50 @@ namespace Unary_Common.Server
 {
     public class SteamSys : SysObject
     {
+        [Flags]
+        public enum ServerFlags : uint
+        {
+            None = 0x00,
+            Active = 0x01,
+            Secure = 0x02,
+            Dedicated = 0x04,
+            Linux = 0x08,
+            Passworded = 0x10,
+            Private = 0x20
+        }
+
         private EventSys EventSys;
+        private ConfigSys ConfigSys;
+        private Shared.SteamSys SharedSteamSys;
         private Callback<ValidateAuthTicketResponse_t> CallbackValidateAuthTicketResponse;
 
-        private Dictionary<int, ulong> SteamIDs;
+        private BiDictionary<int, ulong> SteamIDs;
 
         public override void Init()
         {
             EventSys = Sys.Ref.Shared.GetNode<EventSys>();
+            ConfigSys = Sys.Ref.Shared.GetObject<ConfigSys>();
+            SharedSteamSys = Sys.Ref.Shared.GetNode<Shared.SteamSys>();
             CallbackValidateAuthTicketResponse = Callback<ValidateAuthTicketResponse_t>.Create(OnTicketResponse);
 
-            SteamIDs = new Dictionary<int, ulong>();
+            SteamIDs = new BiDictionary<int, ulong>();
 
-            EventSys.Internal.Subscribe(this, nameof(OnAuth), "Unary_Common.Auth");
-            EventSys.Internal.Subscribe(this, nameof(OnDisconnected), "Unary_Common.Disconnected");
-
-            SteamIDs[1] = SteamUser.GetSteamID().m_SteamID;
+            EventSys.Internal.Subscribe(this, nameof(OnAuth), "Unary_Common.Network.Auth");
+            EventSys.Internal.Subscribe(this, nameof(OnDisconnected), "Unary_Common.Network.Disconnected");
+            EventSys.Internal.Subscribe(this, nameof(OnStart), "Unary_Common.Network.Start");
         }
 
         public override void Clear()
         {
-            foreach(var SteamID in SteamIDs.ToList())
+            foreach(var SteamID in SteamIDs.GetAll())
             {
-                if(SteamID.Key != 1)
-                {
-                    EndAuthSession(SteamID.Value);
-                    SteamIDs.Remove(SteamID.Key);
-                }
-                else
-                {
-                    SteamIDs.Remove(1);
-                }
+                EndAuthSession(SteamID.Item2);
+                SteamIDs.Remove(SteamID.Item1);
+            }
+
+            if(SteamGameServer.BLoggedOn())
+            {
+                SteamGameServer.LogOff();
             }
         }
 
@@ -90,11 +106,11 @@ namespace Unary_Common.Server
         {
             TicketResponse NewResponse = new TicketResponse();
 
-            foreach(var SteamID in SteamIDs)
+            foreach(var SteamID in SteamIDs.GetAll())
             {
-                if(SteamID.Value == Arguments.m_SteamID.m_SteamID)
+                if(SteamID.Item2 == Arguments.m_SteamID.m_SteamID)
                 {
-                    NewResponse.ID = SteamID.Key;
+                    NewResponse.ID = SteamID.Item1;
                 }
             }
 
@@ -113,7 +129,7 @@ namespace Unary_Common.Server
                 SteamIDs.Remove(NewResponse.ID);
             }
 
-            EventSys.Internal.Invoke("Unary_Common.TicketResponse", NewResponse);
+            EventSys.Internal.Invoke("Unary_Common.Steam.TicketResponse", NewResponse);
         }
         
         public void OnAuth(SteamPlayer Arguments)
@@ -122,9 +138,9 @@ namespace Unary_Common.Server
 
             bool Exists = false;
 
-            foreach(var Peer in SteamIDs)
+            foreach(var Peer in SteamIDs.GetAll())
             {
-                if(Peer.Value == Arguments.SteamID || Peer.Key == Arguments.ID)
+                if(Peer.Item2 == Arguments.SteamID)
                 {
                     Exists = true;
                 }
@@ -141,31 +157,24 @@ namespace Unary_Common.Server
 
             if(NewResponse.Response == "OK")
             {
-                SteamIDs[Arguments.ID] = Arguments.SteamID;
+                SteamIDs.Set(Arguments.ID, Arguments.SteamID);
             }
 
-            EventSys.Internal.Invoke("Unary_Common.AuthResponse", NewResponse);
+            EventSys.Internal.Invoke("Unary_Common.Steam.AuthResponse", NewResponse);
         }
 
         public void OnDisconnected(Args Arguments)
         {
-            if (SteamIDs.ContainsKey(Arguments.ID))
+            if (SteamIDs.KeyExists(Arguments.ID))
             {
-                if (Arguments.ID != 1)
-                {
-                    EndAuthSession(SteamIDs[Arguments.ID]);
-                    SteamIDs.Remove(Arguments.ID);
-                }
-                else
-                {
-                    SteamIDs.Remove(1);
-                }
+                EndAuthSession(SteamIDs[Arguments.ID]);
+                SteamIDs.Remove(Arguments.ID);
             }
         }
 
         public string GetNickname(int Peer)
         {
-            if(SteamIDs.ContainsKey(Peer))
+            if(SteamIDs.KeyExists(Peer))
             {
                 return SteamFriends.GetPlayerNickname(new CSteamID(SteamIDs[Peer]));
             }
@@ -177,7 +186,7 @@ namespace Unary_Common.Server
 
         public ulong GetSteamID(int Peer)
         {
-            if(SteamIDs.ContainsKey(Peer))
+            if(SteamIDs.KeyExists(Peer))
             {
                 return SteamIDs[Peer];
             }
@@ -185,6 +194,31 @@ namespace Unary_Common.Server
             {
                 return 0;
             }
+        }
+
+        private bool OnStart()
+        {
+            SteamGameServer.SetModDir("Unary_Common");
+            SteamGameServer.SetProduct(SharedSteamSys.AppID.ToString());
+            SteamGameServer.SetGameDescription("Unary_Common");
+            
+            if (Sys.Ref.AppType.IsHost())
+            {
+                SteamGameServer.SetServerName(Sys.Ref.Client.GetObject<Client.SteamSys>().GetNickname() + "'s Server");
+                SteamGameServer.SetDedicatedServer(false);
+            }
+            else if(Sys.Ref.AppType.IsServer())
+            {
+                SteamGameServer.SetServerName(ConfigSys.Shared.Get<string>("Unary_Common.Network.Name"));
+                SteamGameServer.SetDedicatedServer(true);
+            }
+
+            SteamGameServer.LogOnAnonymous();
+
+            return SteamGameServer.InitGameServer(0x7f000001,
+            (ushort)ConfigSys.Shared.Get<int>("Unary_Common.Network.GamePort"),
+            (ushort)ConfigSys.Shared.Get<int>("Unary_Common.Network.QueryPort"),
+            0, new AppId_t(SharedSteamSys.AppID), Sys.Ref.Shared.GetObject<ModSys>().Core.Mod.Version.ToString());
         }
     }
 }

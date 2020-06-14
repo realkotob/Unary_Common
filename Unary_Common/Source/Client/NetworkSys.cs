@@ -26,17 +26,22 @@ using Unary_Common.Interfaces;
 using Unary_Common.Utils;
 using Unary_Common.Shared;
 using Unary_Common.Structs;
+using Unary_Common.Enums;
 using Unary_Common.Abstract;
 using Unary_Common.Arguments;
+using Unary_Common.Arguments.Internal;
+using Unary_Common.Arguments.Remote;
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 using Godot;
 
 using Steamworks;
 using MessagePack;
 using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace Unary_Common.Client
 {
@@ -44,70 +49,141 @@ namespace Unary_Common.Client
     {
         private EventSys EventSys;
         private SteamSys SteamSys;
-        private Shared.RegistrySys RegistrySys;
+        private RegistrySys RegistrySys;
+        private LocaleSys LocaleSys;
+
+        private EventBasedNetListener Listener;
+        private NetManager Client;
 
         public override void Init()
         {
             EventSys = Sys.Ref.Shared.GetNode<EventSys>();
             SteamSys = Sys.Ref.Client.GetObject<SteamSys>();
             RegistrySys = Sys.Ref.Shared.GetObject<RegistrySys>();
+            LocaleSys = Sys.Ref.Client.GetObject<LocaleSys>();
+
+            Listener = new EventBasedNetListener();
+
+            Listener.NetworkErrorEvent += OnNetworkError;
+            Listener.NetworkLatencyUpdateEvent += OnNetworkLatencyUpdate;
+            Listener.NetworkReceiveEvent += OnNetworkReceive;
+            Listener.PeerDisconnectedEvent += OnPeerDisconnected;
         }
 
-        public void Start(string Address = "127.0.0.1", int Port = 0, int MaxPlayers = 0)
+        public void Connect(string Address = "127.0.0.1", int Port = 0)
         {
             if (Port == 0)
             {
                 Port = Sys.Ref.Shared.GetObject<ConfigSys>().Shared.Get<int>("Unary_Common.Network.Port");
             }
+
+            NetDataWriter NewWriter = new NetDataWriter();
+
+            SteamPlayer NewPlayer = new SteamPlayer
+            {
+                SteamID = SteamSys.GetSteamID(),
+                Ticket = SteamSys.GetAuthTicket()
+            };
+
+            NewWriter.Put(NetworkUtil.Pack("Unary_Common.Network.AuthPlayer", NewPlayer));
             
-            NetworkedMultiplayerENet NewPeer = new NetworkedMultiplayerENet();
-            NewPeer.CreateClient(Address, Port, MaxPlayers);
-            NewPeer.TransferMode = NetworkedMultiplayerPeer.TransferModeEnum.Reliable;
-            GetTree().NetworkPeer = NewPeer;
-            GetTree().Connect("connected_to_server", this, nameof(OnConnectedToServer));
-            GetTree().Connect("connection_failed", this, nameof(OnConnectionFailed));
-            GetTree().Connect("server_disconnected", this, nameof(OnServerDisconnected));
+            if(Client.Connect(Address, Port, NewWriter) != null)
+            {
+                EventSys.Internal.Invoke("Unary_Common.Network.Connected", NewPlayer);
+            }
+            else
+            {
+                EventSys.Internal.Invoke("Unary_Common.Network.FailedToConnect", NewPlayer);
+            }
         }
 
-        public void Stop()
+        public void Disconnect()
         {
-            GetTree().NetworkPeer = null;
-            GetTree().Disconnect("connected_to_server", this, nameof(OnConnectedToServer));
-            GetTree().Disconnect("connection_failed", this, nameof(OnConnectionFailed));
-            GetTree().Disconnect("server_disconnected", this, nameof(OnServerDisconnected));
+            Client.Stop(true);
+            EventSys.Internal.Invoke("Unary_Common.Network.Disconnected", null);
         }
 
-        public void OnConnectedToServer()
+        private void OnNetworkError(System.Net.IPEndPoint endPoint, System.Net.Sockets.SocketError socketError)
         {
-            EventSys.Internal.Invoke("Unary_Common.Connected", null);
+            Disconnect();
+            EventSys.Internal.Invoke("Unary_Common.Network.Disconnected",
+            new PeerDisconnected() { ID = Client.FirstPeer.Id, Reason = "SocketError" });
         }
 
-        public void OnConnectionFailed()
+        private void OnNetworkLatencyUpdate(NetPeer peer, int latency)
         {
-            EventSys.Internal.Invoke("Unary_Common.ConnectionFailed", null);
+            EventSys.Internal.Invoke("Unary_Common.Network.LatencyUpdate", new LatencyUpdate() { ID = peer.Id, Latency = latency });
         }
 
-        public void OnServerDisconnected()
+        private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
-            EventSys.Internal.Invoke("Unary_Common.Disconnected", null);
+            string EventName = RegistrySys.GetEntry("Unary_Common.Events", reader.GetUInt());
+            Args NewArgs = NetworkUtil.Unpack(reader.GetRemainingBytes());
+            NewArgs.ID = peer.Id;
+            EventSys.Remote.Invoke(EventName, NewArgs);
         }
 
-        public void RPC(string EventName, Args Arguments)
+        private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            Rpc("S", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
+            Disconnect();
+
+            PeerDisconnected Disconnected = new PeerDisconnected
+            {
+                ID = Client.FirstPeer.Id,
+            };
+
+            if(disconnectInfo.AdditionalData.AvailableBytes != 0)
+            {
+                Enums.DisconnectReason Reason = (Enums.DisconnectReason)disconnectInfo.AdditionalData.GetByte();
+
+                switch (Reason)
+                {
+                    case Enums.DisconnectReason.Full:
+                        Disconnected.Reason = LocaleSys.Translate("Unary_Common.Left.Full");
+                        break;
+                    case Enums.DisconnectReason.Invalid:
+                        Disconnected.Reason = LocaleSys.Translate("Unary_Common.Left.Invalid");
+                        break;
+                    case Enums.DisconnectReason.Banned:
+                        Disconnected.Reason = string.Format(LocaleSys.Translate("Unary_Common.Left.Invalid"),
+                        new DateTime(disconnectInfo.AdditionalData.GetLong()).ToString(),
+                        Encoding.UTF8.GetString(disconnectInfo.AdditionalData.GetRemainingBytes()));
+                        break;
+                    case Enums.DisconnectReason.Kicked:
+                        Disconnected.Reason = string.Format(LocaleSys.Translate("Unary_Common.Left.Kicked"),
+                        Encoding.UTF8.GetString(disconnectInfo.AdditionalData.GetRemainingBytes()));
+                        break;
+                    case Enums.DisconnectReason.OutOfTurn:
+                        Disconnected.Reason = LocaleSys.Translate("Unary_Common.Left.OutOfTurn");
+                        break;
+                }
+            }
+            else if (disconnectInfo.SocketErrorCode != System.Net.Sockets.SocketError.Success)
+            {
+                Disconnected.Reason = LocaleSys.Translate("Unary_Common.Left.SocketError");
+            }
+            else
+            {
+                Disconnected.Reason = EnumUtil.GetStringFromKey(disconnectInfo.Reason);
+            }
+
+            EventSys.Internal.Invoke("Unary_Common.Network.Disconnected", Disconnected);
         }
 
-        public void RPCUnreliable(string EventName, Args Arguments)
+        public void Send(string EventName, Args Arguments)
         {
-            RpcUnreliable("S", RegistrySys.GetEntry("Unary_Common.Events", EventName), Arguments);
+            NetDataWriter NewWriter = new NetDataWriter();
+            NewWriter.Put(RegistrySys.GetEntry("Unary_Common.Events", EventName));
+            NewWriter.Put(NetworkUtil.Pack(Arguments));
+            Client.FirstPeer.Send(NewWriter, DeliveryMethod.ReliableOrdered);
         }
 
-        [Remote]
-        public void C(uint EventIndex, Args Arguments)
+        public void SendUnreliable(string EventName, Args Arguments)
         {
-            string EventName = RegistrySys.GetEntry("Unary_Common.Events", EventIndex);
-            Arguments.ID = Multiplayer.GetRpcSenderId();
-            EventSys.Remote.Invoke(EventName, Arguments);
+            NetDataWriter NewWriter = new NetDataWriter();
+            NewWriter.Put(RegistrySys.GetEntry("Unary_Common.Events", EventName));
+            NewWriter.Put(NetworkUtil.Pack(Arguments));
+            Client.FirstPeer.Send(NewWriter, DeliveryMethod.Unreliable);
         }
     }
 }

@@ -22,10 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Arguments
+namespace Unary_Common.Arguments.Remote
 {
     public class PlayerLeft : Args
     {
         public string Reason;
+        public ulong SteamID;
     }
 }

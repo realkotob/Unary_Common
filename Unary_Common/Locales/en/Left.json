@@ -14,7 +14,17 @@
 	"Unary_Common.Left.PublisherIssuedBan": "Disconnected due to publisher ban.",
 	"Unary_Common.Left.ExpiredTicket": "Disconnected by server.",
 	"Unary_Common.Left.ByUser": "Disconnected by user.",
-	"Unary_Common.Left.Kicked": "Kicked by server.",
-	"Unary_Common.Left.Banned": "Banned by server.",
-	"Unary_Common.Left.Timeout": "Disconnected due to a lost connection."
+	"Unary_Common.Left.ConnectionFailed": "Connection failed.",
+	"Unary_Common.Left.Timeout": "Disconnected due to a lost connection.",
+	"Unary_Common.Left.HostUnreachable": "Disconnected due to host being unreachable.",
+	"Unary_Common.Left.RemoteConnectionClose": "Disconnected due to server closing connection.",
+	"Unary_Common.Left.DisconnectPeerCalled": "Disconnected due to disconnect peer called.",
+	"Unary_Common.Left.ConnectionRejected": "Disconnected due server rejecting connection.",
+	"Unary_Common.Left.InvalidProtocol": "Disconnected due to invalid protocol.",
+	"Unary_Common.Left.SocketError": "Disconnected due to a socket error.",
+	"Unary_Common.Left.Full": "Could not connect due to server being full.",
+	"Unary_Common.Left.Invalid": "Rejected by server due to an invalid connection request.",
+	"Unary_Common.Left.Kicked": "Kicked by server. Reason: {1}",
+	"Unary_Common.Left.Banned": "Banned by server until {1}. Reason: {2}",
+	"Unary_Common.Left.OutOfTurn": "Disconnected due to speaking to a server out of turn."
 }

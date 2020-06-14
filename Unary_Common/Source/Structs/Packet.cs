@@ -22,30 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using Unary_Common.Structs;
+using System;
 using Unary_Common.Arguments;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using MessagePack;
-using LiteNetLib.Utils;
 
-namespace Unary_Common.Utils
+namespace Unary_Common.Structs
 {
-    public static class NetworkUtil
+    public struct Packet
     {
-        public static byte[] Pack(Args Arguments)
-        {
-            return MessagePackSerializer.Serialize(Arguments,
-            MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray));
-        }
-
-        public static Args Unpack(byte[] Bytes)
-        {
-            return MessagePackSerializer.Deserialize<Args>(Bytes, 
-			MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray));
-        }
+        public uint EventIndex;
+        public string EventName;
+        public Args Arguments;
     }
 }

@@ -22,30 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using Unary_Common.Structs;
-using Unary_Common.Arguments;
-
 using System;
 using System.Collections.Generic;
-using System.Text;
 
-using MessagePack;
-using LiteNetLib.Utils;
-
-namespace Unary_Common.Utils
+namespace Unary_Common.Enums
 {
-    public static class NetworkUtil
+    public enum DisconnectReason : byte
     {
-        public static byte[] Pack(Args Arguments)
-        {
-            return MessagePackSerializer.Serialize(Arguments,
-            MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray));
-        }
-
-        public static Args Unpack(byte[] Bytes)
-        {
-            return MessagePackSerializer.Deserialize<Args>(Bytes, 
-			MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray));
-        }
+        Full,
+        Invalid,
+        Banned,
+        Kicked,
+        OutOfTurn
     }
 }

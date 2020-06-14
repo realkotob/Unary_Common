@@ -22,10 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Arguments
+using System;
+using System.Collections.Generic;
+
+namespace Unary_Common.Arguments.Internal
 {
-    public class AuthResponse : Args
+    public class PeerConnected
     {
-        public string Response;
+
     }
 }

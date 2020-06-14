@@ -34,27 +34,12 @@ namespace Unary_Common.Structs
 
         public override string ToString()
         {
-            string Result = default;
-            Result += "ModID: " + ModID + Environment.NewLine;
-            Result += "Version: " + Version + Environment.NewLine;
-
-            if(Path != null)
-            {
-                Result += "Path: " + Path + Environment.NewLine;
-            }
-
-            return Result;
+            return ModID + '-' + Version.ToString();
         }
 
         public override int GetHashCode()
         {
             string Result = ModID + Version.ToString();
-
-            if(Path != null)
-            {
-                Result += Path;
-            }
-
             return Result.GetHashCode();
         }
 

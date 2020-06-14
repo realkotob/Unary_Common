@@ -42,7 +42,7 @@ namespace Unary_Common.Shared
         {
             DataPaths = new Dictionary<string, string>();
 
-            List<string> DataFolders = FilesystemUtil.SystemDirGetDirs(FolderPath);
+            List<string> DataFolders = FilesystemUtil.Sys.DirGetDirs(FolderPath);
 
             foreach(var Folder in DataFolders)
             {
@@ -66,20 +66,20 @@ namespace Unary_Common.Shared
 
         public override void InitCore(Mod Mod)
         {
-            if(!FilesystemUtil.SystemDirExists(FolderPath + Mod.ModID))
+            if(!FilesystemUtil.Sys.DirExists(FolderPath + Mod.ModID))
             {
-                FilesystemUtil.SystemDirCreate(FolderPath + Mod.ModID);
-                DataPaths[Mod.ModID] = FolderPath + Mod.ModID;
+                FilesystemUtil.Sys.DirCreate(FolderPath + Mod.ModID);
             }
+            DataPaths[Mod.ModID] = FolderPath + Mod.ModID;
         }
 
         public override void InitMod(Mod Mod)
         {
-            if (!FilesystemUtil.SystemDirExists(FolderPath + Mod.ModID))
+            if (!FilesystemUtil.Sys.DirExists(FolderPath + Mod.ModID))
             {
-                FilesystemUtil.SystemDirCreate(FolderPath + Mod.ModID);
-                DataPaths[Mod.ModID] = FolderPath + Mod.ModID;
+                FilesystemUtil.Sys.DirCreate(FolderPath + Mod.ModID);
             }
+            DataPaths[Mod.ModID] = FolderPath + Mod.ModID;
         }
 
         public string GetPath(string ModID)
@@ -90,7 +90,7 @@ namespace Unary_Common.Shared
             }
             else
             {
-                return default;
+                return null;
             }
         }
     }

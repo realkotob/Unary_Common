@@ -132,6 +132,21 @@ namespace Unary_Common.Collections
             return Result;
         }
 
+        public List<Tuple<K, V>> GetAll()
+        {
+            List<Tuple<K, V>> Result = new List<Tuple<K, V>>();
+
+            List<K> Keys = GetAllKeys();
+
+            foreach(var Key in Keys)
+            {
+                Tuple<K, V> NewTuple = new Tuple<K, V>(Key, GetValue(Key));
+                Result.Add(NewTuple);
+            }
+
+            return Result;
+        }
+
         public bool KeyExists(K Key)
         {
             return KeyToValue.ContainsKey(Key);

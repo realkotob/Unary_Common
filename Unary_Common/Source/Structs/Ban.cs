@@ -22,10 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary_Common.Arguments
+using System;
+using System.Collections.Generic;
+
+namespace Unary_Common.Structs
 {
-    class OverlayActivated : Args
+    public struct Ban
     {
-        public byte Active;
+        public string Reason;
+        public long Time;
     }
 }
