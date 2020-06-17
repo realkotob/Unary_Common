@@ -15,9 +15,9 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Unary_Common"
-run/main_scene="res://Unary_Common/Nodes/Main.tscn"
-boot_splash/image="res://Unary_Common/Textures/Splash.png"
+config/name="Unary.Common"
+run/main_scene="res://Unary.Common/Nodes/Main.tscn"
+boot_splash/image="res://Unary.Common/Textures/Splash.png"
 boot_splash/bg_color=Color( 0.278431, 0.345098, 0.360784, 1 )
 config/icon="res://Icon.png"
 
@@ -75,11 +75,6 @@ ui_end={
 "deadzone": 0.5,
 "events": [  ]
 }
-
-[logging]
-
-file_logging/log_path="log.txt"
-file_logging/max_log_files=1
 
 [mono]
 

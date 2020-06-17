@@ -1,6 +1,6 @@
 [
 	{
-		"Target": "Unary_Common.Shared.ConsoleSys.Message",
+		"Target": "Unary.Common.Shared.ConsoleSys.Message",
 		"Arguments": "string Text",
 		"Alias": "Message",
 		"AliasColor": "White",
@@ -8,7 +8,7 @@
 		"DescriptionColor": "White"
 	},
 	{
-		"Target": "Unary_Common.Shared.ConsoleSys.Warning",
+		"Target": "Unary.Common.Shared.ConsoleSys.Warning",
 		"Arguments": "string Text",
 		"Alias": "Warning",
 		"AliasColor": "Yellow",
@@ -16,7 +16,7 @@
 		"DescriptionColor": "White"
 	},
 	{
-		"Target": "Unary_Common.Shared.ConsoleSys.Error",
+		"Target": "Unary.Common.Shared.ConsoleSys.Error",
 		"Arguments": "string Text",
 		"Alias": "Error",
 		"AliasColor": "Red",
@@ -24,7 +24,7 @@
 		"DescriptionColor": "White"
 	},
 	{
-		"Target": "Unary_Common.Shared.ConsoleSys.Panic",
+		"Target": "Unary.Common.Shared.ConsoleSys.Panic",
 		"Arguments": "string Text",
 		"Alias": "Panic",
 		"AliasColor": "Red",
@@ -32,28 +32,28 @@
 		"DescriptionColor": "White"
 	},
 	{
-		"Target": "Unary_Common.Shared.InterpreterSys.Help",
+		"Target": "Unary.Common.Shared.InterpreterSys.Help",
 		"Alias": "Help",
 		"AliasColor": "Green",
 		"Description": "Outputs a few helpful commands to setup .json usage",
 		"DescriptionColor": "White"
 	},
 	{
-		"Target": "Unary_Common.Shared.InterpreterSys.ListModID",
+		"Target": "Unary.Common.Shared.InterpreterSys.ListModID",
 		"Alias": "ListModID",
 		"AliasColor": "Green",
 		"Description": "Outputs all of the currently registered ModID's",
 		"DescriptionColor": "White"
 	},
 	{
-		"Target": "Unary_Common.Shared.InterpreterSys.ListSystemTypes",
+		"Target": "Unary.Common.Shared.InterpreterSys.ListSystemTypes",
 		"Alias": "ListSystemTypes",
 		"AliasColor": "Green",
 		"Description": "Outputs all of the available system types to use in ListSystems()",
 		"DescriptionColor": "White"
 	},
 	{
-		"Target": "Unary_Common.Shared.InterpreterSys.ListSystems",
+		"Target": "Unary.Common.Shared.InterpreterSys.ListSystems",
 		"Arguments": "string Text",
 		"Alias": "ListSystems",
 		"AliasColor": "Green",
@@ -61,7 +61,7 @@
 		"DescriptionColor": "White"
 	},
 	{
-		"Target": "Unary_Common.Shared.InterpreterSys.BindFile",
+		"Target": "Unary.Common.Shared.InterpreterSys.BindFile",
 		"Arguments": "string ModID, string Key, string FilePath",
 		"Alias": "BindFile",
 		"AliasColor": "Pink",

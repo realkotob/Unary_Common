@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B67577AA-48E8-4944-9FA9-AF29D8A19AB7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <OutputPath>.</OutputPath>
+    <!--<OutputPath>.mono\temp\bin\$(Configuration)</OutputPath>-->
+    <RootNamespace>Unary.Common</RootNamespace>
+    <AssemblyName>Unary.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <BaseIntermediateOutputPath>.mono\temp\obj</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>.mono\$(Configuration)</IntermediateOutputPath>
+    <ApiConfiguration Condition=" '$(Configuration)' != 'Release' ">Debug</ApiConfiguration>
+    <ApiConfiguration Condition=" '$(Configuration)' == 'Release' ">Release</ApiConfiguration>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>portable</DebugType>
+    <Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Tools|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TOOLS;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LiteNetLib">
+      <HintPath>$(ProjectDir)/LiteNetLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Discord">
+      <HintPath>$(ProjectDir)/Discord.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="GodotSharp">
+      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GodotSharpEditor">
+      <HintPath>$(ProjectDir)/GodotSharpEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="GodotSharpEditor" Condition=" '$(Configuration)' == 'Tools' ">
+      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharpEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="Steamworks">
+      <HintPath>$(ProjectDir)/Steamworks.NET.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>$(ProjectDir)/System.Memory.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>$(ProjectDir)/System.Buffers.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>$(ProjectDir)/System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>$(ProjectDir)/System.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MessagePack.Annotations">
+      <HintPath>$(ProjectDir)/MessagePack.Annotations.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MessagePack">
+      <HintPath>$(ProjectDir)/MessagePack.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(ProjectDir)/Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Harmony">
+      <HintPath>$(ProjectDir)/0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Unary.Common\Source\Abstract\SysUI.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Internal\DownloadedItem.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Internal\LatencyUpdate.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Internal\PeerConnected.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Internal\PeerDisconnected.cs" />
+    <Compile Include="Unary.Common\Source\Collections\BiDictionary.cs" />
+    <Compile Include="Unary.Common\Source\Enums\DisconnectReason.cs" />
+    <Compile Include="Unary.Common\Source\Enums\NetworkRPCType.cs" />
+    <Compile Include="Unary.Common\Source\Interfaces\IConsoleSys.cs" />
+    <Compile Include="Unary.Common\Source\Interfaces\ISysEntry.cs" />
+    <Compile Include="Unary.Common\Source\Abstract\SysNode.cs" />
+    <Compile Include="Unary.Common\Source\Abstract\SysObject.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Args.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Internal\AuthResponse.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Internal\OverlayActivated.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Remote\PlayerJoined.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Remote\PlayerLeft.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Remote\SteamPlayer.cs" />
+    <Compile Include="Unary.Common\Source\Arguments\Internal\TicketResponse.cs" />
+    <Compile Include="Unary.Common\Source\Client\AlertSys.cs" />
+    <Compile Include="Unary.Common\Source\Client\MusicSys.cs" />
+    <Compile Include="Unary.Common\Source\Client\NetworkSys.cs" />
+    <Compile Include="Unary.Common\Source\Client\SteamSys.cs" />
+    <Compile Include="Unary.Common\Source\Enums\SysType.cs" />
+    <Compile Include="Unary.Common\Source\Interfaces\IBoot.cs" />
+    <Compile Include="Unary.Common\Source\Interfaces\ITreeStateEntry.cs" />
+    <Compile Include="Unary.Common\Source\Server\BanSys.cs" />
+    <Compile Include="Unary.Common\Source\Server\NetworkSys.cs" />
+    <Compile Include="Unary.Common\Source\Server\SteamSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\BootSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\DataSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\RandomSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\RCONSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\RegistrySys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\SaveSys.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Ban.cs" />
+    <Compile Include="Unary.Common\Source\Structs\BoundPath.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Packet.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Command.cs" />
+    <Compile Include="Unary.Common\Source\Subsystems\ConfigManager.cs" />
+    <Compile Include="Unary.Common\Source\Subsystems\SubscriberManager.cs" />
+    <Compile Include="Unary.Common\Source\Subsystems\SysManager.cs" />
+    <Compile Include="Unary.Common\Source\Structs\EntryDebug.cs" />
+    <Compile Include="Unary.Common\Source\Structs\RareTickSubscriber.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Mod.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Registry.cs" />
+    <Compile Include="Unary.Common\Source\Structs\RPCEntry.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Save.cs" />
+    <Compile Include="Unary.Common\Source\Subsystems\Singletones.cs" />
+    <Compile Include="Unary.Common\Source\Subsystems\Categories.cs" />
+    <Compile Include="Unary.Common\Source\Client\DiscordSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\EventSys.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Binds.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Config.cs" />
+    <Compile Include="Unary.Common\Source\Structs\ModManifest.cs" />
+    <Compile Include="Unary.Common\Source\Structs\ModImages.cs" />
+    <Compile Include="Unary.Common\Source\Structs\NodeID.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Output.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Subscriber.cs" />
+    <Compile Include="Unary.Common\Source\Subsystems\SysMultiplayer.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Variable.cs" />
+    <Compile Include="Unary.Common\Source\Shared\ModSys.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Version.cs" />
+    <Compile Include="Unary.Common\Source\Utils\AssemblyUtil.cs" />
+    <Compile Include="Unary.Common\Source\Utils\Converter.cs" />
+    <Compile Include="Unary.Common\Source\Subsystems\Entries.cs" />
+    <Compile Include="Unary.Common\Source\Utils\EnumUtil.cs" />
+    <Compile Include="Unary.Common\Source\Utils\ModIDUtil.cs" />
+    <Compile Include="Unary.Common\Source\Utils\NetworkUtil.cs" />
+    <Compile Include="Unary.Common\Source\Utils\NodeUtil.cs" />
+    <Compile Include="Unary.Common\Source\Utils\StringUtil.cs" />
+    <Compile Include="Unary.Common\Source\Utils\TreeStateUtil.cs" />
+    <Compile Include="Unary.Common\Source\Shared\AssemblySys.cs" />
+    <Compile Include="Unary.Common\Source\Client\BindSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\EntriesSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\ConfigSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\FilesystemSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\HarmonySys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\InterpreterSys.cs" />
+    <Compile Include="Unary.Common\Source\Client\LocaleSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\OSSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\Sys.cs" />
+    <Compile Include="Unary.Common\Source\UI\ProfilerEntry.cs" />
+    <Compile Include="Unary.Common\Source\UI\ProfilerManager.cs" />
+    <Compile Include="Unary.Common\Source\Shared\SceneSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\SteamSys.cs" />
+    <Compile Include="Unary.Common\Source\Common.cs" />
+    <Compile Include="Unary.Common\Source\Shared\ConsoleSys.cs" />
+    <Compile Include="Unary.Common\Source\AssemblyInfo.cs" />
+    <Compile Include="Unary.Common\Source\UI\ModListEntry.cs" />
+    <Compile Include="Unary.Common\Source\UI\ModsList.cs" />
+    <Compile Include="Unary.Common\Source\UI\ProfilerNamespace.cs" />
+    <Compile Include="Unary.Common\Source\Utils\FilesystemUtil.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

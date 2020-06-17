@@ -1,8 +1,8 @@
-# Common Framework
+# Unary.Common
 ![Common architecture](/Info/Architecture.png)
 ## Multiplayer oriented modding framework with Steam Workshop integration built on top of Godot engine
 
-Common Framework provides you with a toolset to make plug-n-play architecture for your
+Unary.Common provides you with a toolset to make plug-n-play architecture for your
 Core game, as well as for all the Mods, which allows you to have interchangable mods in-between
 sessions/servers/lobbies with automatic Steam workshop / Mods folder synchronization. Is uses the
 same ClassDB-like architecture from Godot, and provides an easy way to separate codebase into 
@@ -11,7 +11,6 @@ Shared, Client and Server systems.
 ### Used third-party materials:
 ##### [Godot Engine](https://godotengine.org/)
 ##### [Steamworks.NET](https://steamworks.github.io/)
-##### [LiteNetLib](https://github.com/RevenantX/LiteNetLib)
 ##### [Newtonsoft Json](https://www.newtonsoft.com/json)
 ##### [MessagePack](https://github.com/neuecc/MessagePack-CSharp)
 ##### [NotoSans Font](https://www.google.com/get/noto/)

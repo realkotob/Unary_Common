@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Unary.Common/Source/UI/ProfilerManager.cs" type="Script" id=1]
+[ext_resource path="res://Unary.Common/Themes/MainTheme.tres" type="Theme" id=2]
+
+[node name="Profiler" type="CanvasLayer"]
+
+[node name="Profiler" type="WindowDialog" parent="."]
+visible = true
+margin_right = 286.0
+margin_bottom = 257.0
+window_title = "Profiler"
+resizable = true
+script = ExtResource( 1 )
+
+[node name="Scroll" type="ScrollContainer" parent="Profiler"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+theme = ExtResource( 2 )
+
+[node name="Namespaces" type="VBoxContainer" parent="Profiler/Scroll"]
