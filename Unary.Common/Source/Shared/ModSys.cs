@@ -57,7 +57,7 @@ namespace Unary.Common.Shared
 			
 			ModFolders.AddRange(SteamSys.GetModFolders());
 
-			ModFolders.AddRange(FilesystemUtil.SystemDirGetDirsTop("Mods"));
+			ModFolders.AddRange(FilesystemUtil.Sys.DirGetDirsTop("Mods"));
 
 			foreach (var Folder in ModFolders)
 			{
@@ -77,7 +77,7 @@ namespace Unary.Common.Shared
 
 			try
 			{
-				string Manifest = FilesystemUtil.SystemFileRead(Path + '/' + "Manifest.json");
+				string Manifest = FilesystemUtil.Sys.FileRead(Path + '/' + "Manifest.json");
 				NewMod = JsonConvert.DeserializeObject<ModManifest>(Manifest);
 				NewMod.Mod.Path = Path;
 			}

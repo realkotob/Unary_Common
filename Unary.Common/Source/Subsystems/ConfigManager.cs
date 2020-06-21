@@ -60,7 +60,7 @@ namespace Unary.Common.Subsystems
         {
             string FilePath = Path + '/' + FileName + ".json";
 
-            if (FilesystemUtil.SystemFileExists(FilePath))
+            if (FilesystemUtil.Sys.FileExists(FilePath))
             {
                 if (!Configs.ContainsKey(ModID))
                 {

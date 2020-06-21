@@ -63,19 +63,19 @@ namespace Unary.Common.Shared
 
 		public override void Init()
 		{
-			if (FilesystemUtil.SystemFileExists("log.old"))
+			if (FilesystemUtil.Sys.FileExists("log.old"))
 			{
-				FilesystemUtil.SystemFileDelete("log.old");
+				FilesystemUtil.Sys.FileDelete("log.old");
 			}
 
-			if (FilesystemUtil.SystemFileExists("log.txt"))
+			if (FilesystemUtil.Sys.FileExists("log.txt"))
 			{
-				FilesystemUtil.SystemFileMove("log.txt", "log.old");
+				FilesystemUtil.Sys.FileMove("log.txt", "log.old");
 			}
 
-			if (!FilesystemUtil.SystemFileExists("log.txt"))
+			if (!FilesystemUtil.Sys.FileExists("log.txt"))
 			{
-				FilesystemUtil.SystemFileCreate("log.txt");
+				FilesystemUtil.Sys.FileCreate("log.txt");
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace Unary.Common.Shared
 					if(Autofill.GetChildCount() != 0)
 					{
 						string Text = Autofill.GetChild<Node>(0).GetNode<Label>("Alias").Text;
-						Text = Text.GetFirstOccurrence("(") + '(';
+						Text = Text.GetPartsFromBeginToIndex('(', 0) + '(';
 						ConsoleLine.Text = Text;
 						ConsoleLine.CaretPosition = Text.Length;
 					}
@@ -228,7 +228,7 @@ namespace Unary.Common.Shared
 		{
 			var Time = OS.GetTime();
 			string Result = "[" + Time["hour"] + ':' + Time["minute"] + ':' + Time["second"] + "][" + Type + "]: " + Text + System.Environment.NewLine;
-			FilesystemUtil.SystemFileAppend("log.txt", Result);
+			FilesystemUtil.Sys.FileAppend("log.txt", Result);
 		}
 
 		public void Message(string Text)

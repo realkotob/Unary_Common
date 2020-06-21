@@ -76,7 +76,7 @@ namespace Unary.Common.Client
 
             string FullPath = Path + '/' + "Binds.json";
 
-            if(!FilesystemUtil.SystemFileExists(FullPath))
+            if(!FilesystemUtil.Sys.FileExists(FullPath))
             {
                 ConsoleSys.Error("Tried loading binds at " + Path + " but file is not here");
                 return;

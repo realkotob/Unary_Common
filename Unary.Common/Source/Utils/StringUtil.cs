@@ -32,51 +32,111 @@ namespace Unary.Common.Utils
 {
     public static class StringUtil
     {
-        public static string GetLastOccurence(this string Source, string Find)
+        private static List<int> OffsetBuffer = new List<int>();
+        private static List<int> LengthBuffer = new List<int>();
+        private static int Offset = 0;
+        private static int Length = 0;
+        private static int BufferCounter = -1;
+
+        private static void AddPartToBuffer(int i)
         {
-            int Place = Source.LastIndexOf(Find);
-            return Source.Substring(Place, Source.Length - Place);
+            OffsetBuffer.Add(Offset);
+            LengthBuffer.Add(Length);
+            Offset = i + 1;
+            Length = 0;
+            BufferCounter++;
         }
 
-        public static string ReplaceLastOccurrence(this string Source, string Find, string Replace)
+        private static void BuildBuffer(string Source, char NewTarget)
         {
-            int Place = Source.LastIndexOf(Find);
-            string result = Source.Remove(Place, Find.Length).Insert(Place, Replace);
-            return result;
-        }
+            OffsetBuffer.Clear();
+            LengthBuffer.Clear();
+            Offset = 0;
+            Length = 0;
+            BufferCounter = -1;
 
-        public static string GetFirstOccurrence(this string Source, string Find)
-        {
-            int Place = Source.IndexOf(Find);
-            return Source.Substring(0, Place);
-        }
-
-        public static string GetAfterFirstOccurrence(this string Source, string Find)
-        {
-            int Place = Source.IndexOf(Find);
-            Place++;
-            return Source.Substring(Place, Source.Length - Place);
-        }
-
-        public static string ReplaceFirstOccurrence(this string Source, string Find, string Replace)
-        {
-            int Place = Source.IndexOf(Find);
-            return Replace + Source.Substring(Place, Source.Length - Place);
-        }
-
-        public static int CountCharOccurrences(this string Source, char Target)
-        {
-            int Result = 0;
-
-            for(int i = Source.Length - 1; i >= 0; --i)
+            for (int i = 0; i < Source.Length; ++i)
             {
-                if(Source[i] == Target)
+                if (Source[i] == NewTarget)
                 {
-                    Result++;
+                    AddPartToBuffer(i);
+                }
+                else if(i == Source.Length - 1)
+                {
+                    Length++;
+                    AddPartToBuffer(i);
+                }
+                else
+                {
+                    Length++;
+                }
+            }
+        }
+
+        public static string GetPart(this string Source, char Target, int Index)
+        {
+            BuildBuffer(Source, Target);
+
+            if(Index >= 0)
+            {
+                return Source.Substring(OffsetBuffer[Index], LengthBuffer[Index]);
+            }
+            else
+            {
+                return Source.Substring(OffsetBuffer[BufferCounter + Index], LengthBuffer[BufferCounter + Index]);
+            }
+        }
+
+        public static string GetLastPart(this string Source, char Target)
+        {
+            BuildBuffer(Source, Target);
+
+            return Source.Substring(OffsetBuffer[BufferCounter], LengthBuffer[BufferCounter]);
+        }
+
+        /*    From        To
+         *    v           v
+         *    Unary.Common.This.Is.A.Test
+         */
+        public static string GetPartsFromBeginToIndex(this string Source, char Target, int Index)
+        {
+            BuildBuffer(Source, Target);
+
+            return Source.Substring(0, OffsetBuffer[Index] + LengthBuffer[Index]);
+        }
+
+        /*                From       To
+         *                v          v
+         *    Unary.Common.This.Is.A.Test
+         */
+        public static string GetPartsFromIndexToEnd(this string Source, char Target, int Index)
+        {
+            BuildBuffer(Source, Target);
+
+            return Source.Substring(OffsetBuffer[Index]);
+        }
+
+        public static string ReplacePart(this string Source, char Target, int Index, string Replace)
+        {
+            BuildBuffer(Source, Target);
+
+            return Source.Remove(OffsetBuffer[BufferCounter + Index], LengthBuffer[BufferCounter + Index])
+            .Insert(OffsetBuffer[BufferCounter + Index], Replace);
+        }
+
+        public static int CountChar(this string Source, char Target)
+        {
+            Length = 0;
+
+            for (int i = 0; i < Source.Length - 1; ++i)
+            {
+                if (Source[i] == Target)
+                {
+                    Length++;
                 }
             }
 
-            return Result;
+            return Length;
         }
     }
 }

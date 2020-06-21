@@ -57,14 +57,14 @@ namespace Unary.Common.Structs
 
         public void Load()
         {
-            if(!FilesystemUtil.SystemFileExists(Path))
+            if(!FilesystemUtil.Sys.FileExists(Path))
             {
                 Valid = false;
                 Sys.Ref.ConsoleSys.Error("Tried to load binds at " + Path + " but file is not presented");
                 return;
             }
 
-            string BindList = FilesystemUtil.SystemFileRead(Path);
+            string BindList = FilesystemUtil.Sys.FileRead(Path);
 
             if (BindList == null)
             {
@@ -101,7 +101,7 @@ namespace Unary.Common.Structs
             {
                 try
                 {
-                    FilesystemUtil.SystemFileWrite(Path, JsonConvert.SerializeObject(Actions, Formatting.Indented));
+                    FilesystemUtil.Sys.FileWrite(Path, JsonConvert.SerializeObject(Actions, Formatting.Indented));
                 }
                 catch (Exception)
                 {

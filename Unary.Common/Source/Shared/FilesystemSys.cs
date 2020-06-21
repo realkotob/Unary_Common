@@ -49,7 +49,7 @@ namespace Unary.Common.Shared
 			ModIDFiles = new Dictionary<string, List<string>>();
 
 			#if DEBUG
-				if (!FilesystemUtil.GodotPackPCK("Unary.Common", ".", new List<string>() { }))
+				if (!FilesystemUtil.GD.PackPCK("Unary.Common", ".", new List<string>() { }))
 				{
 					Sys.Ref.ConsoleSys.Error("Failed to pack Unary.Common");
 				}
@@ -73,11 +73,11 @@ namespace Unary.Common.Shared
 			{
 				foreach (var File in ModIDFiles[Mod.ModID])
 				{
-					FilesystemUtil.GodotFileRemove(File);
+					FilesystemUtil.GD.FileRemove(File);
 				}
 			}
 
-			FilesystemUtil.GodotDirRemove("res://" + Mod.ModID);
+			FilesystemUtil.GD.DirRemove("res://" + Mod.ModID);
 			ModIDFiles.Remove(Mod.ModID);
 		}
 
@@ -100,26 +100,26 @@ namespace Unary.Common.Shared
 			string PCKManifest = Mod.Path + '/' + Mod.ModID + ".json";
 
 			#if DEBUG
-				if (!FilesystemUtil.GodotPackPCK(Mod.ModID, Mod.Path, new List<string>() { }))
+				if (!FilesystemUtil.GD.PackPCK(Mod.ModID, Mod.Path, new List<string>() { }))
 				{
 					Sys.Ref.ConsoleSys.Error("Failed to repack " + Mod.ModID);
 					return;
 				}
 			#endif
 
-			if (!FilesystemUtil.SystemFileExists(PCKPath))
+			if (!FilesystemUtil.Sys.FileExists(PCKPath))
 			{
 				Sys.Ref.ConsoleSys.Error(Mod.ModID + " is not providing a package to load from");
 				return;
 			}
 
-			if (!FilesystemUtil.SystemFileExists(PCKManifest))
+			if (!FilesystemUtil.Sys.FileExists(PCKManifest))
 			{
 				Sys.Ref.ConsoleSys.Error(Mod.ModID + " is not providing a package manifest to load from");
 				return;
 			}
 
-			string Manifest = FilesystemUtil.SystemFileRead(PCKManifest);
+			string Manifest = FilesystemUtil.Sys.FileRead(PCKManifest);
 
 			if (Manifest == null)
 			{
@@ -154,7 +154,7 @@ namespace Unary.Common.Shared
 
 			ModSys ModSys = Sys.Ref.Shared.GetObject<ModSys>();
 
-			if (!FilesystemUtil.GodotDirContainsFiles(Mod.Path, Mod.ModID + ".pck"))
+			if (!FilesystemUtil.GD.DirContainsFiles(Mod.Path, Mod.ModID + ".pck"))
 			{
 				return;
 			}
@@ -170,10 +170,10 @@ namespace Unary.Common.Shared
 
 				TargetFolders = TargetFolders.Distinct().ToList();
 
-				FilesystemUtil.GodotPackPCK(Mod.ModID, Mod.Path, TargetFolders);
+				FilesystemUtil.GD.PackPCK(Mod.ModID, Mod.Path, TargetFolders);
 			#endif
 
-			string Manifest = FilesystemUtil.SystemFileRead(Mod.Path + '/' + Mod.ModID + ".json");
+			string Manifest = FilesystemUtil.Sys.FileRead(Mod.Path + '/' + Mod.ModID + ".json");
 
 			if (Manifest == null)
 			{

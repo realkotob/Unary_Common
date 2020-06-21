@@ -27,6 +27,7 @@ using Unary.Common.Utils;
 using Unary.Common.Interfaces;
 using Unary.Common.Abstract;
 using Unary.Common.Enums;
+using Unary.Common.Utils;
 
 using Godot;
 
@@ -260,7 +261,7 @@ namespace Unary.Common.Shared
 					RegisteredCommands[ModID] = new List<Command>();
 				}
 
-				List<Command> Commands = JsonConvert.DeserializeObject<List<Command>>(FilesystemUtil.SystemFileRead(Path));
+				List<Command> Commands = JsonConvert.DeserializeObject<List<Command>>(FilesystemUtil.Sys.FileRead(Path));
 
 				foreach (var CommandEntry in Commands)
 				{
@@ -312,11 +313,10 @@ namespace Unary.Common.Shared
 		{
 			List<string> CommandParts;
 			string Arguments = null;
+			string TargetCommand = default;
 
 			if (Command.Contains('(') && Command.Contains(')') && Command[Command.Length - 1] == ')')
 			{
-				string TargetCommand = default;
-
 				for (int i = 0; i < Command.Length - 1; ++i)
 				{
 					if (Command[i] == '(')
@@ -342,7 +342,7 @@ namespace Unary.Common.Shared
 
 				CommandParts = TargetCommand.Split('.').ToList();
 
-				if (CommandParts.Count != 4)
+				if (CommandParts.Count != 5)
 				{
 					ConsoleSys.Error("Invalid command syntax");
 					ConsoleSys.Error("Have you tried using \"Help()\"?");
@@ -364,62 +364,54 @@ namespace Unary.Common.Shared
 				return;
 			}
 
-			string ModID;
+			string ModID = ModIDUtil.ModID(TargetCommand);
 
-			if (!RegisteredCommands.ContainsKey(CommandParts[0]))
+			if (!RegisteredCommands.ContainsKey(ModID))
 			{
-				ConsoleSys.Error(CommandParts[0] + " is an invalid ModID");
+				ConsoleSys.Error(ModID + " is an invalid ModID");
 				ConsoleSys.Error(GetModIDs());
 				return;
-			}
-			else
-			{
-				ModID = CommandParts[0];
 			}
 
 			List<string> Systems;
 
-			if (CommandParts[1] == "Shared")
+			if (CommandParts[2] == "Shared")
 			{
 				Systems = Sys.Ref.Shared.Order;
 			}
-			else if (CommandParts[1] == "Client")
+			else if (CommandParts[2] == "Client")
 			{
 				Systems = Sys.Ref.Client.Order;
 			}
-			else if (CommandParts[1] == "Server")
+			else if (CommandParts[2] == "Server")
 			{
 				Systems = Sys.Ref.Server.Order;
 			}
 			else
 			{
-				ConsoleSys.Error(CommandParts[1] + " is an invalid System type");
+				ConsoleSys.Error(CommandParts[2] + " is an invalid System type");
 				ConsoleSys.Error(GetSystemTypes());
 				return;
 			}
 
-			string ModIDEntry;
+			string ModIDEntry = TargetCommand.GetPartsFromBeginToIndex('.', 3);
 			SysType Type;
 
-			if (Systems.Contains(CommandParts[0] + '.' + CommandParts[1] + '.' + CommandParts[2]))
-			{
-				ModIDEntry = CommandParts[0] + '.' + CommandParts[1] + '.' + CommandParts[2];
-			}
-			else
+			if (!Systems.Contains(ModIDEntry))
 			{
 				ConsoleSys.Error(CommandParts[2] + " is an invalid System ModIDEntry");
-				ConsoleSys.Error(GetSystems(CommandParts[1], Systems));
+				ConsoleSys.Error(GetSystems(CommandParts[2], Systems));
 				return;
 			}
 
 			Godot.Object TargetSystem = default;
 			SysManager TargetManager;
 
-			if (CommandParts[1] == "Shared")
+			if (CommandParts[2] == "Shared")
 			{
 				TargetManager = Sys.Ref.Shared;
 			}
-			else if (CommandParts[1] == "Client")
+			else if (CommandParts[2] == "Client")
 			{
 				TargetManager = Sys.Ref.Client;
 			}
@@ -451,7 +443,7 @@ namespace Unary.Common.Shared
 
 			foreach (var Method in Methods)
 			{
-				if (Method.Name == CommandParts[3])
+				if (Method.Name == CommandParts[4])
 				{
 					TargetMethod = Method;
 					break;
@@ -460,7 +452,7 @@ namespace Unary.Common.Shared
 
 			if (TargetMethod == null)
 			{
-				ConsoleSys.Error(CommandParts[3] + " is an invalid method");
+				ConsoleSys.Error(CommandParts[4] + " is an invalid method");
 				ConsoleSys.Error(GetMethods(Methods));
 				return;
 			}
@@ -504,7 +496,7 @@ namespace Unary.Common.Shared
 				}
 			}
 
-			object CallResult = TargetSystem.Call(CommandParts[3], FinalArguments.ToArray());
+			object CallResult = TargetSystem.Call(CommandParts[4], FinalArguments.ToArray());
 
 			if (CallResult != null)
 			{
@@ -514,7 +506,7 @@ namespace Unary.Common.Shared
 
 		public void ProcessScriptFile(string Path)
 		{
-			string File = FilesystemUtil.SystemFileRead(Path);
+			string File = FilesystemUtil.Sys.FileRead(Path);
 
 			string[] Lines = File.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
@@ -561,12 +553,12 @@ namespace Unary.Common.Shared
 
 		public void ProcessFiles(string ModID, string Path)
 		{
-			if (FilesystemUtil.SystemFileExists(Path + CommandsPath))
+			if (FilesystemUtil.Sys.FileExists(Path + CommandsPath))
 			{
 				ProcessCommandFile(Path + CommandsPath, ModID);
 			}
 
-			if (FilesystemUtil.SystemFileExists(Path + ScriptPath))
+			if (FilesystemUtil.Sys.FileExists(Path + ScriptPath))
 			{
 				ProcessScriptFile(Path + ScriptPath);
 			}

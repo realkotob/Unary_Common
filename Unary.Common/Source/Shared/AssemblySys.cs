@@ -134,14 +134,9 @@ namespace Unary.Common.Shared
         {
             foreach (var Type in TargetAssembly.GetTypes())
             {
-                if (Type.Namespace != null && Type.IsClass || (Type.IsValueType && !Type.IsEnum))
+                if (Type.Namespace != null && (Type.IsClass || (Type.IsValueType && !Type.IsEnum)))
                 {
                     string Key = ModIDUtil.FromType(Type);
-
-                    if (!ModIDUtil.Validate(Key))
-                    {
-                        continue;
-                    }
 
                     if (!NamedTypes.ContainsKey(Key))
                     {
@@ -163,7 +158,7 @@ namespace Unary.Common.Shared
 
         public override void InitCore(Mod Mod)
         {
-            if(!FilesystemUtil.SystemDirContainsFiles(Mod.Path, Mod.ModID + ".dll"))
+            if(!FilesystemUtil.Sys.DirContainsFiles(Mod.Path, Mod.ModID + ".dll"))
             {
                 ConsoleSys.Panic("Core mod cant exist without assembly");
             }
@@ -191,7 +186,7 @@ namespace Unary.Common.Shared
 
         public override void InitMod(Mod Mod)
         {
-            if (FilesystemUtil.SystemDirContainsFiles(Mod.Path, Mod.ModID + ".dll"))
+            if (FilesystemUtil.Sys.DirContainsFiles(Mod.Path, Mod.ModID + ".dll"))
             {
                 try
                 {

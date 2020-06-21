@@ -1,4 +1,4 @@
-﻿/*
+/*
 MIT License
 
 Copyright (c) 2020 Unary Incorporated
@@ -35,201 +35,197 @@ using Newtonsoft.Json.Linq;
 
 namespace Unary.Common.Structs
 {
-    public struct Config
-    {
-        public string Path { get; private set; }
+	public struct Config
+	{
+		public string Path { get; private set; }
 
-        private Dictionary<string, Variable> Properties;
-        private Dictionary<string, List<Subscriber>> Subscribers;
+		private Dictionary<string, Variable> Properties;
+		private Dictionary<string, List<Subscriber>> Subscribers;
 
-        private bool Valid;
+		private bool Valid;
 
-        public void Init(string FilePath)
-        {
-            Valid = true;
-            Path = FilePath;
+		public void Init(string FilePath)
+		{
+			Valid = true;
+			Path = FilePath;
 
-            Properties = new Dictionary<string, Variable>();
-            Subscribers = new Dictionary<string, List<Subscriber>>();
+			Properties = new Dictionary<string, Variable>();
+			Subscribers = new Dictionary<string, List<Subscriber>>();
 
-            Load();
-        }
+			Load();
+		}
 
-        public void Load()
-        {
-            if(!FilesystemUtil.SystemFileExists(Path))
-            {
-                Valid = false;
-                Sys.Ref.ConsoleSys.Error("Tried to init config at " + Path + " but it is not presented");
-                return;
-            }
-            
-            string Config = FilesystemUtil.SystemFileRead(Path);
+		public void Load()
+		{
+			if(!FilesystemUtil.Sys.FileExists(Path))
+			{
+				Valid = false;
+				Sys.Ref.ConsoleSys.Error("Tried to init config at " + Path + " but it is not presented");
+				return;
+			}
+			
+			string Config = FilesystemUtil.Sys.FileRead(Path);
 
-            if (Config == null)
-            {
-                Valid = false;
-                Sys.Ref.ConsoleSys.Error("Tried to init config at " + Path + " but it was empty");
-                return;
-            }
+			if (Config == null)
+			{
+				Valid = false;
+				Sys.Ref.ConsoleSys.Error("Tried to init config at " + Path + " but it was empty");
+				return;
+			}
 
-            Dictionary<string, JObject> Entries;
+			Dictionary<string, JObject> Entries;
 
-            try
-            {
-                Entries = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(Config);
-            }
-            catch(Exception Exception)
-            {
-                Valid = false;
-                Sys.Ref.ConsoleSys.Error("Failed to load config at " + Path);
-                Sys.Ref.ConsoleSys.Error(Exception.Message);
-                return;
-            }
+			try
+			{
+				Entries = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(Config);
+			}
+			catch(Exception Exception)
+			{
+				Valid = false;
+				Sys.Ref.ConsoleSys.Error("Failed to load config at " + Path);
+				Sys.Ref.ConsoleSys.Error(Exception.Message);
+				return;
+			}
 
-            AssemblySys AssemblySys = Sys.Ref.Shared.GetNode<AssemblySys>();
+			AssemblySys AssemblySys = Sys.Ref.Shared.GetNode<AssemblySys>();
 
-            foreach (var Entry in Entries)
-            {
-                string TypeName = Entry.Value["Type"].ToString();
+			foreach (var Entry in Entries)
+			{
+				string TypeName = Entry.Value["Type"].ToString();
 
-                Type Type = AssemblySys.GetType(TypeName);
+				Type Type = AssemblySys.GetType(TypeName);
 
-                Type Another = AssemblySys.GetType("System.Boolean");
+				if (Type == null)
+				{
+					Sys.Ref.ConsoleSys.Error(TypeName + " is not a valid type");
+					continue;
+				}
 
-                Type TestType = typeof(bool);
+				try
+				{
+					object Test = JsonConvert.DeserializeObject(Entry.Value["Value"].ToString(Formatting.None), Type);
+					Set(Entry.Key, Test);
+				}
+				catch (Exception Exception)
+				{
+					Sys.Ref.ConsoleSys.Error("Failed at parse of variable " + Entry.Key + " at " + Path);
+					Sys.Ref.ConsoleSys.Error(Exception.Message);
+					continue;
+				}
+			}
+		}
 
-                if (Type == null)
-                {
-                    Sys.Ref.ConsoleSys.Error(TypeName + " is not a valid type");
-                    continue;
-                }
+		public void Save()
+		{
+			if(Valid)
+			{
+				try
+				{
+					FilesystemUtil.Sys.FileWrite(Path, JsonConvert.SerializeObject(Properties, Formatting.Indented));
+				}
+				catch (Exception)
+				{
+					Sys.Ref.ConsoleSys.Error("Tried saving config at " + Path + " but failed");
+				}
+			}
+		}
 
-                try
-                {
-                    object Test = JsonConvert.DeserializeObject(Entry.Value["Value"].ToString(Formatting.None), Type);
-                    Set(Entry.Key, Test);
-                }
-                catch (Exception Exception)
-                {
-                    Sys.Ref.ConsoleSys.Error("Failed at parse of variable " + Entry.Key + " at " + Path);
-                    Sys.Ref.ConsoleSys.Error(Exception.Message);
-                    continue;
-                }
-            }
-        }
+		public void Set(string Property, object Value)
+		{
+			if(!ModIDUtil.Validate(Property))
+			{
+				return;
+			}
 
-        public void Save()
-        {
-            if(Valid)
-            {
-                try
-                {
-                    FilesystemUtil.SystemFileWrite(Path, JsonConvert.SerializeObject(Properties, Formatting.Indented));
-                }
-                catch (Exception)
-                {
-                    Sys.Ref.ConsoleSys.Error("Tried saving config at " + Path + " but failed");
-                }
-            }
-        }
+			string TypeName = ModIDUtil.FromType(Value.GetType());
 
-        public void Set(string Property, object Value)
-        {
-            if(!ModIDUtil.Validate(Property))
-            {
-                return;
-            }
+			if (!ModIDUtil.Validate(TypeName))
+			{
+				return;
+			}
 
-            string TypeName = ModIDUtil.FromType(Value.GetType());
+			Properties[Property] = new Variable
+			{
+				Type = TypeName,
+				Value = Value
+			};
 
-            if (!ModIDUtil.Validate(TypeName))
-            {
-                return;
-            }
+			if(Subscribers.ContainsKey(Property))
+			{
+				for(int i = Subscribers[Property].Count - 1; i >= 0; --i)
+				{
+					var Target = Subscribers[Property][i];
 
-            Properties[Property] = new Variable
-            {
-                Type = TypeName,
-                Value = Value
-            };
+					if (Godot.Object.IsInstanceValid(Target.Target))
+					{
+						if(Target.Type == SubscriberType.Member)
+						{
+							Target.Target.Set(Target.MemberName, Value);
+						}
+						else
+						{
+							Target.Target.Call(Target.MemberName, Value);
+						}
+					}
+					else
+					{
+						Subscribers[Property].RemoveAt(i);
+					}
+				}
+			}
+		}
 
-            if(Subscribers.ContainsKey(Property))
-            {
-                for(int i = Subscribers[Property].Count - 1; i >= 0; --i)
-                {
-                    var Target = Subscribers[Property][i];
+		public object Get(string Property)
+		{
+			if (!ModIDUtil.Validate(Property))
+			{
+				return null;
+			}
 
-                    if (Godot.Object.IsInstanceValid(Target.Target))
-                    {
-                        if(Target.Type == SubscriberType.Member)
-                        {
-                            Target.Target.Set(Target.MemberName, Value);
-                        }
-                        else
-                        {
-                            Target.Target.Call(Target.MemberName, Value);
-                        }
-                    }
-                    else
-                    {
-                        Subscribers[Property].RemoveAt(i);
-                    }
-                }
-            }
-        }
+			if (Properties.ContainsKey(Property))
+			{
+				return Properties[Property].Value;
+			}
+			else
+			{
+				return null;
+			}
+		}
 
-        public object Get(string Property)
-        {
-            if (!ModIDUtil.Validate(Property))
-            {
-                return null;
-            }
+		public void Subscribe(Godot.Object Target, string MemberName, string Property, SubscriberType Type)
+		{
+			if (!ModIDUtil.Validate(Property))
+			{
+				return;
+			}
 
-            if (Properties.ContainsKey(Property))
-            {
-                return Properties[Property].Value;
-            }
-            else
-            {
-                return null;
-            }
-        }
+			if(!Properties.ContainsKey(Property))
+			{
+				return;
+			}
 
-        public void Subscribe(Godot.Object Target, string MemberName, string Property, SubscriberType Type)
-        {
-            if (!ModIDUtil.Validate(Property))
-            {
-                return;
-            }
+			if (!Subscribers.ContainsKey(Property))
+			{
+				Subscribers[Property] = new List<Subscriber>();
+			}
 
-            if(!Properties.ContainsKey(Property))
-            {
-                return;
-            }
+			Subscriber NewSubscriber = new Subscriber
+			{
+				Target = Target,
+				MemberName = MemberName,
+				Type = Type
+			};
 
-            if (!Subscribers.ContainsKey(Property))
-            {
-                Subscribers[Property] = new List<Subscriber>();
-            }
+			Subscribers[Property].Add(NewSubscriber);
 
-            Subscriber NewSubscriber = new Subscriber
-            {
-                Target = Target,
-                MemberName = MemberName,
-                Type = Type
-            };
-
-            Subscribers[Property].Add(NewSubscriber);
-
-            if (Type == SubscriberType.Member)
-            {
-                Target.Set(MemberName, Get(Property));
-            }
-            else
-            {
-                Target.Call(MemberName, Get(Property));
-            }
-        }
-    }
+			if (Type == SubscriberType.Member)
+			{
+				Target.Set(MemberName, Get(Property));
+			}
+			else
+			{
+				Target.Call(MemberName, Get(Property));
+			}
+		}
+	}
 }

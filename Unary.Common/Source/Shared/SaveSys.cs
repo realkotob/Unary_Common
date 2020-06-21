@@ -45,14 +45,14 @@ namespace Unary.Common.Shared
         {
             EntriesSys = Sys.Ref.Shared.GetObject<EntriesSys>();
 
-            if (!FilesystemUtil.SystemDirExists("Saves"))
+            if (!FilesystemUtil.Sys.DirExists("Saves"))
             {
-                FilesystemUtil.SystemDirCreate("Saves");
+                FilesystemUtil.Sys.DirCreate("Saves");
             }
 
             Saves = new Dictionary<string, Save>();
 
-            foreach(var Dir in FilesystemUtil.SystemDirGetDirsTop("Saves"))
+            foreach(var Dir in FilesystemUtil.Sys.DirGetDirsTop("Saves"))
             {
                 string Name = System.IO.Path.GetFileName(Dir);
 
@@ -63,9 +63,9 @@ namespace Unary.Common.Shared
 
                 string ManifestPath = Dir + '/' + "Manifest.json";
 
-                if(FilesystemUtil.SystemFileExists(ManifestPath))
+                if(FilesystemUtil.Sys.FileExists(ManifestPath))
                 {
-                    string Manifest = FilesystemUtil.SystemFileRead(ManifestPath);
+                    string Manifest = FilesystemUtil.Sys.FileRead(ManifestPath);
 
                     if(Manifest == null)
                     {
@@ -100,7 +100,7 @@ namespace Unary.Common.Shared
 
         public bool New(string Name, string Description = default)
         {
-            if (FilesystemUtil.SystemDirExists("Saves/" + Name) || Saves.ContainsKey(Name))
+            if (FilesystemUtil.Sys.DirExists("Saves/" + Name) || Saves.ContainsKey(Name))
             {
                 return false;
             }
@@ -128,11 +128,11 @@ namespace Unary.Common.Shared
                 Registry = Registry
             };
 
-            FilesystemUtil.SystemDirCreate("Saves/" + Name);
+            FilesystemUtil.Sys.DirCreate("Saves/" + Name);
 
             try
             {
-                FilesystemUtil.SystemFileWrite("Saves/" + Name + "/Manifest.json", JsonConvert.SerializeObject(NewSave));
+                FilesystemUtil.Sys.FileWrite("Saves/" + Name + "/Manifest.json", JsonConvert.SerializeObject(NewSave));
             }
             catch (Exception)
             {

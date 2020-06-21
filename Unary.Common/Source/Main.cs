@@ -26,13 +26,14 @@ using Unary.Common.Interfaces;
 
 using Godot;
 using Unary.Common.UI;
+using Unary.Common.Utils;
 
 using Unary.Common.Shared;
 using Unary.Common.Client;
 
 namespace Unary.Common
 {
-	public class Common : IBoot
+	public class Main : IBoot
 	{
 		private Sys Sys;
 		
@@ -64,18 +65,13 @@ namespace Unary.Common
 			Sys.Client.AddNode(new Client.DiscordSys());
 			Sys.Client.AddObject(new LocaleSys());
 			Sys.Client.AddNode(new BindSys());
-			Sys.Client.AddObject(new Client.SteamSys());
 			Sys.Client.AddNode(new MusicSys());
 			Sys.Client.AddUI(new AlertSys(), "Alert");
-			Sys.Client.AddNode(new Client.NetworkSys());
 			Sys.Client.AddNode(new SceneSys());
 		}
 
 		public void AddServer()
 		{
-			Sys.Server.AddObject(new Server.BanSys());
-			Sys.Server.AddObject(new Server.SteamSys());
-			Sys.Server.AddNode(new Server.NetworkSys());
 			Sys.Server.AddNode(new SceneSys());
 		}
 	}

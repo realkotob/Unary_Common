@@ -58,7 +58,7 @@ namespace Unary.Common.Shared
 
         public override void Init()
         {
-            if(!FilesystemUtil.SystemFileExists("steam_appid.txt"))
+            if(!FilesystemUtil.Sys.FileExists("steam_appid.txt"))
             {
                 ConsoleSys.Panic("steam_appid.txt does not exist, could not get AppID.");
                 return;
@@ -69,7 +69,7 @@ namespace Unary.Common.Shared
 
             try
             {
-                AppID = uint.Parse(FilesystemUtil.SystemFileRead("steam_appid.txt"));
+                AppID = uint.Parse(FilesystemUtil.Sys.FileRead("steam_appid.txt"));
 
                 if (!Packsize.Test())
                 {

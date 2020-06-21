@@ -102,13 +102,13 @@ namespace Unary.Common.Shared
         {
             string EntriesDir = "res://" + ModID + "/Entries";
 
-            if (!FilesystemUtil.GodotDirExists(EntriesDir))
+            if (!FilesystemUtil.GD.DirExists(EntriesDir))
             {
                 ConsoleSys.Error("Failed to load entries at " + EntriesDir + " because folder does not exist");
                 return;
             }
 
-            List<string> EntriesFiles = FilesystemUtil.GodotDirGetFiles(EntriesDir);
+            List<string> EntriesFiles = FilesystemUtil.GD.DirGetFiles(EntriesDir);
 
             for (int i = EntriesFiles.Count - 1; i >= 0; --i)
             {
@@ -120,7 +120,7 @@ namespace Unary.Common.Shared
 
             for (int i = EntriesFiles.Count - 1; i >= 0; --i)
             {
-                string EntryManifest = FilesystemUtil.GodotFileRead(EntriesFiles[i]);
+                string EntryManifest = FilesystemUtil.GD.FileRead(EntriesFiles[i]);
 
                 try
                 {

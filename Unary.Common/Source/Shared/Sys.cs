@@ -26,7 +26,6 @@ using Unary.Common.Interfaces;
 using Unary.Common.UI;
 using Unary.Common.Utils;
 using Unary.Common.Structs;
-using Unary.Common.Server;
 using Unary.Common.Enums;
 
 using System;
@@ -55,6 +54,14 @@ namespace Unary.Common.Shared
 
 		public override void _Ready()
 		{
+			string ModTest = "Unary.Common.Lol.Path";
+
+			string ModID = ModIDUtil.ModID(ModTest);
+			string ModIDEntry = ModIDUtil.ModIDEntry(ModTest);
+			string Target = ModIDUtil.ModIDTarget(ModTest);
+
+
+
 			Ref = this;
 
 			Shared = new SysManager();
@@ -85,7 +92,7 @@ namespace Unary.Common.Shared
 
 				ConsoleSys = Shared.GetUI<ConsoleSys>();
 
-				Common NewCommon = new Common();
+				Main NewCommon = new Main();
 				NewCommon.AddShared();
 
 				Shared.AddObject(new BootSys());

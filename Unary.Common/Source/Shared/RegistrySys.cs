@@ -25,7 +25,6 @@ SOFTWARE.
 using Unary.Common.Abstract;
 using Unary.Common.Arguments;
 using Unary.Common.Structs;
-using Unary.Common.Subsystems;
 
 using System;
 using System.Collections.Generic;
@@ -104,15 +103,12 @@ namespace Unary.Common.Shared
 
         public override void Sync(Args Arguments)
         {
-            if(Arguments is RegistrySync Sync)
-            {
-                Registry = Sync.Registry;
-            }
+
         }
 
         public override Args Sync()
         {
-            return new RegistrySync() { Registry = Registry };
+            return null;
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Unary.Common.Utils
         {
             if(Target.Namespace != null)
             {
-                return Target.FullName;
+                return Target.FullName.Replace("+", ".");
             }
             else
             {
@@ -43,19 +43,7 @@ namespace Unary.Common.Utils
 
         public static bool Validate(string ModIDEntry)
         {
-            if(ModIDEntry == null)
-            {
-                return false;
-            }
-
-            if(!ModIDEntry.Contains("."))
-            {
-                return false;
-            }
-
-            string[] Parts = ModIDEntry.Split('.');
-
-            if (Parts.Length < 2)
+            if(ModIDEntry == null || !ModIDEntry.Contains("."))
             {
                 return false;
             }
@@ -69,10 +57,8 @@ namespace Unary.Common.Utils
             {
                 return null;
             }
-            else
-            {
-                return ModIDEntry.GetFirstOccurrence(".");
-            }
+
+            return ModIDEntry.GetPartsFromBeginToIndex('.', 1);
         }
 
         public static string ModIDEntry(string ModIDEntry)
@@ -83,7 +69,7 @@ namespace Unary.Common.Utils
             }
             else
             {
-                return ModIDEntry.GetAfterFirstOccurrence(".");
+                return ModIDEntry.GetPartsFromIndexToEnd('.', 2);
             }
         }
 
@@ -95,7 +81,7 @@ namespace Unary.Common.Utils
             }
             else
             {
-                return ModIDEntry.GetLastOccurence(".");
+                return ModIDEntry.GetLastPart('.');
             }
         }
 

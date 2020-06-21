@@ -56,13 +56,13 @@ namespace Unary.Common.Client
 		{
 			ConsoleSys = Sys.Ref.ConsoleSys;
 
-			if (!FilesystemUtil.GodotFileExists("res://Unary.Common/Locales/Locales.json"))
+			if (!FilesystemUtil.GD.FileExists("res://Unary.Common/Locales/Locales.json"))
 			{
 				ConsoleSys.Error("Failed to find Locales.json, LocaleSys will likely crash everything");
 				return;
 			}
 
-			string LocalesManifest = FilesystemUtil.GodotFileRead("res://Unary.Common/Locales/Locales.json");
+			string LocalesManifest = FilesystemUtil.GD.FileRead("res://Unary.Common/Locales/Locales.json");
 
 			if (LocalesManifest == null)
 			{
@@ -139,13 +139,13 @@ namespace Unary.Common.Client
 		{
 			string LocaleDir = "res://" + ModID + "/Locales/" + LocaleIndex;
 
-			if(!FilesystemUtil.GodotDirExists(LocaleDir))
+			if(!FilesystemUtil.GD.DirExists(LocaleDir))
 			{
 				ConsoleSys.Error("Failed to load locale at " + LocaleDir + " because folder does not exist");
 				return;
 			}
 
-			List<string> LocaleFiles = FilesystemUtil.GodotDirGetFiles(LocaleDir);
+			List<string> LocaleFiles = FilesystemUtil.GD.DirGetFiles(LocaleDir);
 
 			for(int i = LocaleFiles.Count - 1; i >= 0; --i)
 			{
@@ -157,7 +157,7 @@ namespace Unary.Common.Client
 
 			for (int i = LocaleFiles.Count - 1; i >= 0; --i)
 			{
-				string LocaleManifest = FilesystemUtil.GodotFileRead(LocaleFiles[i]);
+				string LocaleManifest = FilesystemUtil.GD.FileRead(LocaleFiles[i]);
 
 				try
 				{
