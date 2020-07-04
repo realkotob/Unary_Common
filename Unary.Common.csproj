@@ -101,7 +101,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Unary.Common\Source\Abstract\EnvironmentPatcher.cs" />
+    <Compile Include="Unary.Common\Source\Environment\EnvironmentPatcher.cs" />
     <Compile Include="Unary.Common\Source\Abstract\SysUI.cs" />
     <Compile Include="Unary.Common\Source\Arguments\Internal\DownloadedItem.cs" />
     <Compile Include="Unary.Common\Source\Arguments\Internal\LatencyUpdate.cs" />

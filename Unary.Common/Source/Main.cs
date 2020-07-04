@@ -30,6 +30,9 @@ using Unary.Common.Utils;
 
 using Unary.Common.Shared;
 using Unary.Common.Client;
+using Microsoft.Win32;
+using System.Runtime.InteropServices;
+using System;
 
 namespace Unary.Common
 {
@@ -37,9 +40,27 @@ namespace Unary.Common
 	{
 		private Sys Sys;
 		
+
+		public class Test
+		{
+			public void Lol()
+			{
+
+			}
+		}
+
 		public void AddShared()
 		{
 			Sys = Sys.Ref;
+
+			Test NewTest = new Test();
+			NewTest.Lol();
+			NewTest.GetType().GetMethod("Lol").Invoke(NewTest, null);
+
+			System.Type NewType = new Type()
+			{
+				
+			}
 
 			// Adding shared systems
 			Sys.Shared.AddObject(new EnvironmentSys());
