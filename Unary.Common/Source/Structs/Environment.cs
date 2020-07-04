@@ -22,13 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary.Common.Enums
+using System;
+using System.Collections.Generic;
+
+namespace Unary.Common.Structs
 {
-    public enum NetworkRPCType
+    public struct Environment
     {
-        RPCID,
-        RPCIDUnreliable,
-        RPCIDAll,
-        RPCIDAllUnreliable,
+        public string ModID;
+        public string 
     }
 }

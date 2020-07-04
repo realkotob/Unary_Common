@@ -55,7 +55,7 @@ namespace Unary.Common.Client
                 {
                     State = "Playing",
                     Details = "Playing the game",
-                    Timestamps = { Start = 1 },
+                    Timestamps = { Start = 0 },
                     Assets = { LargeImage = "logo" },
                     Instance = true,
                 };

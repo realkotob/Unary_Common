@@ -101,14 +101,15 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Unary.Common\Source\Abstract\EnvironmentPatcher.cs" />
     <Compile Include="Unary.Common\Source\Abstract\SysUI.cs" />
     <Compile Include="Unary.Common\Source\Arguments\Internal\DownloadedItem.cs" />
     <Compile Include="Unary.Common\Source\Arguments\Internal\LatencyUpdate.cs" />
     <Compile Include="Unary.Common\Source\Arguments\Internal\PeerConnected.cs" />
     <Compile Include="Unary.Common\Source\Arguments\Internal\PeerDisconnected.cs" />
     <Compile Include="Unary.Common\Source\Collections\BiDictionary.cs" />
-    <Compile Include="Unary.Common\Source\Enums\DisconnectReason.cs" />
-    <Compile Include="Unary.Common\Source\Enums\NetworkRPCType.cs" />
+    <Compile Include="Unary.Common\Source\Environment\EnvManifest.cs" />
+    <Compile Include="Unary.Common\Source\Environment\EnvOperationType.cs" />
     <Compile Include="Unary.Common\Source\Interfaces\IConsoleSys.cs" />
     <Compile Include="Unary.Common\Source\Interfaces\ISysEntry.cs" />
     <Compile Include="Unary.Common\Source\Abstract\SysNode.cs" />
@@ -125,14 +126,17 @@
     <Compile Include="Unary.Common\Source\Enums\SysType.cs" />
     <Compile Include="Unary.Common\Source\Interfaces\IBoot.cs" />
     <Compile Include="Unary.Common\Source\Interfaces\ITreeStateEntry.cs" />
+    <Compile Include="Unary.Common\Source\Server\NetworkingSys.cs" />
+    <Compile Include="Unary.Common\Source\Server\SteamSys.cs" />
     <Compile Include="Unary.Common\Source\Shared\BootSys.cs" />
-    <Compile Include="Unary.Common\Source\Shared\DataSys.cs" />
+    <Compile Include="Unary.Common\Source\Shared\EnvironmentSys.cs" />
     <Compile Include="Unary.Common\Source\Shared\RandomSys.cs" />
     <Compile Include="Unary.Common\Source\Shared\RCONSys.cs" />
     <Compile Include="Unary.Common\Source\Shared\RegistrySys.cs" />
     <Compile Include="Unary.Common\Source\Shared\SaveSys.cs" />
     <Compile Include="Unary.Common\Source\Structs\Ban.cs" />
     <Compile Include="Unary.Common\Source\Structs\BoundPath.cs" />
+    <Compile Include="Unary.Common\Source\Structs\Environment.cs" />
     <Compile Include="Unary.Common\Source\Structs\Packet.cs" />
     <Compile Include="Unary.Common\Source\Structs\Command.cs" />
     <Compile Include="Unary.Common\Source\Subsystems\ConfigManager.cs" />
@@ -163,6 +167,7 @@
     <Compile Include="Unary.Common\Source\Utils\Converter.cs" />
     <Compile Include="Unary.Common\Source\Subsystems\Entries.cs" />
     <Compile Include="Unary.Common\Source\Utils\EnumUtil.cs" />
+    <Compile Include="Unary.Common\Source\Utils\EnvironmentUtil.cs" />
     <Compile Include="Unary.Common\Source\Utils\ModIDUtil.cs" />
     <Compile Include="Unary.Common\Source\Utils\NetworkUtil.cs" />
     <Compile Include="Unary.Common\Source\Utils\NodeUtil.cs" />
@@ -190,8 +195,6 @@
     <Compile Include="Unary.Common\Source\UI\ProfilerNamespace.cs" />
     <Compile Include="Unary.Common\Source\Utils\FilesystemUtil.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Unary.Common\Source\Server\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

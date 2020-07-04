@@ -1,0 +1,12 @@
+{
+	"Target": "Unary.Common.Environment.JsonPatcher",
+	"Values":
+	[
+		"0.0.2"
+		{
+			"Type": "Add",
+			"Name": "Test",
+			"Value": "true"
+		}
+	]
+}

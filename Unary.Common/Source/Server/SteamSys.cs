@@ -22,11 +22,44 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary.Common.Arguments
+using Unary.Common.Interfaces;
+using Unary.Common.Structs;
+using Unary.Common.Arguments;
+using Unary.Common.Arguments.Internal;
+using Unary.Common.Utils;
+using Unary.Common.Abstract;
+
+using System;
+using System.Collections.Generic;
+
+using Steamworks;
+
+namespace Unary.Common.Server
 {
-    public class Args
+    public class SteamSys : SysNode
     {
-        public int ID;
-        public bool Canceled;
+        private Callback<P2PSessionRequest_t> RequestCallback;
+        private Callback<P2PSessionConnectFail_t> RequestFailCallback;
+
+        public override void Init()
+        {
+            RequestCallback = Callback<P2PSessionRequest_t>.Create(OnSessionRequest);
+            RequestFailCallback = Callback<P2PSessionConnectFail_t>.Create(OnSessionRequestFail);
+        }
+
+        public override void Clear()
+        {
+
+        }
+
+        public void OnSessionRequest(P2PSessionRequest_t Args)
+        {
+
+        }
+
+        public void OnSessionRequestFail(P2PSessionConnectFail_t Args)
+        {
+
+        }
     }
 }

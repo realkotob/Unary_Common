@@ -22,11 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Unary.Common.Arguments
+using System;
+using System.Collections.Generic;
+
+namespace Unary.Common.Abstract
 {
-    public class Args
+    public class EnvironmentPatcher
     {
-        public int ID;
-        public bool Canceled;
+        // Executed instead of a constructor for Object/Node inherited systems
+        public virtual void Patch()
+        {
+
+        }
+
+        // Executed instead of a deconstuctor for Node base systems
+        public virtual void Clear()
+        {
+
+        }
     }
 }

@@ -220,6 +220,11 @@ namespace Unary.Common.Shared
             }
         }
 
+        public ulong GetSteamID()
+        {
+            return SteamUser.GetSteamID().m_SteamID;
+        }
+
         public override void _Process(float delta)
         {
             SteamAPI.RunCallbacks();

@@ -41,6 +41,7 @@ namespace Unary.Common.Shared
 		public static Sys Ref { get; private set; }
 
 		public bool Running { get; set; } = true;
+		public bool Debug { get; set; } = false;
 
 		public ConsoleSys ConsoleSys { get; private set; }
 
@@ -54,15 +55,9 @@ namespace Unary.Common.Shared
 
 		public override void _Ready()
 		{
-			string ModTest = "Unary.Common.Lol.Path";
-
-			string ModID = ModIDUtil.ModID(ModTest);
-			string ModIDEntry = ModIDUtil.ModIDEntry(ModTest);
-			string Target = ModIDUtil.ModIDTarget(ModTest);
-
-
-
 			Ref = this;
+
+			Debug = OS.IsDebugBuild();
 
 			Shared = new SysManager();
 			Server = new SysManager();

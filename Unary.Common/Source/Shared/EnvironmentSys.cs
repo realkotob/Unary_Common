@@ -33,21 +33,21 @@ using System.Collections.Generic;
 
 namespace Unary.Common.Shared
 {
-    class DataSys : SysObject
+    class EnvironmentSys : SysObject
     {
-        private const string FolderPath = "Data/";
-        private Dictionary<string, string> DataPaths;
+        private const string FolderPath = "Environment/";
+        private Dictionary<string, string> EnvPaths;
 
         public override void Init()
         {
-            DataPaths = new Dictionary<string, string>();
+            EnvPaths = new Dictionary<string, string>();
 
-            List<string> DataFolders = FilesystemUtil.Sys.DirGetDirs(FolderPath);
+            List<string> EnvFolders = FilesystemUtil.Sys.DirGetDirs(FolderPath);
 
-            foreach(var Folder in DataFolders)
+            foreach(var Folder in EnvFolders)
             {
                 string ModID = System.IO.Path.GetFileNameWithoutExtension(Folder);
-                DataPaths[ModID] = Folder;
+                EnvPaths[ModID] = Folder;
             }
         }
 

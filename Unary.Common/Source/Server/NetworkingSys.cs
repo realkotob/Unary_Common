@@ -25,14 +25,10 @@ SOFTWARE.
 using System;
 using System.Collections.Generic;
 
-namespace Unary.Common.Enums
+namespace Unary.Common.Server
 {
-    public enum DisconnectReason : byte
+    public class NetworkingSys
     {
-        Full,
-        Invalid,
-        Banned,
-        Kicked,
-        OutOfTurn
+
     }
 }

@@ -52,17 +52,14 @@ namespace Unary.Common.Shared
             NamedTypes = new Dictionary<string, Type>();
             ActualTypes = new Dictionary<Type, string>();
 
-            Assembly CommonAssembly = Assembly.GetCallingAssembly();
             Assembly[] NewAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            Assemblies["Unary.Common"] = CommonAssembly;
-            AddTypes(Assemblies["Unary.Common"]);
 
             foreach (var Entry in NewAssemblies)
             {
                 string CurrentName = Entry.GetName().Name;
 
-                if (CurrentName.BeginsWith("System") || CurrentName.BeginsWith("Godot") || CurrentName.BeginsWith("mscorlib"))
+                if (CurrentName.BeginsWith("System") || CurrentName.BeginsWith("Godot")
+                || CurrentName.BeginsWith("mscorlib") || CurrentName.BeginsWith("Unary."))
                 {
                     Assemblies[CurrentName] = Entry;
                     AddTypes(Assemblies[CurrentName]);

@@ -32,7 +32,6 @@ namespace Unary.Common.Structs
 {
     public struct RPCEntry
     {
-        public NetworkRPCType Type;
         public string EventName;
         public Args Args;
     }
