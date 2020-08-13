@@ -1,5 +1,3 @@
-# ARCHIVED AND DISCONTINUED IN FAVOR OF UNARY.CORE -> https://github.com/unaryinc/Unary.Core
-
 # Unary.Common
 ![Common architecture](/Info/Architecture.png)
 ## Multiplayer oriented modding framework with Steam Workshop integration built on top of Godot engine
