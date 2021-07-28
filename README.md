@@ -1,3 +1,5 @@
+# Obsoleted for [Recusant launcher](https://github.com/unaryinc/RecusantLauncher) and [Recusant game](https://github.com/unaryinc/RecusantGame)
+
 # Unary.Common
 ![Common architecture](/Info/Architecture.png)
 ## Multiplayer oriented modding framework with Steam Workshop integration built on top of Godot engine
