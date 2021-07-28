@@ -1,4 +1,4 @@
-# Obsoleted for [Recusant launcher](https://github.com/unaryinc/RecusantLauncher) and [Recusant game](https://github.com/unaryinc/RecusantGame)
+# Archived in favor of [Recusant launcher](https://github.com/unaryinc/RecusantLauncher) and [Recusant game](https://github.com/unaryinc/RecusantGame)
 
 # Unary.Common
 ![Common architecture](/Info/Architecture.png)
